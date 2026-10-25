@@ -1,0 +1,49 @@
+org.gnome.desktop.interface gtk-theme 'MacTahoe-Dark'
+org.gnome.desktop.interface icon-theme 'MacTahoe-blue'
+org.gnome.desktop.interface cursor-theme 'MacTahoe-cursors'
+org.gnome.desktop.interface cursor-size 24
+org.gnome.desktop.interface color-scheme 'prefer-dark'
+org.gnome.desktop.interface accent-color 'green'
+org.gnome.desktop.interface font-name 'SF Pro Display 11'
+org.gnome.desktop.interface document-font-name 'SF Pro Text 11'
+org.gnome.desktop.interface monospace-font-name 'SF Mono 11'
+org.gnome.desktop.interface font-antialiasing 'rgba'
+org.gnome.desktop.interface font-hinting 'medium'
+org.gnome.desktop.wm.preferences titlebar-font 'SF Pro Display Bold 11'
+org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:'
+org.gnome.shell.extensions.user-theme name 'MacTahoe-Dark'
+org.gnome.shell.extensions.ubuntutahoe enabled true
+org.gnome.shell.extensions.ubuntutahoe clock-position 1
+org.gnome.shell.extensions.ubuntutahoe clock-offset 20
+org.gnome.shell.extensions.ubuntutahoe hide-activities true
+org.gnome.shell.extensions.ubuntutahoe enable-globalmenu true
+org.gnome.shell.extensions.ubuntutahoe enable-blur true
+org.gnome.shell.extensions.ubuntutahoe enable-kimpanel true
+org.gnome.shell.extensions.globalmenu show-indicator true
+org.gnome.shell.extensions.globalmenu show-logo-menu true
+org.gnome.shell.extensions.globalmenu hide-overview-button true
+org.gnome.shell.extensions.globalmenu logo-distro-icon-symbolic true
+org.gnome.shell.extensions.globalmenu logo-custom-icon-path ''
+org.gnome.shell.extensions.globalmenu logo-distro-icon ''
+org.gnome.shell.extensions.globalmenu logo-icon-name 'start-here-symbolic'
+org.gnome.shell.extensions.globalmenu logo-icon-size 16
+org.gnome.shell.extensions.globalmenu custom-menus '[]'
+org.gnome.shell.extensions.globalmenu system-menu-custom-items '[]'
+org.gnome.shell.extensions.globalmenu desktop-app-name 'Nautilus'
+org.gnome.shell.extensions.globalmenu menu-app-enabled true
+org.gnome.shell.extensions.globalmenu menu-file-enabled true
+org.gnome.shell.extensions.globalmenu menu-edit-enabled true
+org.gnome.shell.extensions.globalmenu menu-view-enabled true
+org.gnome.shell.extensions.globalmenu menu-go-enabled true
+org.gnome.shell.extensions.globalmenu menu-window-enabled true
+org.gnome.shell.extensions.globalmenu menu-help-enabled true
+org.gnome.shell.extensions.blur-my-shell.appfolder blur true
+org.gnome.shell.extensions.blur-my-shell.overview blur true
+org.gnome.shell.extensions.blur-my-shell.panel blur false
+org.gnome.shell.extensions.blur-my-shell.panel override-background true
+org.gnome.shell.extensions.blur-my-shell.panel style-panel 0
+org.gnome.shell.extensions.blur-my-shell.panel override-background-dynamically false
+org.gnome.shell.extensions.blur-my-shell sigma 30
+org.gnome.shell.extensions.blur-my-shell brightness 0.6
+org.gnome.shell.extensions.ubuntutahoedock dash-max-icon-size 45
+org.gnome.shell.extensions.ubuntutahoedock click-action 'minimize'

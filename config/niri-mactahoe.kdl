@@ -1,0 +1,21 @@
+// Gợi ý cấu hình Niri cho bộ MacTahoe. Dán các khối cần dùng vào ~/.config/niri/config.kdl
+// (script cài đặt KHÔNG tự sửa config Niri của bạn).
+//
+// Theme GTK, icon, font và chế độ sáng/tối đọc từ dconf/gsettings nên tự áp dụng cả trong Niri.
+// Extension GNOME Shell (dock UbuntuTahoeDock, global menu, blur) chỉ chạy trong phiên GNOME.
+
+cursor {
+    xcursor-theme "MacTahoe-cursors"
+    xcursor-size 24
+}
+
+// Bo góc kiểu macOS cho mọi cửa sổ.
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// Widget Conky dùng X11 (cairo_xlib). Trong Niri cần xwayland-satellite:
+//   sudo pacman -S xwayland-satellite
+// Bản Niri mới có thể tự gọi xwayland-satellite nếu đã cài; nếu không, bật thủ công:
+// spawn-at-startup "xwayland-satellite"

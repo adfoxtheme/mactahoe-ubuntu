@@ -1,0 +1,220 @@
+diff --git a/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/globalmenu/menuManager.js b/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/globalmenu/menuManager.js
+index e0f5a44f..c32e0525 100644
+--- a/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/globalmenu/menuManager.js
++++ b/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/globalmenu/menuManager.js
+@@ -187,7 +187,7 @@ const TopLevelMenuButton = GObject.registerClass(
+         }
+ 
+         try {
+-            let seat = Clutter.get_default_backend().get_default_seat();
++            let seat = global.stage.context.get_backend().get_default_seat();
+             let virtualDevice = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
+             
+             if (virtualDevice) {
+@@ -288,7 +288,7 @@ const TopLevelMenuButton = GObject.registerClass(
+                 return;
+             }
+ 
+-            let seat = Clutter.get_default_backend().get_default_seat();
++            let seat = global.stage.context.get_backend().get_default_seat();
+             let virtualDevice = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
+             if (!virtualDevice) return;
+ 
+diff --git a/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/kimpanel/panel.js b/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/kimpanel/panel.js
+index 8bef4af0..b77e0f5c 100644
+--- a/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/kimpanel/panel.js
++++ b/vendor/gnome-extensions/UbuntuTahoe@adfoxtheme.github.io/modules/kimpanel/panel.js
+@@ -35,14 +35,15 @@ export class InputPanel extends GObject.Object {
+ 
+         this.layout = new St.BoxLayout({
+             style_class : 'popup-menu-content',
+-            vertical : true,
++            orientation : Clutter.Orientation.VERTICAL,
+         });
+         this.layout.add_style_class_name('kimpanel-popup-content');
+         this.panel.bin.set_child(this.layout);
+ 
+         this.upperLayout = new St.BoxLayout();
+         this.lookupTableLayout = new St.BoxLayout(
+-            {vertical : this.kimpanel.isLookupTableVertical()});
++            {orientation : this.kimpanel.isLookupTableVertical()
++                ? Clutter.Orientation.VERTICAL : Clutter.Orientation.HORIZONTAL});
+ 
+         this.layout.add_child(this.upperLayout);
+ 
+@@ -169,7 +170,8 @@ export class InputPanel extends GObject.Object {
+                     .remove_style_pseudo_class('active');
+         }
+     }
+-    setVertical(vertical) { this.lookupTableLayout.set_vertical(vertical); }
++    setVertical(vertical) { this.lookupTableLayout.orientation = vertical
++            ? Clutter.Orientation.VERTICAL : Clutter.Orientation.HORIZONTAL; }
+     updateFont(textStyle) {
+         this.text_style = textStyle;
+         this.auxText.set_style(this.text_style);
+@@ -274,8 +276,8 @@ export class InputPanel extends GObject.Object {
+ 
+     show() {
+         this.panel.setPosition(this._cursor, 0.0);
+-        this.panel.open(BoxPointer.PopupAnimation.NONE);
++        this.panel.open(BoxPointer.PopupAnimation ? BoxPointer.PopupAnimation.NONE : {animate: false});
+         this.panel.get_parent().set_child_above_sibling(this.panel, null);
+     }
+-    hide() { this.panel.close(BoxPointer.PopupAnimation.NONE); }
++    hide() { this.panel.close(BoxPointer.PopupAnimation ? BoxPointer.PopupAnimation.NONE : {animate: false}); }
+ }
+diff --git a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/appIcons.js b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/appIcons.js
+index 679c9ca4..04abd9ee 100644
+--- a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/appIcons.js
++++ b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/appIcons.js
+@@ -1079,7 +1079,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
+ 
+     popup(_activatingButton) {
+         this._rebuildMenu();
+-        this.open(BoxPointer.PopupAnimation.FULL);
++        this.open(BoxPointer.PopupAnimation?.FULL);
+     }
+ 
+     removeAll() {
+diff --git a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dash.js b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dash.js
+index a650f389..69bd7d30 100644
+--- a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dash.js
++++ b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dash.js
+@@ -170,7 +170,7 @@ export const DockDash = GObject.registerClass({
+             name: 'dashtodockDashContainer',
+             x_align: Clutter.ActorAlign.CENTER,
+             y_align: Clutter.ActorAlign.CENTER,
+-            vertical: !this._isHorizontal,
++            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL,
+             y_expand: this._isHorizontal,
+             x_expand: !this._isHorizontal,
+         });
+@@ -190,13 +190,13 @@ export const DockDash = GObject.registerClass({
+             name: 'dashtodockBoxContainer',
+             x_align: Clutter.ActorAlign.FILL,
+             y_align: Clutter.ActorAlign.FILL,
+-            vertical: !this._isHorizontal,
++            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL,
+         });
+         this._boxContainer.add_style_class_name(Theming.PositionStyleClass[this._position]);
+ 
+         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
+         this._box = new St.BoxLayout({
+-            vertical: !this._isHorizontal,
++            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL,
+             clip_to_allocation: false,
+             ...!this._isHorizontal ? {layout_manager: new DockDashIconsVerticalLayout()} : {},
+             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
+diff --git a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/pointerWatcher.js b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/pointerWatcher.js
+new file mode 100644
+index 00000000..9cadefdc
+--- /dev/null
++++ b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/pointerWatcher.js
+@@ -0,0 +1,62 @@
++// Thay thế cho resource:///org/gnome/shell/ui/pointerWatcher.js (đã bị GNOME Shell 51 xóa).
++// Giữ nguyên giao diện getPointerWatcher().addWatch(interval, callback) / _removeWatch(watch)
++// mà docking.js đang dùng, nhưng đọc vị trí con trỏ qua Meta.CursorTracker.
++import GLib from 'gi://GLib';
++
++const MIN_INTERVAL_MS = 16;
++
++function getPointerPosition() {
++    try {
++        // Tuỳ phiên bản mutter: trả về [x, y, mods] hoặc [Graphene.Point, mods].
++        const result = global.backend.get_cursor_tracker().get_pointer();
++        if (typeof result[0] === 'number')
++            return [result[0], result[1]];
++        return [result[0].x, result[0].y];
++    } catch (e) {
++        // GNOME Shell cũ hơn: global.get_pointer() vẫn còn.
++        const [x, y] = global.get_pointer();
++        return [x, y];
++    }
++}
++
++class PointerWatch {
++    constructor(interval, callback) {
++        this._callback = callback;
++        this._lastX = null;
++        this._lastY = null;
++        this._sourceId = GLib.timeout_add(
++            GLib.PRIORITY_DEFAULT, Math.max(interval, MIN_INTERVAL_MS), () => {
++                const [x, y] = getPointerPosition();
++                if (x !== this._lastX || y !== this._lastY) {
++                    this._lastX = x;
++                    this._lastY = y;
++                    this._callback(x, y);
++                }
++                return GLib.SOURCE_CONTINUE;
++            });
++        GLib.Source.set_name_by_id(this._sourceId, '[UbuntuTahoeDock] pointer watch');
++    }
++
++    remove() {
++        if (this._sourceId) {
++            GLib.source_remove(this._sourceId);
++            this._sourceId = 0;
++        }
++    }
++}
++
++class PointerWatcher {
++    addWatch(interval, callback) {
++        return new PointerWatch(interval, callback);
++    }
++
++    _removeWatch(watch) {
++        watch?.remove();
++    }
++}
++
++const watcher = new PointerWatcher();
++
++export function getPointerWatcher() {
++    return watcher;
++}
+diff --git a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/ui.js b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/ui.js
+index a932a79e..202a6fe0 100644
+--- a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/ui.js
++++ b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/dependencies/shell/ui.js
+@@ -8,7 +8,7 @@ export * as Layout from 'resource:///org/gnome/shell/ui/layout.js';
+ export * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ export * as Overview from 'resource:///org/gnome/shell/ui/overview.js';
+ export * as OverviewControls from 'resource:///org/gnome/shell/ui/overviewControls.js';
+-export * as PointerWatcher from 'resource:///org/gnome/shell/ui/pointerWatcher.js';
++export * as PointerWatcher from './pointerWatcher.js';
+ export * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+ export * as SearchController from 'resource:///org/gnome/shell/ui/searchController.js';
+ export * as ShellMountOperation from 'resource:///org/gnome/shell/ui/shellMountOperation.js';
+diff --git a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/windowPreview.js b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/windowPreview.js
+index 337d5f1e..6f3a98d9 100644
+--- a/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/windowPreview.js
++++ b/vendor/gnome-extensions/UbuntuTahoeDock@adfoxtheme.github.io/windowPreview.js
+@@ -77,7 +77,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
+         const windows = this._source.getInterestingWindows();
+         if (windows.length > 0) {
+             this._redisplay();
+-            this.open(BoxPointer.PopupAnimation.FULL);
++            this.open(BoxPointer.PopupAnimation?.FULL);
+             this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
+             this._source.emit('sync-tooltip');
+         }
+@@ -107,7 +107,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
+ 
+         const position = Utils.getPosition();
+         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
+-        this.box.set_vertical(!this.isHorizontal);
++        this.box.orientation = this.isHorizontal
++            ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL;
+         this.box.set_name('dashtodockWindowList');
+         Utils.addActor(this.actor, this.box);
+         this.actor._delegate = this;
+@@ -382,7 +383,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
+         });
+ 
+         const box = new St.BoxLayout({
+-            vertical: true,
++            orientation: Clutter.Orientation.VERTICAL,
+             reactive: true,
+             x_expand: true,
+         });

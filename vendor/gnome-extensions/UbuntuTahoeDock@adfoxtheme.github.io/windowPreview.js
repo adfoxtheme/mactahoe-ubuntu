@@ -77,7 +77,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         const windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
-            this.open(BoxPointer.PopupAnimation.FULL);
+            this.open(BoxPointer.PopupAnimation?.FULL);
             this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
@@ -107,7 +107,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
 
         const position = Utils.getPosition();
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
-        this.box.set_vertical(!this.isHorizontal);
+        this.box.orientation = this.isHorizontal
+            ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL;
         this.box.set_name('dashtodockWindowList');
         Utils.addActor(this.actor, this.box);
         this.actor._delegate = this;
@@ -382,7 +383,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         });
 
         const box = new St.BoxLayout({
-            vertical: true,
+            orientation: Clutter.Orientation.VERTICAL,
             reactive: true,
             x_expand: true,
         });

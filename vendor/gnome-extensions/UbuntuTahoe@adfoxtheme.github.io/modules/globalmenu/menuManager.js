@@ -187,7 +187,7 @@ const TopLevelMenuButton = GObject.registerClass(
         }
 
         try {
-            let seat = Clutter.get_default_backend().get_default_seat();
+            let seat = global.stage.context.get_backend().get_default_seat();
             let virtualDevice = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
             
             if (virtualDevice) {
@@ -288,7 +288,7 @@ const TopLevelMenuButton = GObject.registerClass(
                 return;
             }
 
-            let seat = Clutter.get_default_backend().get_default_seat();
+            let seat = global.stage.context.get_backend().get_default_seat();
             let virtualDevice = seat.create_virtual_device(Clutter.InputDeviceType.KEYBOARD_DEVICE);
             if (!virtualDevice) return;
 

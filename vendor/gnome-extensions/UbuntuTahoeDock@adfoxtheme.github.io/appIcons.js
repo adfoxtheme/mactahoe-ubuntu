@@ -1079,7 +1079,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
     popup(_activatingButton) {
         this._rebuildMenu();
-        this.open(BoxPointer.PopupAnimation.FULL);
+        this.open(BoxPointer.PopupAnimation?.FULL);
     }
 
     removeAll() {

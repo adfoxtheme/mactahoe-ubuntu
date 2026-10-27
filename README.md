@@ -16,9 +16,33 @@ Bộ giao diện macOS Tahoe cho GNOME và Xfce, kèm các tiện ích mở rộ
 | Desktop | Thành phần được áp dụng |
 | --- | --- |
 | GNOME 48+ | GTK, icon, con trỏ, font, wallpaper, ứng dụng, Firefox và các extension dock/widget |
-| Xfce (Kali/Ubuntu/Debian) | GTK, viền cửa sổ Xfwm4, nút cửa sổ bên trái, icon, con trỏ, font, wallpaper từng monitor/workspace, ứng dụng và Firefox |
+| Xfce X11 (Kali/Ubuntu/Debian) | GTK/Xfwm4, icon, con trỏ, font, wallpaper, ứng dụng, Firefox, Plank dock và widget desktop |
 
-Xfce dùng panel hiện tại; các extension UbuntuTahoe, Dock và Widgets chỉ dành cho GNOME. Không cài GNOME hoặc chuyển display manager tự động. `install-gdm.sh` dành riêng cho GNOME/GDM, không đổi giao diện LightDM.
+Xfce dùng Plank dock với theme Tahoe: tự ẩn khi cửa sổ phóng to, phóng icon khi rê chuột, ghim ứng dụng và nút Launchpad mở `xfce4-appfinder`. Widget Python/GTK3 chạy riêng, có đồng hồ, thời tiết, CPU/GPU/RAM/ổ đĩa/mạng, âm lịch và nhắc nghỉ. GNOME tiếp tục dùng các extension hiện có. Dock/widget Xfce cần **X11**, chưa hỗ trợ Xfce Wayland.
+
+Mở **MacTahoe · Widget & Dock** trong menu hoặc chạy `mactahoe-xfce-widgets --preferences` để bật/tắt từng widget, chọn thành phố/API key, chu kỳ cập nhật, thời gian nghỉ, màn hình và lề. Nút cài đặt Dock mở tùy chọn Plank; có thể chạy `mactahoe-xfce-dock preferences`. Thời tiết mặc định dùng Open-Meteo, API key OpenWeather là tùy chọn. GPU tự ẩn nếu không có telemetry AMD/NVIDIA; âm lịch dùng UTC+7.
+
+Dock/widget tự chạy khi đăng nhập Xfce. Icon desktop được ẩn để nhường chỗ cho widget, cấu hình ban đầu được sao lưu để khôi phục khi gỡ. Panel Xfce hiện tại được giữ lại; nếu đã có panel/dock ở đáy màn hình, tắt panel/dock đó trong **Panel Preferences** để tránh trùng với Plank. Cài lại giữ cấu hình dock đã chỉnh. Không tự cài GNOME hay đổi display manager.
+
+### Giao diện đăng nhập LightDM (Xfce)
+
+Sau `./install.sh`, chạy riêng:
+
+```bash
+./install-lightdm.sh
+```
+
+Cần LightDM đang được cấu hình làm display manager và dùng **LightDM GTK Greeter** (Kali Xfce thông thường). Script kiểm tra greeter trước khi ghi, cài theme GTK Tahoe, con trỏ, font và wallpaper vào thư mục hệ thống đọc được trước đăng nhập. Giữ thiết lập bàn phím, accessibility và chính sách đăng nhập hiện có; không chuyển greeter, không restart phiên đang chạy. Khởi động lại khi muốn kiểm tra màn hình đăng nhập.
+
+Khôi phục riêng, kể cả từ TTY bằng tài khoản thường:
+
+```bash
+./install-lightdm.sh --uninstall
+```
+
+Bản sao gốc được giữ tại `/var/lib/mactahoe-lightdm` bằng quyền root, cài lại không ghi đè bản sao này. `./uninstall.sh` cũng khôi phục LightDM nếu đã cài bằng tài khoản này. `install-gdm.sh` vẫn dành cho GNOME/GDM.
+
+Đã kiểm tra widget bằng GTK/X11 và Xfwm/Xfdesktop trong Xvfb trên Ubuntu WSL, cùng test cài lại/khôi phục Xfconf/Plank và test rollback LightDM. **Chưa kiểm thử đăng nhập LightDM hoặc toàn bộ desktop Kali trên máy thật/VM.**
 
 Trên máy test, clone nhánh hỗ trợ Kali:
 

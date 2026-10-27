@@ -43,6 +43,10 @@ else
 fi
 source "$ROOT_DIR/scripts/desktop.sh"
 detect_desktop
+if [ "$desktop" = xfce ] && [ "${XDG_SESSION_TYPE:-x11}" != x11 ]; then
+    printf 'The Xfce dock and widgets require an X11 session. Log in to Xfce on X11.\n' >&2
+    exit 1
+fi
 if [ "$desktop" = xfce ] && [ "$distribution_id" != kali ] && \
    [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ]; then
     printf 'Xfce installation currently supports Kali, Ubuntu, and Debian.\n' >&2
@@ -139,7 +143,8 @@ else
         libglib2.0-dev-bin librsvg2-bin python3-gi python3-pil sassc)
     if [ "$desktop" = xfce ]; then
         package_list=(breeze-icon-theme fontconfig imagemagick libglib2.0-dev-bin
-            librsvg2-bin python3-gi python3-pil gir1.2-gtk-4.0 gir1.2-adw-1 sassc)
+            librsvg2-bin python3-gi python3-pil gir1.2-gtk-4.0 gir1.2-adw-1 sassc
+            gir1.2-gtk-3.0 python3-psutil plank dconf-cli xfce4-appfinder)
     fi
     apt_snapshot="$BACKUP_DIR/apt-packages-before-mactahoe"
     apt_installed="$BACKUP_DIR/apt-packages-installed-by-mactahoe"
@@ -354,6 +359,8 @@ PY
 
 else
     apply_xfce
+    source "$ROOT_DIR/scripts/xfce-extras.sh"
+    install_xfce_extras
 fi
 
 cp "$ROOT_DIR/desktop/mactahoe-icon-manager.desktop" "$HOME/.local/share/applications/"

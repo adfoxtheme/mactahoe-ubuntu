@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Sourced by install.sh after common assets and Xfconf settings are installed.
+install_xfce_extras() {
+    local relative
+    for relative in \
+        .local/bin/mactahoe-xfce-widgets .local/bin/mactahoe-xfce-dock \
+        .local/share/mactahoe-apps/mactahoe-xfce-widgets \
+        .local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop \
+        .local/share/applications/io.github.adfoxtheme.Launchpad.desktop \
+        .config/autostart/mactahoe-xfce-widgets.desktop \
+        .config/autostart/mactahoe-xfce-dock.desktop \
+        .config/plank/mactahoe .local/share/plank/themes/MacTahoe; do
+        backup_item "$relative"
+    done
+    mkdir -p "$HOME/.config/autostart" "$HOME/.config/plank/mactahoe/launchers" \
+        "$HOME/.local/share/plank/themes/MacTahoe" \
+        "$HOME/.local/share/mactahoe-apps/mactahoe-xfce-widgets"
+    cp -a "$ROOT_DIR/apps/mactahoe-xfce-widgets/." \
+        "$HOME/.local/share/mactahoe-apps/mactahoe-xfce-widgets/"
+    install -m 0755 "$ROOT_DIR/apps/launchers/mactahoe-xfce-widgets" "$HOME/.local/bin/"
+    install -m 0755 "$ROOT_DIR/apps/launchers/mactahoe-xfce-dock" "$HOME/.local/bin/"
+    cp "$ROOT_DIR/desktop/io.github.adfoxtheme."{XfceWidgets,Launchpad}.desktop \
+        "$HOME/.local/share/applications/"
+    sed -i "s|^Exec=mactahoe-xfce-widgets|Exec=\"$HOME/.local/bin/mactahoe-xfce-widgets\"|" \
+        "$HOME/.local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop"
+    cp "$ROOT_DIR/vendor/MacTahoe-gtk-theme/other/plank/theme-Dark/dock.theme" \
+        "$HOME/.local/share/plank/themes/MacTahoe/dock.theme"
+
+    # Preserve first-install state and subsequent user customization of the dock.
+    if [ ! -e "$BACKUP_DIR/plank-before.ini" ]; then
+        dconf dump /net/launchpad/plank/docks/mactahoe/ > "$BACKUP_DIR/plank-before.ini"
+    fi
+    if [ ! -e "$BACKUP_DIR/plank-configured" ]; then
+        local schema=net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/mactahoe/
+        gsettings set "$schema" theme MacTahoe
+        gsettings set "$schema" position bottom
+        gsettings set "$schema" alignment center
+        gsettings set "$schema" icon-size 45
+        gsettings set "$schema" hide-mode dodge-maximized
+        gsettings set "$schema" zoom-enabled true
+        gsettings set "$schema" zoom-percent 130
+        local launcher number=0
+        for launcher in \
+            "$HOME/.local/share/applications/io.github.adfoxtheme.Launchpad.desktop" \
+            /usr/share/applications/thunar.desktop \
+            /usr/share/applications/firefox-esr.desktop \
+            /usr/share/applications/org.xfce.terminal.desktop \
+            "$HOME/.local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop"; do
+            [ -f "$launcher" ] || continue
+            number=$((number + 1))
+            # URI escaping covers home directories containing spaces or non-ASCII names.
+            python3 - "$launcher" "$HOME/.config/plank/mactahoe/launchers/$number.dockitem" <<'PY'
+from pathlib import Path
+import sys
+Path(sys.argv[2]).write_text('[PlankDockItemPreferences]\nLauncher=' + Path(sys.argv[1]).as_uri() + '\n')
+PY
+        done
+        touch "$BACKUP_DIR/plank-configured"
+    fi
+    local component
+    for component in widgets dock; do
+        cat > "$HOME/.config/autostart/mactahoe-xfce-$component.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=MacTahoe Xfce $component
+Exec="$HOME/.local/bin/mactahoe-xfce-$component"
+OnlyShowIn=XFCE;
+Terminal=false
+EOF
+    done
+    # Settings application uses PATH, as do the other bundled desktop launchers.
+    "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true
+    "$HOME/.local/bin/mactahoe-xfce-dock" stop
+    mkdir -p "$HOME/.cache/mactahoe-xfce"
+    nohup "$HOME/.local/bin/mactahoe-xfce-widgets" \
+        > "$HOME/.cache/mactahoe-xfce/widgets.log" 2>&1 < /dev/null &
+    nohup "$HOME/.local/bin/mactahoe-xfce-dock" \
+        > "$HOME/.cache/mactahoe-xfce/dock.log" 2>&1 < /dev/null &
+}

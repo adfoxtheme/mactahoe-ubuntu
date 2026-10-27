@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-start}" in
+    stop)
+        # Match only our named dock, preserving any existing personal Plank dock.
+        pkill -u "$UID" -f '^plank --name=mactahoe$' 2>/dev/null || true
+        for ((attempt=0; attempt<20; attempt++)); do
+            pgrep -u "$UID" -f '^plank --name=mactahoe$' >/dev/null || exit 0
+            sleep 0.1
+        done
+        printf 'The Tahoe dock did not stop; close it before reinstalling.\n' >&2
+        exit 1
+        ;;
+    preferences) exec plank --name=mactahoe --preferences ;;
+    start) ;;
+    *) printf 'Usage: %s [start|stop|preferences]\n' "$0" >&2; exit 2 ;;
+esac
+if [ "${XDG_SESSION_TYPE:-x11}" != x11 ]; then
+    printf 'The Tahoe Plank dock requires an X11 session.\n' >&2
+    exit 1
+fi
+runtime_dir="${XDG_RUNTIME_DIR:-$HOME/.cache}/mactahoe-xfce"
+mkdir -p "$runtime_dir"
+exec 9>"$runtime_dir/dock.lock"
+flock -n 9 || exit 0
+exec plank --name=mactahoe

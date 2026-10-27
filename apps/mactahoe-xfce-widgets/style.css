@@ -1,0 +1,22 @@
+window.tahoe-desktop { background: transparent; color: #f7f7ff; }
+.tahoe-card {
+  background: rgba(27, 30, 43, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.23);
+  border-radius: 24px;
+  padding: 18px 22px;
+  color: #f7f7ff;
+}
+.tahoe-card label { color: #f7f7ff; }
+.tahoe-card .eyebrow { font: 700 10px "SF Pro Display", Sans; color: #b6bdd4; letter-spacing: 2px; }
+.tahoe-card .clock { font: 300 76px "SF Pro Display", Sans; letter-spacing: -4px; }
+.tahoe-card .date { font: 500 16px "SF Pro Display", Sans; }
+.tahoe-card .temperature { font: 500 28px "SF Pro Display", Sans; }
+.tahoe-card .lunar { font: 500 25px "SF Pro Display", Sans; }
+.tahoe-card .detail { font: 13px "SF Pro Text", Sans; color: #d2d7e7; }
+.tahoe-desktop button { border-radius: 14px; background: rgba(110, 122, 154, 0.28); color: #f7f7ff; border: 1px solid rgba(255,255,255,0.16); }
+.tahoe-desktop button:hover { background: rgba(150, 165, 210, 0.4); }
+.compact .tahoe-card { padding: 10px 16px; border-radius: 20px; }
+.compact .tahoe-card .detail { font-size: 12px; }
+.compact .tahoe-card .lunar { font-size: 21px; }
+.compact .tahoe-card .temperature { font-size: 24px; }
+.compact .tahoe-card .clock { font-size: 64px; }

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Launchpad
+Comment=Mở danh sách ứng dụng
+Exec=xfce4-appfinder
+Icon=view-app-grid-symbolic
+Terminal=false
+Categories=Utility;
+OnlyShowIn=XFCE;

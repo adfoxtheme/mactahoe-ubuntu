@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Shared desktop detection and scalar Xfconf backup/restore helpers.
+# shellcheck disable=SC2034 # desktop is read by the installer sourcing this file.
 detect_desktop() {
     local session="${XDG_CURRENT_DESKTOP:-${XDG_SESSION_DESKTOP:-${DESKTOP_SESSION:-}}}"
     case "${session,,}" in
@@ -37,6 +38,7 @@ xfce_set() {
 }
 
 apply_xfce() {
+    xfce_set xfce4-desktop /desktop-icons/style int 0
     xfce_set xsettings /Net/ThemeName string MacTahoe-Dark
     xfce_set xsettings /Net/IconThemeName string MacTahoe-blue
     xfce_set xsettings /Gtk/CursorThemeName string MacTahoe-cursors
@@ -44,6 +46,7 @@ apply_xfce() {
     xfce_set xsettings /Gtk/FontName string 'SF Pro Display 11'
     xfce_set xsettings /Gtk/MonospaceFontName string 'SF Mono 11'
     xfce_set xsettings /Gtk/DecorationLayout string 'close,minimize,maximize:'
+    xfce_set xfwm4 /general/use_compositing bool true
     xfce_set xfwm4 /general/theme string MacTahoe-Dark
     xfce_set xfwm4 /general/title_font string 'SF Pro Display Bold 11'
     xfce_set xfwm4 /general/button_layout string 'CMH|'

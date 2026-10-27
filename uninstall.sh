@@ -38,6 +38,28 @@ restore_item() {
     fi
 }
 
+# Stop only the Tahoe instances before restoring their launchers.
+if [ -f "$BACKUP_DIR/plank-before.ini" ]; then
+    "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true
+    "$HOME/.local/bin/mactahoe-xfce-dock" stop 2>/dev/null || true
+    dconf reset -f /net/launchpad/plank/docks/mactahoe/
+    dconf load /net/launchpad/plank/docks/mactahoe/ < "$BACKUP_DIR/plank-before.ini"
+    for relative in \
+        .local/bin/mactahoe-xfce-widgets .local/bin/mactahoe-xfce-dock \
+        .local/share/mactahoe-apps/mactahoe-xfce-widgets \
+        .local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop \
+        .local/share/applications/io.github.adfoxtheme.Launchpad.desktop \
+        .config/autostart/mactahoe-xfce-widgets.desktop \
+        .config/autostart/mactahoe-xfce-dock.desktop \
+        .config/plank/mactahoe .local/share/plank/themes/MacTahoe; do
+        restore_item "$relative"
+    done
+fi
+# The LightDM installer keeps a system backup so it can be restored from a TTY.
+if [ -f "$STATE_DIR/lightdm-installed" ]; then
+    "$ROOT_DIR/install-lightdm.sh" --uninstall
+fi
+
 # 1. Dừng các tiến trình và dịch vụ
 systemctl --user disable --now color-scheme-sync.service 2>/dev/null || true
 rm -f "$HOME/.config/systemd/user/color-scheme-sync.service"

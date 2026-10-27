@@ -11,11 +11,8 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 if [ "$action" = install ]; then
-    desktop=""
-    source "$ROOT_DIR/scripts/desktop.sh"
-    detect_desktop
-    if [ "$desktop" != xfce ]; then
-        printf 'Run this installer from Xfce with LightDM GTK Greeter.\n' >&2
+    if [ "$(python3 "$ROOT_DIR/scripts/display_manager.py")" != lightdm ]; then
+        printf 'LightDM is not the active/configured display manager.\n' >&2
         exit 1
     fi
     if [ ! -f "$HOME/.themes/MacTahoe-Dark/gtk-3.0/gtk.css" ]; then

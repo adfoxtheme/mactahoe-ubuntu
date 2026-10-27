@@ -50,15 +50,22 @@ apply_xfce() {
     xfce_set xfwm4 /general/theme string MacTahoe-Dark
     xfce_set xfwm4 /general/title_font string 'SF Pro Display Bold 11'
     xfce_set xfwm4 /general/button_layout string 'CMH|'
-    local property
+    local property helper wallpaper_list
+    helper="$(dirname "${BASH_SOURCE[0]}")/wallpaper_properties.py"
+    wallpaper_list="$(xfconf-query -c xfce4-desktop -l | python3 "$helper")" || return 1
+    if [ -z "$wallpaper_list" ]; then
+        printf 'Xfdesktop has no monitor wallpaper properties; retry after the desktop starts.\n' >&2
+        return 1
+    fi
     # Use actual monitor/workspace properties instead of assuming monitor0.
     while IFS= read -r property; do
         case "$property" in
             /backdrop/*/last-image|/backdrop/*/image-path)
                 xfce_set xfce4-desktop "$property" string "$HOME/Pictures/Wallpapers/MacTahoe/MacTahoe-night.jpeg"
+                xfce_set xfce4-desktop "${property%/*}/cycle-enable" bool false
                 xfce_set xfce4-desktop "${property%/*}/image-style" int 5 ;;
         esac
-    done < <(xfconf-query -c xfce4-desktop -l)
+    done <<< "$wallpaper_list"
 }
 
 restore_xfce() {

@@ -12,6 +12,8 @@ menu entry and Xfce-only autostart entries.
 - Plank preferences for smart hiding, icon size, zoom, placement and pinned launchers.
 
 ```bash
+mactahoe-xfce-widgets --enable-all
+mactahoe-xfce-widgets --status
 mactahoe-xfce-widgets --preferences
 mactahoe-xfce-widgets --stop
 mactahoe-xfce-dock preferences

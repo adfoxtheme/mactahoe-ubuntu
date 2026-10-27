@@ -24,13 +24,24 @@ Mở **MacTahoe · Widget & Dock** trong menu hoặc chạy `mactahoe-xfce-widge
 
 Dock/widget tự chạy khi đăng nhập Xfce. Icon desktop được ẩn để nhường chỗ cho widget, cấu hình ban đầu được sao lưu để khôi phục khi gỡ. Panel Xfce hiện tại được giữ lại; nếu đã có panel/dock ở đáy màn hình, tắt panel/dock đó trong **Panel Preferences** để tránh trùng với Plank. Cài lại giữ cấu hình dock đã chỉnh. Không tự cài GNOME hay đổi display manager.
 
-### Giao diện đăng nhập LightDM (Xfce)
+### Wallpaper và bật widget Xfce
 
-Sau `./install.sh`, chạy riêng:
+Ảnh logo Kali ở giữa desktop là **hình nền**, không phải icon menu. Bộ cài đặt wallpaper Tahoe cho từng monitor/workspace, tắt vòng đổi wallpaper và thêm `mactahoe-xfce-session` vào autostart để áp lại theme/wallpaper khi đăng nhập. Profile Xfce mới chưa có `last-image` cũng được khởi tạo đúng đường dẫn monitor. Muốn dùng wallpaper cá nhân lâu dài, tắt **MacTahoe Xfce session** trong **Session and Startup → Application Autostart**.
+
+Widget bật mặc định và tự chạy khi login. Để bật lại toàn bộ hoặc mở cài đặt:
 
 ```bash
-./install-lightdm.sh
+"$HOME/.local/bin/mactahoe-xfce-widgets" --enable-all
+"$HOME/.local/bin/mactahoe-xfce-widgets" --preferences
 ```
+
+Hoặc mở **MacTahoe · Widget & Dock** trong menu, bấm **Bật tất cả**. Kiểm tra tiến trình bằng `"$HOME/.local/bin/mactahoe-xfce-widgets" --status`. Bộ cài kiểm tra tiến trình sau khi khởi động; lỗi cụ thể nằm trong `~/.cache/mactahoe-xfce/widgets.log` hoặc `dock.log`. Menu ứng dụng Whisker của Xfce là thành phần riêng, không phải bộ widget desktop.
+
+### Tự động cài giao diện đăng nhập
+
+`./install.sh` tự phát hiện display manager đang chạy hoặc được cấu hình: **GDM/GDM3 → `install-gdm.sh`**, **LightDM → `install-lightdm.sh`**. Nhận diện dựa trên dịch vụ hệ thống/cấu hình display manager, độc lập với desktop đang đăng nhập. Không tìm thấy GDM/LightDM thì báo bỏ qua; nếu bộ cài login thất bại, Terminal báo lỗi và không báo hoàn tất toàn bộ. Không tự đổi display manager hay restart phiên đang dùng.
+
+Có thể chạy lại `./install-lightdm.sh` hoặc `./install-gdm.sh` riêng khi cần.
 
 Cần LightDM đang được cấu hình làm display manager và dùng **LightDM GTK Greeter** (Kali Xfce thông thường). Script kiểm tra greeter trước khi ghi, cài theme GTK Tahoe, con trỏ, font và wallpaper vào thư mục hệ thống đọc được trước đăng nhập. Giữ thiết lập bàn phím, accessibility và chính sách đăng nhập hiện có; không chuyển greeter, không restart phiên đang chạy. Khởi động lại khi muốn kiểm tra màn hình đăng nhập.
 
@@ -40,7 +51,7 @@ Khôi phục riêng, kể cả từ TTY bằng tài khoản thường:
 ./install-lightdm.sh --uninstall
 ```
 
-Bản sao gốc được giữ tại `/var/lib/mactahoe-lightdm` bằng quyền root, cài lại không ghi đè bản sao này. `./uninstall.sh` cũng khôi phục LightDM nếu đã cài bằng tài khoản này. `install-gdm.sh` vẫn dành cho GNOME/GDM.
+Bản sao gốc được giữ tại `/var/lib/mactahoe-lightdm` bằng quyền root, cài lại không ghi đè bản sao này. `./uninstall.sh` cũng khôi phục LightDM nếu đã cài bằng tài khoản này. `install-gdm.sh` dành cho máy đang dùng GDM, kể cả đang đăng nhập Xfce.
 
 Đã kiểm tra widget bằng GTK/X11 và Xfwm/Xfdesktop trong Xvfb trên Ubuntu WSL, cùng test cài lại/khôi phục Xfconf/Plank và test rollback LightDM. **Chưa kiểm thử đăng nhập LightDM hoặc toàn bộ desktop Kali trên máy thật/VM.**
 
@@ -143,7 +154,7 @@ Sau khi cài xong, đăng xuất (Log out) rồi đăng nhập lại để GNOME
 
 ### Đồng bộ màn hình đăng nhập (GDM)
 
-Nếu muốn màn hình đăng nhập (login) cũng đồng bộ giao diện Ubuntu Tahoe thì chạy tiếp lệnh dưới:
+Màn hình đăng nhập được tự cài theo display manager khi chạy `./install.sh`. Nếu máy đang dùng GDM, có thể chạy lại riêng bằng lệnh dưới:
 
 ```bash
 cd "$HOME/mactahoe-ubuntu" && ./install-gdm.sh
@@ -152,7 +163,7 @@ cd "$HOME/mactahoe-ubuntu" && ./install-gdm.sh
 > [!CAUTION]
 > **CÀI GDM CÓ THỂ LÀM HỎNG MÀN HÌNH ĐĂNG NHẬP.** Đây là màn hình đăng nhập của hệ thống (GDM), không phải màn hình khóa trong phiên GNOME. Bước này thay resource GDM của hệ thống (Yaru trên Ubuntu hoặc Adwaita trên Debian) bằng resource theme đã biên dịch. Nếu resource không tương thích hoặc có lỗi ngoài bước kiểm tra, GDM có thể hiện màn hình đen hoặc không cho đăng nhập; điều này có thể trông giống GNOME bị treo.
 >
-> Chỉ chạy nếu bạn chấp nhận rủi ro và biết cách vào TTY/khôi phục máy; nên tạo snapshot máy ảo hoặc bản sao lưu trước. Không chạy bằng `sudo ./install-gdm.sh` — script sẽ tự yêu cầu quyền quản trị khi cần.
+> Bộ cài tự áp dụng theo GDM đã nhận diện. Có thể khôi phục từ TTY bằng lệnh dưới nếu cần. Không chạy bằng `sudo ./install-gdm.sh` — script sẽ tự yêu cầu quyền quản trị khi cần.
 >
 > Nếu GDM lỗi, chuyển sang TTY (`Ctrl`+`Alt`+`F3`; trong VirtualBox dùng **Host key** + `F3`, thường là `Right Ctrl` + `F3`), đăng nhập tài khoản thường rồi khôi phục resource GDM:
 >
@@ -163,12 +174,12 @@ cd "$HOME/mactahoe-ubuntu" && ./install-gdm.sh
 >
 > Lệnh khôi phục trên giả định repo nằm ở `~/mactahoe-ubuntu`; nếu lưu ở chỗ khác, thay bằng đường dẫn repo thực tế. Nếu lần chạy dừng ở bước kiểm tra/biên dịch trước khi áp dụng, GDM chưa bị thay đổi.
 
-Bộ widget desktop được tích hợp trực tiếp qua tiện ích mở rộng **UbuntuTahoeWidgets**, hoàn toàn không cần cài đặt Conky hay chạy tiến trình nền bên ngoài. Người dùng có thể tùy chỉnh bật/tắt từng widget (Đồng hồ lớn, Thời tiết OpenWeather, Hệ thống, Âm lịch, Nhắc nghỉ), nhập API Key và căn lề ngay trong ứng dụng **Tiện ích mở rộng (Extension Manager)**.
+Trên GNOME, bộ widget desktop được tích hợp trực tiếp qua tiện ích mở rộng **UbuntuTahoeWidgets**, hoàn toàn không cần cài đặt Conky hay chạy tiến trình nền bên ngoài. Người dùng có thể tùy chỉnh bật/tắt từng widget (Đồng hồ lớn, Thời tiết OpenWeather, Hệ thống, Âm lịch, Nhắc nghỉ), nhập API Key và căn lề ngay trong ứng dụng **Tiện ích mở rộng (Extension Manager)**.
 
 ### Sau khi cài
 
-1. Chờ Terminal báo `Installed`, sau đó đăng xuất rồi đăng nhập lại để GNOME nạp theme và các extension. Sau khi cài riêng GDM bằng `install-gdm.sh`, khởi động lại máy.
-2. Mở **Tiện ích mở rộng (Extension Manager)**, bật tiện ích **UbuntuTahoeWidgets** để hiển thị bộ widget desktop và vào phần Cài đặt để tùy chỉnh theo ý muốn.
+1. Chờ Terminal báo `Installed`, sau đó đăng xuất rồi đăng nhập lại để GNOME nạp theme và các extension. Khởi động lại máy để áp dụng giao diện màn hình đăng nhập.
+2. Trên **GNOME**, mở **Tiện ích mở rộng (Extension Manager)** và bật **UbuntuTahoeWidgets**. Trên **Xfce**, mở **MacTahoe · Widget & Dock** và bấm **Bật tất cả** (hoặc chạy `"$HOME/.local/bin/mactahoe-xfce-widgets" --enable-all`).
 3. Mở **Quản lý icon MacTahoe** trong danh sách ứng dụng để chọn icon riêng cho ứng dụng. Font, con trỏ, bộ icon/theme tổng thể và tiện ích **UbuntuTahoe**, **UbuntuTahoeDock** đã được tự động cài đặt và kích hoạt sẵn trọn bộ giao diện macOS Tahoe.
 4. **Âm lịch Việt Nam**, **Nén ảnh** và **Giao diện ứng dụng** được cài thành các ứng dụng riêng, có thể mở từ danh sách ứng dụng GNOME hoặc chạy `am-lich-viet-nam`, `image-compressor`, `mactahoe-app-themer` trong Terminal.
 5. Nếu không thấy thay đổi, kiểm tra Terminal đã hiện thông báo `Installed` chưa; nếu có, thử đăng xuất/đăng nhập lại một lần nữa.
@@ -245,7 +256,7 @@ cd "$HOME/mactahoe-ubuntu" && ./uninstall.sh
 
 Chạy bằng tài khoản thường, không thêm `sudo`; trình gỡ sẽ hỏi xác nhận trước khi khôi phục bản sao cấu hình GNOME. Nếu đã cài theme màn hình đăng nhập, lệnh này cũng sẽ yêu cầu mật khẩu sudo để khôi phục. Các gói hệ thống được giữ lại.
 
-Bộ cài (cả `install.sh` và `install-gdm.sh`) đã được kiểm thử và hỗ trợ đầy đủ trên **Ubuntu 26.04**, **Debian 13**, **Fedora** và **CachyOS / Arch Linux** (GNOME 48 trở lên). Bộ cài GDM kiểm tra dịch vụ GDM đang có (`gdm` trên CachyOS/Arch/Fedora, `gdm3` trên Ubuntu/Debian), tự động nhận diện gói và resource phù hợp cho từng hệ thống (Yaru trên Ubuntu hoặc Adwaita trên Debian/Fedora/CachyOS) trước khi áp dụng giao diện Tahoe. Trên Fedora, script tự động phục hồi context bảo mật SELinux (`restorecon`) sau khi cập nhật resource GDM để đăng nhập luôn an toàn và ổn định. Bước này thay đổi resource màn hình đăng nhập hệ thống; chạy riêng và reboot sau khi cài.
+Bộ cài (cả `install.sh` và `install-gdm.sh`) đã được kiểm thử và hỗ trợ đầy đủ trên **Ubuntu 26.04**, **Debian 13**, **Fedora** và **CachyOS / Arch Linux** (GNOME 48 trở lên). Bộ cài GDM kiểm tra dịch vụ GDM đang có (`gdm` trên CachyOS/Arch/Fedora, `gdm3` trên Ubuntu/Debian), tự động nhận diện gói và resource phù hợp cho từng hệ thống (Yaru trên Ubuntu hoặc Adwaita trên Debian/Fedora/CachyOS) trước khi áp dụng giao diện Tahoe. Trên Fedora, script tự động phục hồi context bảo mật SELinux (`restorecon`) sau khi cập nhật resource GDM để đăng nhập luôn an toàn và ổn định. Bước này thay đổi resource màn hình đăng nhập hệ thống, được `install.sh` tự gọi khi phát hiện GDM; reboot sau khi cài để kiểm tra.
 
 ## Nguồn và phiên bản theme
 

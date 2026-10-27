@@ -14,6 +14,8 @@ import shutil
 import subprocess
 import tempfile
 
+from display_manager import detect_manager
+
 TARGETS = {
     "config": "etc/lightdm/lightdm-gtk-greeter.conf",
     "theme": "usr/share/themes/MacTahoe-LightDM",
@@ -47,12 +49,8 @@ def themed_config(text):
 
 
 def validate_manager(root=Path("/"), show_config=None):
-    default = root / "etc/X11/default-display-manager"
-    service = root / "etc/systemd/system/display-manager.service"
-    is_lightdm = default.exists() and Path(default.read_text().strip()).name == "lightdm"
-    is_lightdm = is_lightdm or (service.is_symlink() and service.resolve().name == "lightdm.service")
-    if not is_lightdm:
-        raise ValueError("LightDM is not the configured display manager; no changes made.")
+    if detect_manager(root) != "lightdm":
+        raise ValueError("LightDM is not the active/configured display manager; no changes made.")
     if show_config is None:
         show_config = subprocess.check_output(["lightdm", "--show-config"], text=True, stderr=subprocess.STDOUT)
     # --show-config emits optional source letters before each effective option.

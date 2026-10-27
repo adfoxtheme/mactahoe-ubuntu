@@ -80,15 +80,33 @@ class Widgets(Gtk.Application):
         if args == ["--stop"]:
             self.quit()
             return 0
-        if args not in ([], ["--preferences"]):
-            command_line.printerr("Usage: mactahoe-xfce-widgets [--preferences|--stop]\n")
+        if args == ["--status"]:
+            running = bool(self.windows)
+            command_line.print_literal("MacTahoe widgets: " + ("running" if running else "not running") + "\n")
+            return 0 if running else 1
+        if args not in ([], ["--preferences"], ["--enable-all"]):
+            command_line.printerr_literal("Usage: mactahoe-xfce-widgets [--preferences|--enable-all|--status|--stop]\n")
             return 2
         display = Gdk.Display.get_default()
         if display is None or "x11" not in display.__class__.__name__.lower():
-            command_line.printerr("MacTahoe Xfce widgets require an X11 desktop session.\n")
+            command_line.printerr_literal("MacTahoe Xfce widgets require an X11 desktop session.\n")
             return 1
+        if args == ["--enable-all"]:
+            self.settings = load_settings()
+            for key in self.settings:
+                if key.startswith("show_"):
+                    self.settings[key] = True
+            try:
+                save_settings(self.settings)
+            except OSError as error:
+                command_line.printerr_literal(f"Cannot save widget settings: {error}\n")
+                return 1
         self.activate()
-        if args:
+        if args == ["--enable-all"]:
+            self.apply_visibility()
+            self.weather_due = 0
+            command_line.print_literal("All MacTahoe desktop widgets are enabled.\n")
+        if args == ["--preferences"]:
             self.show_preferences()
         return 0
 
@@ -253,7 +271,7 @@ class Widgets(Gtk.Application):
             return
         dialog = Gtk.Dialog(title="MacTahoe · Widget & Dock", application=self)
         dialog.set_default_size(470, 640)
-        dialog.add_buttons("Đóng", Gtk.ResponseType.CANCEL, "Áp dụng", Gtk.ResponseType.APPLY)
+        dialog.add_buttons("Đóng", Gtk.ResponseType.CANCEL, "Bật tất cả", 100, "Áp dụng", Gtk.ResponseType.APPLY)
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         dialog.get_content_area().pack_start(scroll, True, True, 0)
@@ -296,6 +314,11 @@ class Widgets(Gtk.Application):
         grid.attach(credit, 0, len(fields) + 1, 2, 1)
 
         def response(_, response_id):
+            if response_id == 100:
+                for key, control in controls.items():
+                    if key.startswith("show_"):
+                        control.set_active(True)
+                response_id = Gtk.ResponseType.APPLY
             if response_id == Gtk.ResponseType.APPLY:
                 new = {}
                 for key, control in controls.items():

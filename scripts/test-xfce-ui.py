@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import shutil
+import threading
 
 ROOT = Path(__file__).resolve().parent.parent
 temporary = tempfile.TemporaryDirectory(prefix="mactahoe-ui-")
@@ -35,6 +36,9 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk, GLib, Gtk
 from widgets import Widgets
+import widgets as ui
+ui.fetch_weather = lambda _: {"city": "Hà Nội", "temp": 28, "description": "Có mây",
+                              "humidity": 72, "wind": 8, "source": "Open-Meteo"}
 
 children = []
 failures = []
@@ -58,18 +62,32 @@ def exercise():
         app.finish_weather(app.weather_generation, "28°  Hà Nội", "Có mây\nĐộ ẩm 72% · Gió 8 km/h\nOpen-Meteo")
         app.toggle_rest()
         assert app.rest.on_break
-        # Running the same command remotely must forward to the same application.
-        children.append(subprocess.Popen(["python3", str(ROOT / "apps/mactahoe-xfce-widgets/widgets.py"), "--preferences"]))
-        GLib.timeout_add_seconds(2, capture)
+        # Remote calls need the primary GTK event loop to keep running.
+        threading.Thread(target=remote_commands, daemon=True).start()
     except Exception as error:
         failures.append(error)
         app.quit()
     return False
 
 
+def remote_commands():
+    try:
+        command = ["python3", str(ROOT / "apps/mactahoe-xfce-widgets/widgets.py")]
+        status = subprocess.run(command + ["--status"], capture_output=True, text=True, timeout=5)
+        assert status.returncode == 0 and "running" in status.stdout, status.stderr
+        enabled = subprocess.run(command + ["--enable-all"], capture_output=True, text=True, timeout=5)
+        assert enabled.returncode == 0 and "enabled" in enabled.stdout, enabled.stderr
+        subprocess.run(command + ["--preferences"], check=True, timeout=5)
+        GLib.idle_add(capture)
+    except Exception as error:
+        failures.append(error)
+        GLib.idle_add(app.quit)
+
+
 def capture():
     try:
         assert app.preferences is not None
+        assert all(value for key, value in app.settings.items() if key.startswith("show_"))
         app.preferences.destroy()
         while Gtk.events_pending():
             Gtk.main_iteration_do(False)

@@ -45,6 +45,9 @@ if [ -f "$BACKUP_DIR/plank-before.ini" ]; then
     dconf reset -f /net/launchpad/plank/docks/mactahoe/
     dconf load /net/launchpad/plank/docks/mactahoe/ < "$BACKUP_DIR/plank-before.ini"
     for relative in \
+        .local/bin/mactahoe-xfce-session \
+        .local/share/mactahoe-apps/mactahoe-xfce-session \
+        .config/autostart/mactahoe-xfce-session.desktop \
         .local/bin/mactahoe-xfce-widgets .local/bin/mactahoe-xfce-dock \
         .local/share/mactahoe-apps/mactahoe-xfce-widgets \
         .local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop \

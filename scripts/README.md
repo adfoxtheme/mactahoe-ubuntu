@@ -17,3 +17,5 @@ xvfb-run -a dbus-run-session -- python3 scripts/test-xfce-ui.py
 ```
 
 The X11 tests require GTK3 GI, psutil, Xvfb, Xauth, D-Bus, Xfconf, dconf-cli, Xfwm4, Xfdesktop and Plank. Each creates a temporary HOME and an isolated D-Bus session. Set `MACTAHOE_UI_SCREENSHOT` to an absolute PNG path to capture the widget UI. On WSL, run with `env -u WAYLAND_DISPLAY GDK_BACKEND=x11` before `xvfb-run`.
+
+`display_manager.py` detects the running/configured GDM or LightDM independently of the desktop; `login-theme.sh` dispatches the matching login theme at the end of `install.sh`. Run `bash scripts/test-login-theme.sh` for isolated dispatch tests. `wallpaper_properties.py` handles fresh Xfdesktop profiles with no image properties. The installed `mactahoe-xfce-session` autostart reapplies theme/wallpaper after Xfdesktop initializes; uninstall restores its launcher and autostart entry.

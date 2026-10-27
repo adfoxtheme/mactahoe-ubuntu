@@ -96,7 +96,7 @@ fi
 
 if [ "$distribution_id" = fedora ]; then
     package_list=(breeze-icon-theme dconf fontconfig \
-        libadwaita gtk4 gnome-extensions-app \
+        libadwaita gtk4 gtk3 gnome-extensions-app \
         gnome-shell-extension-user-theme gnome-tweaks ImageMagick \
         glib2-devel librsvg2-tools python3-gobject python3-pillow sassc)
     dnf_snapshot="$BACKUP_DIR/dnf-packages-before-mactahoe"
@@ -117,7 +117,7 @@ if [ "$distribution_id" = fedora ]; then
     fi
 elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$distribution_like" =~ arch ]]; then
     package_list=(breeze-icons dconf fontconfig \
-        libadwaita gtk4 extension-manager \
+        libadwaita gtk4 gtk3 extension-manager \
         gnome-shell-extensions gnome-tweaks imagemagick \
         glib2 glib2-devel librsvg python-gobject python-pillow sassc)
     pacman_snapshot="$BACKUP_DIR/pacman-packages-before-mactahoe"
@@ -138,7 +138,7 @@ elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$d
     fi
 else
     package_list=(breeze-icon-theme dconf-cli fontconfig \
-        gir1.2-adw-1 gir1.2-gtk-4.0 gnome-shell-extension-manager \
+        gir1.2-adw-1 gir1.2-gtk-4.0 gir1.2-gtk-3.0 gnome-shell-extension-manager \
         gnome-shell-extension-user-theme gnome-tweaks imagemagick \
         libglib2.0-dev-bin librsvg2-bin python3-gi python3-pil sassc)
     if [ "$desktop" = xfce ]; then
@@ -457,4 +457,9 @@ if [ -d "$HOME/snap/firefox" ]; then
 fi
 
 update-desktop-database "$HOME/.local/share/applications" || true
+source "$ROOT_DIR/scripts/login-theme.sh"
+if ! install_login_theme; then
+    printf 'Desktop installed, but login theming failed. Fix the error above and rerun install.sh.\n' >&2
+    exit 1
+fi
 printf '\nInstalled. Log out and back in to reload the desktop.\nBackup: %s\n' "$BACKUP_DIR"

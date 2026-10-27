@@ -3,13 +3,24 @@
 set -euo pipefail
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 test_dir="$(mktemp -d)"
-trap 'rm -rf "$test_dir"' EXIT
+cleanup() {
+    "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true
+    "$HOME/.local/bin/mactahoe-xfce-dock" stop 2>/dev/null || true
+    [ -z "${wm_pid:-}" ] || kill "$wm_pid" 2>/dev/null || true
+    rm -rf "$test_dir"
+}
+trap cleanup EXIT
 export HOME="$test_dir/home"
 export XDG_CONFIG_HOME="$HOME/.config" XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CURRENT_DESKTOP=XFCE GDK_BACKEND=x11
-BACKUP_DIR="$test_dir/backup"
+BACKUP_DIR="$HOME/.local/state/mactahoe-ubuntu/backup-test"
+mkdir -p "$HOME/.local/state/mactahoe-ubuntu"
+printf '%s\n' "$BACKUP_DIR" > "$HOME/.local/state/mactahoe-ubuntu/latest-backup"
+xfwm4 --compositor=on >/dev/null 2>&1 &
+wm_pid=$!
 mkdir -p "$BACKUP_DIR" "$HOME/.local/bin" "$HOME/.local/share/applications" \
-    "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam"
+    "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam" "$HOME/Pictures/Wallpapers/MacTahoe"
+cp "$ROOT_DIR/assets/wallpapers/MacTahoe-night.jpeg" "$HOME/Pictures/Wallpapers/MacTahoe/"
 cp "$ROOT_DIR/apps/am-lich-viet-nam/lunar.py" "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam/"
 dbus-update-activation-environment HOME XDG_CONFIG_HOME XDG_DATA_HOME GDK_BACKEND DISPLAY
 backup_item() {
@@ -22,22 +33,28 @@ backup_item() {
     fi
     touch "$BACKUP_DIR/captured/$relative"
 }
-# This test checks installation, not process startup (covered by test-xfce-ui.py).
-nohup() { return 0; }
 source "$ROOT_DIR/scripts/desktop.sh"
 source "$ROOT_DIR/scripts/xfce-extras.sh"
 schema=net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/mactahoe/
 gsettings set "$schema" icon-size 60
 xfce_set xsettings /Net/ThemeName string MacTahoe-Dark
+xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitorVirtual1/workspace0/image-style --create -t int -s 5
 install_xfce_extras
-[ "$(gsettings get "$schema" icon-size)" = 45 ]
+[ "$(gsettings get "$schema" icon-size)" = 44 ]
 [ "$(gsettings get "$schema" hide-mode)" = "'dodge-maximized'" ]
 [ -x "$HOME/.local/bin/mactahoe-xfce-widgets" ]
 [ -f "$HOME/.config/autostart/mactahoe-xfce-dock.desktop" ]
+[ -f "$HOME/.config/autostart/mactahoe-xfce-session.desktop" ]
+[ "$(xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitorVirtual1/workspace0/last-image)" = "$HOME/Pictures/Wallpapers/MacTahoe/MacTahoe-night.jpeg" ]
+# Simulate Kali/session defaults changing it again; login must reapply Tahoe.
+xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitorVirtual1/workspace0/last-image -s /kali-wallpaper.png
+"$HOME/.local/bin/mactahoe-xfce-session"
+[ "$(xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitorVirtual1/workspace0/last-image)" = "$HOME/Pictures/Wallpapers/MacTahoe/MacTahoe-night.jpeg" ]
 [ -f "$HOME/.config/plank/mactahoe/launchers/1.dockitem" ]
 gsettings set "$schema" icon-size 64
 install_xfce_extras
 [ "$(gsettings get "$schema" icon-size)" = 64 ]
+"$HOME/.local/bin/mactahoe-xfce-dock" stop
 dconf reset -f /net/launchpad/plank/docks/mactahoe/
 dconf load /net/launchpad/plank/docks/mactahoe/ < "$BACKUP_DIR/plank-before.ini"
 [ "$(gsettings get "$schema" icon-size)" = 60 ]

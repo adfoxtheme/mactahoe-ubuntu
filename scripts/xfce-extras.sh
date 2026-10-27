@@ -30,6 +30,8 @@ install_xfce_extras() {
         "$HOME/.local/share/applications/"
     sed -i "s|^Exec=mactahoe-xfce-widgets|Exec=\"$HOME/.local/bin/mactahoe-xfce-widgets\"|" \
         "$HOME/.local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop"
+    sed -i "s|^Exec=mactahoe-xfce-menu$|Exec=\"$HOME/.local/bin/mactahoe-xfce-menu\"|" \
+        "$HOME/.local/share/applications/io.github.adfoxtheme.Launchpad.desktop"
     cp "$ROOT_DIR/vendor/MacTahoe-gtk-theme/other/plank/theme-Dark/dock.theme" \
         "$HOME/.local/share/plank/themes/MacTahoe/dock.theme"
 
@@ -75,6 +77,8 @@ OnlyShowIn=XFCE;
 Terminal=false
 EOF
     done
+    source "$ROOT_DIR/scripts/xfce-menu.sh"
+    install_xfce_menu
     "$HOME/.local/bin/mactahoe-xfce-session"
     start_xfce_components
 }

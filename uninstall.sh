@@ -38,6 +38,23 @@ restore_item() {
     fi
 }
 
+# Stop the panel before restoring rc files; otherwise it can overwrite them on exit.
+restore_menu=false
+if [ -f "$BACKUP_DIR/xfce-menu-files" ]; then
+    source "$ROOT_DIR/scripts/xfce-menu.sh"
+    stop_xfce_panel
+    restore_menu=true
+    trap 'if [ "$restore_menu" = true ]; then start_xfce_panel; fi' EXIT
+    while IFS= read -r relative; do
+        case "$relative" in .config/xfce4/panel/whiskermenu-*.rc) restore_item "$relative" ;; esac
+    done < "$BACKUP_DIR/xfce-menu-files"
+    for relative in .local/bin/mactahoe-xfce-menu \
+        .local/share/mactahoe-apps/mactahoe-xfce-menu \
+        .config/gtk-3.0/gtk.css .config/gtk-3.0/mactahoe-menu.css; do
+        restore_item "$relative"
+    done
+fi
+
 # Stop only the Tahoe instances before restoring their launchers.
 if [ -f "$BACKUP_DIR/plank-before.ini" ]; then
     "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true

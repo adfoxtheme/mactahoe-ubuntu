@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export GDK_BACKEND=x11
+exec xfce4-popup-whiskermenu "$@"

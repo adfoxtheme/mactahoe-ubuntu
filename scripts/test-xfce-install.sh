@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 test_dir="$(mktemp -d)"
 cleanup() {
+    if declare -F stop_xfce_panel >/dev/null; then stop_xfce_panel || true; fi
     "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true
     "$HOME/.local/bin/mactahoe-xfce-dock" stop 2>/dev/null || true
     [ -z "${wm_pid:-}" ] || kill "$wm_pid" 2>/dev/null || true
@@ -35,6 +36,11 @@ backup_item() {
 }
 source "$ROOT_DIR/scripts/desktop.sh"
 source "$ROOT_DIR/scripts/xfce-extras.sh"
+xfconf-query -c xfce4-panel -p /configver --create -t int -s 2
+xfce_write_int_array xfce4-panel /panels 1
+xfce_write_int_array xfce4-panel /panels/panel-1/plugin-ids 1
+xfconf-query -c xfce4-panel -p /panels/panel-1/position --create -t string -s 'p=6;x=0;y=0'
+xfconf-query -c xfce4-panel -p /plugins/plugin-1 --create -t string -s applicationsmenu
 schema=net.launchpad.plank.dock.settings:/net/launchpad/plank/docks/mactahoe/
 gsettings set "$schema" icon-size 60
 xfce_set xsettings /Net/ThemeName string MacTahoe-Dark
@@ -58,5 +64,6 @@ install_xfce_extras
 dconf reset -f /net/launchpad/plank/docks/mactahoe/
 dconf load /net/launchpad/plank/docks/mactahoe/ < "$BACKUP_DIR/plank-before.ini"
 [ "$(gsettings get "$schema" icon-size)" = 60 ]
+stop_xfce_panel
 restore_xfce
 printf 'PASS: real Xfconf, Plank settings, pinned launcher, autostart, repeat-install and restore\n'

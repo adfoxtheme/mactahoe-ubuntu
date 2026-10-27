@@ -18,11 +18,19 @@ Bộ giao diện macOS Tahoe cho GNOME và Xfce, kèm các tiện ích mở rộ
 | GNOME 48+ | GTK, icon, con trỏ, font, wallpaper, ứng dụng, Firefox và các extension dock/widget |
 | Xfce X11 (Kali/Ubuntu/Debian) | GTK/Xfwm4, icon, con trỏ, font, wallpaper, ứng dụng, Firefox, Plank dock và widget desktop |
 
-Xfce dùng Plank dock với theme Tahoe: tự ẩn khi cửa sổ phóng to, phóng icon khi rê chuột, ghim ứng dụng và nút Launchpad mở `xfce4-appfinder`. Widget Python/GTK3 chạy riêng, có đồng hồ, thời tiết, CPU/GPU/RAM/ổ đĩa/mạng, âm lịch và nhắc nghỉ. GNOME tiếp tục dùng các extension hiện có. Dock/widget Xfce cần **X11**, chưa hỗ trợ Xfce Wayland.
+Xfce dùng Plank dock với theme Tahoe: tự ẩn khi cửa sổ phóng to, phóng icon khi rê chuột, ghim ứng dụng và nút Launchpad mở menu ứng dụng MacTahoe. Widget Python/GTK3 chạy riêng, có đồng hồ, thời tiết, CPU/GPU/RAM/ổ đĩa/mạng, âm lịch và nhắc nghỉ. GNOME tiếp tục dùng các extension hiện có. Dock/widget Xfce cần **X11**, chưa hỗ trợ Xfce Wayland.
 
 Mở **MacTahoe · Widget & Dock** trong menu hoặc chạy `mactahoe-xfce-widgets --preferences` để bật/tắt từng widget, chọn thành phố/API key, chu kỳ cập nhật, thời gian nghỉ, màn hình và lề. Nút cài đặt Dock mở tùy chọn Plank; có thể chạy `mactahoe-xfce-dock preferences`. Thời tiết mặc định dùng Open-Meteo, API key OpenWeather là tùy chọn. GPU tự ẩn nếu không có telemetry AMD/NVIDIA; âm lịch dùng UTC+7.
 
 Dock/widget tự chạy khi đăng nhập Xfce. Icon desktop được ẩn để nhường chỗ cho widget, cấu hình ban đầu được sao lưu để khôi phục khi gỡ. Panel Xfce hiện tại được giữ lại; nếu đã có panel/dock ở đáy màn hình, tắt panel/dock đó trong **Panel Preferences** để tránh trùng với Plank. Cài lại giữ cấu hình dock đã chỉnh. Không tự cài GNOME hay đổi display manager.
+
+### Menu ứng dụng Xfce theo phong cách macOS
+
+`./install.sh` tự cài và cấu hình **Whisker Menu**: nút Apple trên panel, menu tối trong suốt nhẹ với góc bo tròn, tìm kiếm phía trên, lưới icon lớn kiểu Launchpad, danh mục bên trái và nút phiên đăng nhập ở dưới. Bấm Apple hoặc Launchpad trên dock để mở; cũng có thể chạy `"$HOME/.local/bin/mactahoe-xfce-menu" --center` để mở giữa màn hình.
+
+Danh mục công cụ Kali, ứng dụng yêu thích và lệnh tìm kiếm riêng được giữ lại. Nếu panel dùng Applications Menu cũ, bộ cài thay đúng nút đó bằng Whisker; nếu panel chưa có menu, thêm một nút vào panel đầu tiên. Panel được khởi động lại để nạp CSS. Hỗ trợ cấu hình rc của Whisker 2.8 và Xfconf của 2.10+.
+
+Gỡ bằng `./uninstall.sh` sẽ khôi phục cấu hình menu/panel và CSS đã sao lưu. Giao diện này dùng menu ứng dụng Linux theo phong cách Tahoe; không cung cấp global menu của từng ứng dụng như thanh menu macOS.
 
 ### Wallpaper và bật widget Xfce
 
@@ -35,7 +43,7 @@ Widget bật mặc định và tự chạy khi login. Để bật lại toàn b�
 "$HOME/.local/bin/mactahoe-xfce-widgets" --preferences
 ```
 
-Hoặc mở **MacTahoe · Widget & Dock** trong menu, bấm **Bật tất cả**. Kiểm tra tiến trình bằng `"$HOME/.local/bin/mactahoe-xfce-widgets" --status`. Bộ cài kiểm tra tiến trình sau khi khởi động; lỗi cụ thể nằm trong `~/.cache/mactahoe-xfce/widgets.log` hoặc `dock.log`. Menu ứng dụng Whisker của Xfce là thành phần riêng, không phải bộ widget desktop.
+Hoặc mở **MacTahoe · Widget & Dock** trong menu, bấm **Bật tất cả**. Kiểm tra tiến trình bằng `"$HOME/.local/bin/mactahoe-xfce-widgets" --status`. Bộ cài kiểm tra tiến trình sau khi khởi động; lỗi cụ thể nằm trong `~/.cache/mactahoe-xfce/widgets.log` hoặc `dock.log`. Menu ứng dụng là Whisker Menu được cấu hình theo phong cách Tahoe; đây là thành phần riêng với bộ widget desktop.
 
 ### Tự động cài giao diện đăng nhập
 

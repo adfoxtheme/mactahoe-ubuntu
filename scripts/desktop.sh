@@ -37,6 +37,32 @@ xfce_set() {
     xfconf-query -c "$channel" -p "$property" --create -t "$type" -s "$value"
 }
 
+xfce_write_int_array() {
+    local channel="$1" property="$2" value
+    shift 2
+    local -a args=()
+    for value in "$@"; do args+=(-t int -s "$value"); done
+    xfconf-query -c "$channel" -p "$property" --reset 2>/dev/null || true
+    if [ "${#args[@]}" -gt 0 ]; then
+        xfconf-query -c "$channel" -p "$property" --create --force-array "${args[@]}"
+    fi
+}
+
+xfce_set_int_array() {
+    local channel="$1" property="$2" saved="$BACKUP_DIR/xfconf/$1$2" raw
+    shift 2
+    if [ ! -e "$saved.type" ]; then
+        mkdir -p "$(dirname "$saved")"
+        if raw="$(LC_ALL=C xfconf-query -c "$channel" -p "$property" 2>/dev/null)"; then
+            printf '%s\n' "$raw" | sed -n '/^[0-9][0-9]*$/p' > "$saved.value"
+            printf 'array-int\n' > "$saved.type"
+        else
+            printf 'absent\n' > "$saved.type"
+        fi
+    fi
+    xfce_write_int_array "$channel" "$property" "$@"
+}
+
 apply_xfce() {
     xfce_set xfce4-desktop /desktop-icons/style int 0
     xfce_set xsettings /Net/ThemeName string MacTahoe-Dark
@@ -83,6 +109,10 @@ restore_xfce() {
         type="$(cat "$file")"
         if [ "$type" = absent ]; then
             xfconf-query -c "$channel" -p "$property" --reset || true
+        elif [ "$type" = array-int ]; then
+            local -a values=()
+            mapfile -t values < "${file%.type}.value"
+            xfce_write_int_array "$channel" "$property" "${values[@]}"
         else
             xfconf-query -c "$channel" -p "$property" --create -t "$type" -s "$(cat "${file%.type}.value")"
         fi

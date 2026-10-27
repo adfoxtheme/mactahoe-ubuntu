@@ -15,6 +15,13 @@ if [ -f "$STATE_DIR/latest-backup" ]; then
         BACKUP_DIR="$candidate"
     fi
 fi
+if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR/xfconf" ]; then
+    if ! command -v xfconf-query >/dev/null 2>&1 ||
+       ! xfconf-query -c xsettings -l >/dev/null 2>&1; then
+        printf 'Run uninstall.sh from Xfce to restore its settings before removing the theme.\n' >&2
+        exit 1
+    fi
+fi
 ICON_MANAGER_DIR="$HOME/.local/share/mactahoe-icon-manager"
 LOCAL_APPLICATIONS="$HOME/.local/share/applications"
 
@@ -80,6 +87,7 @@ for path in .local/bin/mactahoe-icon-manager \
     restore_item "$path"
 done
 
+if [ ! -f "$BACKUP_DIR/xfce-only" ]; then
 # 4. Gỡ extension GNOME Shell
 for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io \
     UbuntuTahoeWidgets@adfoxtheme.github.io \
@@ -95,6 +103,8 @@ for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.i
 done
 gnome-extensions enable ubuntu-dock@ubuntu.com 2>/dev/null || true
 gnome-extensions enable dash-to-dock@micxgx.gmail.com 2>/dev/null || true
+
+fi
 
 # 6. Đóng và khôi phục cấu hình Firefox
 for firefox_process in firefox firefox-bin firefox-esr; do
@@ -203,6 +213,14 @@ if [ -d "$HOME/Pictures/Wallpapers/MacTahoe" ]; then
     rmdir "$HOME/Pictures/Wallpapers/MacTahoe" 2>/dev/null || true
 fi
 
+if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR/xfconf" ]; then
+    source "$ROOT_DIR/scripts/desktop.sh"
+    restore_xfce
+    if [ -e "$BACKUP_DIR/captured/home/.config/xfce4/panel" ]; then
+        restore_item .config/xfce4/panel
+    fi
+fi
+
 # 10. Khôi phục hoặc reset cài đặt GNOME (dconf/gsettings)
 reset_gnome_settings() {
     if [ -r "$ROOT_DIR/config/gsettings.tsv" ]; then
@@ -248,7 +266,7 @@ if [ -n "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/dconf-before.ini" ]; then
     else
         reset_gnome_settings
     fi
-else
+elif [ ! -f "$BACKUP_DIR/xfce-only" ]; then
     reset_gnome_settings
 fi
 
@@ -381,4 +399,4 @@ rm -f "$STATE_DIR/latest-backup" "$STATE_DIR/project-path" 2>/dev/null || true
 rmdir "$STATE_DIR" 2>/dev/null || true
 
 printf '\nUninstall finished. Pre-existing system packages were preserved.\n'
-printf 'Log out and back in to fully reset the GNOME session.\n'
+printf 'Log out and back in to reload the desktop.\n'

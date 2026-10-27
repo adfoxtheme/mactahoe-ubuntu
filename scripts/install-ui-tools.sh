@@ -6,8 +6,8 @@ if [ ! -r /etc/os-release ]; then
     exit 1
 fi
 . /etc/os-release
-if [ "${ID:-}" != ubuntu ]; then
-    printf 'This installer currently supports Ubuntu only.\n' >&2
+if [ "${ID:-}" != ubuntu ] && [ "${ID:-}" != debian ] && [ "${ID:-}" != kali ]; then
+    printf 'This installer currently supports Ubuntu, Debian, and Kali.\n' >&2
     exit 1
 fi
 

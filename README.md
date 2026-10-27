@@ -1,6 +1,6 @@
-# MacTahoe cho GNOME
+# MacTahoe cho GNOME và Xfce
 
-Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng độc quyền dành cho môi trường GNOME.
+Bộ giao diện macOS Tahoe cho GNOME và Xfce, kèm các tiện ích mở rộng độc quyền dành cho GNOME.
 
 > [!NOTE]
 > **Hệ điều hành hỗ trợ & đã kiểm thử thực tế (Tested):**
@@ -8,6 +8,38 @@ Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng đ
 > - **Debian 13 (Trixie)** (GNOME 48 trở lên)
 > - **Fedora 40, 41, 42+** (GNOME 48 trở lên)
 > - **CachyOS GNOME / Arch Linux** (GNOME 48 trở lên)
+
+## Kali Linux (GNOME và Xfce)
+
+Đã bổ sung mã hỗ trợ Kali; cần kiểm thử thực tế trên máy Kali. Chạy `./install.sh` bằng tài khoản thường trong desktop đang dùng. Bộ cài tự nhận diện qua biến môi trường phiên đăng nhập.
+
+| Desktop | Thành phần được áp dụng |
+| --- | --- |
+| GNOME 48+ | GTK, icon, con trỏ, font, wallpaper, ứng dụng, Firefox và các extension dock/widget |
+| Xfce (Kali/Ubuntu/Debian) | GTK, viền cửa sổ Xfwm4, nút cửa sổ bên trái, icon, con trỏ, font, wallpaper từng monitor/workspace, ứng dụng và Firefox |
+
+Xfce dùng panel hiện tại; các extension UbuntuTahoe, Dock và Widgets chỉ dành cho GNOME. Không cài GNOME hoặc chuyển display manager tự động. `install-gdm.sh` dành riêng cho GNOME/GDM, không đổi giao diện LightDM.
+
+Trên máy test, clone nhánh hỗ trợ Kali:
+
+```bash
+git clone --branch kali-linux https://github.com/phamquangvinhfpt/mactahoe-ubuntu.git
+cd mactahoe-ubuntu
+./install.sh
+```
+
+Nếu đã clone repo này:
+
+```bash
+git fetch origin
+git switch kali-linux
+git pull --ff-only origin kali-linux
+./install.sh
+```
+
+Đăng xuất rồi đăng nhập lại sau khi cài. Gỡ bằng `./uninstall.sh`; chạy trong Xfce nếu đã cài Xfce để khôi phục các thuộc tính Xfconf đã sao lưu. Cài lại giữ bản sao cấu hình ban đầu. Các tài nguyên theme/icon dùng chung giữa hai desktop.
+
+Nếu muốn thêm GNOME vào Kali Xfce: `sudo apt update && sudo apt install kali-desktop-gnome`, sau đó đăng xuất và chọn phiên GNOME. Xem [hướng dẫn Kali chính thức](https://www.kali.org/docs/general-use/switching-desktop-environments/).
 
 ## Hình ảnh
 

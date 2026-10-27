@@ -144,7 +144,7 @@ else
     if [ "$desktop" = xfce ]; then
         package_list=(breeze-icon-theme fontconfig imagemagick libglib2.0-dev-bin
             librsvg2-bin python3-gi python3-pil gir1.2-gtk-4.0 gir1.2-adw-1 sassc
-            gir1.2-gtk-3.0 python3-psutil plank dconf-cli xfce4-appfinder xfce4-whiskermenu-plugin)
+            gir1.2-gtk-3.0 python3-psutil dconf-cli xfce4-appfinder xfce4-whiskermenu-plugin)
     fi
     apt_snapshot="$BACKUP_DIR/apt-packages-before-mactahoe"
     apt_installed="$BACKUP_DIR/apt-packages-installed-by-mactahoe"
@@ -158,6 +158,10 @@ else
     fi
     sudo apt-get update
     sudo apt-get install -y "${package_list[@]}"
+    if [ "$desktop" = xfce ]; then
+        source "$ROOT_DIR/scripts/install-plank.sh"
+        install_plank
+    fi
     if [ -f "$apt_snapshot" ] && [ ! -e "$BACKUP_DIR/apt-tracking-version" ]; then
         dpkg-query -W -f='${db:Status-Abbrev}\t${binary:Package}\n' \
             | awk '$1 ~ /^ii/ {print $2}' | LC_ALL=C sort -u > "$BACKUP_DIR/apt-packages-after-mactahoe"

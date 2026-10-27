@@ -24,6 +24,8 @@ Mở **MacTahoe · Widget & Dock** trong menu hoặc chạy `mactahoe-xfce-widge
 
 Dock/widget tự chạy khi đăng nhập Xfce. Icon desktop được ẩn để nhường chỗ cho widget, cấu hình ban đầu được sao lưu để khôi phục khi gỡ. Panel Xfce hiện tại được giữ lại; nếu đã có panel/dock ở đáy màn hình, tắt panel/dock đó trong **Panel Preferences** để tránh trùng với Plank. Cài lại giữ cấu hình dock đã chỉnh. Không tự cài GNOME hay đổi display manager.
 
+Nếu kho Kali không có gói `plank`, bộ cài tự dùng **Plank Reloaded** từ [kho Debian chính thức của dự án](https://github.com/zquestz/plank-reloaded#installation). Kho bổ sung và khóa ký chỉ dùng tạm trong lần cài, không được thêm cố định vào cấu hình APT. Plank Reloaded vẫn cung cấp lệnh `plank` cho dock Tahoe; gói cài mới được ghi nhận cùng các phụ thuộc để gỡ bằng cơ chế hiện có. Cần Internet khi cài; các lần cập nhật Plank Reloaded sau đó thực hiện theo hướng dẫn của dự án.
+
 ### Menu ứng dụng Xfce theo phong cách macOS
 
 `./install.sh` tự cài và cấu hình **Whisker Menu**: nút Apple trên panel, menu tối trong suốt nhẹ với góc bo tròn, tìm kiếm phía trên, lưới icon lớn kiểu Launchpad, danh mục bên trái và nút phiên đăng nhập ở dưới. Bấm Apple hoặc Launchpad trên dock để mở; cũng có thể chạy `"$HOME/.local/bin/mactahoe-xfce-menu" --center` để mở giữa màn hình.

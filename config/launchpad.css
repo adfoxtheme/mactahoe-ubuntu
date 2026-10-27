@@ -1,0 +1,11 @@
+window.tahoe-launchpad { background: #171d2a; color: white; font-family: "SF Pro Display", Sans; }
+.tahoe-launchpad box, .tahoe-launchpad grid { background: transparent; }
+.tahoe-launchpad entry { background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.16); border-radius: 12px; color: white; padding: 5px 14px; box-shadow: none; }
+.tahoe-launchpad entry:focus { border-color: rgba(255,255,255,.45); }
+.tahoe-launchpad button { background: transparent; border: none; color: white; box-shadow: none; text-shadow: 0 1px 3px rgba(0,0,0,.5); border-radius: 22px; }
+.tahoe-launchpad button:hover, .tahoe-launchpad button:focus { background: rgba(255,255,255,.13); }
+.tahoe-launchpad .launchpad-tile { padding: 10px 4px; }
+.launchpad-tile label { color: white; font-size: 13px; }
+.tahoe-launchpad .page-dot { padding: 0 3px; min-width: 18px; min-height: 24px; font-size: 13px; }
+.launchpad-hint { color: rgba(255,255,255,.55); font-size: 11px; }
+.launchpad-status { color: rgba(255,255,255,.8); font-size: 12px; }

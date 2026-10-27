@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=Launchpad
-Comment=Mở danh sách ứng dụng
+Comment=Lưới ứng dụng toàn màn hình với tìm kiếm và phân trang
 Exec=mactahoe-xfce-menu
-Icon=view-app-grid-symbolic
+Icon=view-app-grid
 Terminal=false
 Categories=Utility;
 OnlyShowIn=XFCE;

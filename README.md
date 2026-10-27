@@ -26,13 +26,17 @@ Dock/widget tự chạy khi đăng nhập Xfce. Icon desktop được ẩn để
 
 Nếu kho Kali không có gói `plank`, bộ cài tự dùng **Plank Reloaded** từ [kho Debian chính thức của dự án](https://github.com/zquestz/plank-reloaded#installation). Kho bổ sung và khóa ký chỉ dùng tạm trong lần cài, không được thêm cố định vào cấu hình APT. Plank Reloaded vẫn cung cấp lệnh `plank` cho dock Tahoe; gói cài mới được ghi nhận cùng các phụ thuộc để gỡ bằng cơ chế hiện có. Cần Internet khi cài; các lần cập nhật Plank Reloaded sau đó thực hiện theo hướng dẫn của dự án.
 
-### Menu ứng dụng Xfce theo phong cách macOS
+### Launchpad và widget Xfce theo mẫu GNOME gốc
 
-`./install.sh` tự cài và cấu hình **Whisker Menu**: nút Apple trên panel, menu tối trong suốt nhẹ với góc bo tròn, tìm kiếm phía trên, lưới icon lớn kiểu Launchpad, danh mục bên trái và nút phiên đăng nhập ở dưới. Bấm Apple hoặc Launchpad trên dock để mở; cũng có thể chạy `"$HOME/.local/bin/mactahoe-xfce-menu" --center` để mở giữa màn hình.
+Launchpad trên dock mở **lưới ứng dụng toàn màn hình**: nền wallpaper đang dùng được làm mờ, icon Tahoe lớn, tìm kiếm không dấu, chấm phân trang và nút chuyển trang. Có thể dùng cuộn chuột hoặc Page Up/Page Down, Enter để mở kết quả và Esc để đóng. Danh sách lấy từ desktop entry của hệ thống nên công cụ Kali vẫn được giữ đầy đủ; không hiện các entry bị ẩn hoặc không dành cho Xfce. Bấm lại launcher để đóng Launchpad.
 
-Danh mục công cụ Kali, ứng dụng yêu thích và lệnh tìm kiếm riêng được giữ lại. Nếu panel dùng Applications Menu cũ, bộ cài thay đúng nút đó bằng Whisker; nếu panel chưa có menu, thêm một nút vào panel đầu tiên. Panel được khởi động lại để nạp CSS. Hỗ trợ cấu hình rc của Whisker 2.8 và Xfconf của 2.10+.
+Nút Apple trên panel tiếp tục mở **Whisker Menu**, độc lập với Launchpad. Bộ cài giữ danh mục công cụ Kali, ứng dụng yêu thích và lệnh tìm kiếm riêng; cấu hình cả định dạng rc của Whisker 2.8 và Xfconf của 2.10+. Giao diện này không cung cấp global menu của từng ứng dụng như macOS.
 
-Gỡ bằng `./uninstall.sh` sẽ khôi phục cấu hình menu/panel và CSS đã sao lưu. Giao diện này dùng menu ứng dụng Linux theo phong cách Tahoe; không cung cấp global menu của từng ứng dụng như thanh menu macOS.
+Widget được vẽ theo bố cục trong [ảnh desktop gốc](assets/screenshots/mactahoe-desktop.png): đồng hồ lớn dạng kính viền, thời tiết gradient xanh có biểu tượng ngày/đêm và nhiệt độ cao/thấp, thanh CPU/GPU/RAM/ổ đĩa, âm lịch tím với ngày vàng và thẻ nhắc nghỉ có thanh tiến trình. GPU tự ẩn nếu máy không cung cấp telemetry. Cụm widget co theo chiều cao màn hình; dữ liệu âm lịch dùng UTC+7, đồng hồ dùng giờ hệ thống.
+
+**Cài đặt không còn là nút trên desktop hoặc mục ghim mặc định trên dock.** Chuột phải vào widget → **Chỉnh sửa widget & dock…**, hoặc tìm **MacTahoe · Widget & Dock** trong Launchpad/menu ứng dụng. Khi tất cả widget đang ẩn, mở lại bằng mục này hoặc `mactahoe-xfce-widgets --preferences`. Cài lại tự bỏ shortcut cài đặt do phiên bản cũ ghim sẵn trên dock, giữ ứng dụng cài đặt trong menu. Bấm thời tiết để cập nhật, âm lịch để mở ứng dụng lịch, nhắc nghỉ để chuyển giữa làm việc và nghỉ.
+
+Gỡ bằng `./uninstall.sh` sẽ dừng Launchpad và khôi phục cấu hình menu/panel, CSS cùng các mục đã sao lưu. Giao diện Xfce mới chưa được chạy thử trên Kali; cần kiểm tra trực tiếp sau khi cài.
 
 ### Wallpaper và bật widget Xfce
 
@@ -63,7 +67,7 @@ Khôi phục riêng, kể cả từ TTY bằng tài khoản thường:
 
 Bản sao gốc được giữ tại `/var/lib/mactahoe-lightdm` bằng quyền root, cài lại không ghi đè bản sao này. `./uninstall.sh` cũng khôi phục LightDM nếu đã cài bằng tài khoản này. `install-gdm.sh` dành cho máy đang dùng GDM, kể cả đang đăng nhập Xfce.
 
-Đã kiểm tra widget bằng GTK/X11 và Xfwm/Xfdesktop trong Xvfb trên Ubuntu WSL, cùng test cài lại/khôi phục Xfconf/Plank và test rollback LightDM. **Chưa kiểm thử đăng nhập LightDM hoặc toàn bộ desktop Kali trên máy thật/VM.**
+Bản widget trước từng được kiểm tra bằng GTK/X11 và Xfwm/Xfdesktop trong Xvfb trên Ubuntu WSL, cùng luồng cài lại/khôi phục Xfconf/Plank và rollback LightDM. **Giao diện widget/Launchpad mới chưa chạy test; chưa kiểm thử đăng nhập LightDM hoặc toàn bộ desktop Kali trên máy thật/VM.**
 
 Trên máy test, clone nhánh hỗ trợ Kali:
 

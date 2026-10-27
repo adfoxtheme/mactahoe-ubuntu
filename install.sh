@@ -144,7 +144,7 @@ else
     if [ "$desktop" = xfce ]; then
         package_list=(breeze-icon-theme fontconfig imagemagick libglib2.0-dev-bin
             librsvg2-bin python3-gi python3-pil gir1.2-gtk-4.0 gir1.2-adw-1 sassc
-            gir1.2-gtk-3.0 python3-psutil dconf-cli xfce4-appfinder xfce4-whiskermenu-plugin)
+            gir1.2-gtk-3.0 python3-psutil python3-cairo python3-gi-cairo dconf-cli xfce4-appfinder xfce4-whiskermenu-plugin)
     fi
     apt_snapshot="$BACKUP_DIR/apt-packages-before-mactahoe"
     apt_installed="$BACKUP_DIR/apt-packages-installed-by-mactahoe"

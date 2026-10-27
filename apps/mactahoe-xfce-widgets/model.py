@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -106,14 +107,29 @@ def fetch_weather(settings, fetch=get_json):
         return {"city": city, "temp": data["main"]["temp"],
                 "description": data["weather"][0]["description"],
                 "humidity": data["main"]["humidity"], "wind": data["wind"]["speed"] * 3.6,
+                "high": data["main"].get("temp_max"), "low": data["main"].get("temp_min"),
+                "condition": ('clear' if data['weather'][0]['id'] == 800 else
+                              'cloud' if data['weather'][0]['id'] > 800 else
+                              'storm' if data['weather'][0]['id'] < 300 else
+                              'snow' if 600 <= data['weather'][0]['id'] < 700 else 'rain'),
+                "night": data['weather'][0].get('icon', '').endswith('n'),
                 "source": "OpenWeather"}
     data = fetch("https://api.open-meteo.com/v1/forecast?" + urlencode({
         "latitude": lat, "longitude": lon,
-        "current": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
-    }))["current"]
+        "current": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day",
+        "daily": "temperature_2m_max,temperature_2m_min", "timezone": "auto", "forecast_days": 1,
+    }))
+    daily, data = data.get("daily", {}), data["current"]
     return {"city": city, "temp": data["temperature_2m"],
             "description": weather_label(data["weather_code"]),
             "humidity": data["relative_humidity_2m"], "wind": data["wind_speed_10m"],
+            "high": (daily.get("temperature_2m_max") or [None])[0],
+            "low": (daily.get("temperature_2m_min") or [None])[0],
+            "condition": ('clear' if data['weather_code'] == 0 else
+                          'cloud' if data['weather_code'] in (1, 2, 3, 45, 48) else
+                          'snow' if data['weather_code'] in (71, 73, 75, 77, 85, 86) else
+                          'storm' if data['weather_code'] >= 95 else 'rain'),
+            "night": not bool(data.get('is_day', 1)),
             "source": "Open-Meteo"}
 
 
@@ -160,11 +176,15 @@ class Metrics:
         down = max(0, net.bytes_recv - self.previous.bytes_recv) / seconds / 1024
         up = max(0, net.bytes_sent - self.previous.bytes_sent) / seconds / 1024
         self.previous, self.previous_time = net, now
+        gpu = gpu_usage()
+        gpu_match = re.search(r'(\d+(?:\.\d+)?)%', gpu)
         return {
+            "uptime": max(0, time.time()-self.psutil.boot_time()),
+            "gpu_percent": float(gpu_match.group(1)) if gpu_match else None,
             "cpu_name": self.cpu_name, "cpu": self.psutil.cpu_percent(),
             "ram": memory.percent, "ram_used": memory.used / 2**30,
             "ram_total": memory.total / 2**30, "disk": disk.percent,
-            "disk_free": disk.free / 2**30, "down": down, "up": up, "gpu": gpu_usage(),
+            "disk_free": disk.free / 2**30, "down": down, "up": up, "gpu": gpu,
         }
 
 

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 export GDK_BACKEND=x11
-exec xfce4-popup-whiskermenu "$@"
+exec /usr/bin/python3 "$HOME/.local/share/mactahoe-apps/mactahoe-xfce-menu/launchpad.py" "$@"

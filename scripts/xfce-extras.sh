@@ -53,8 +53,7 @@ install_xfce_extras() {
             "$HOME/.local/share/applications/io.github.adfoxtheme.Launchpad.desktop" \
             /usr/share/applications/thunar.desktop \
             /usr/share/applications/firefox-esr.desktop \
-            /usr/share/applications/org.xfce.terminal.desktop \
-            "$HOME/.local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop"; do
+            /usr/share/applications/org.xfce.terminal.desktop; do
             [ -f "$launcher" ] || continue
             number=$((number + 1))
             # URI escaping covers home directories containing spaces or non-ASCII names.
@@ -66,6 +65,16 @@ PY
         done
         touch "$BACKUP_DIR/plank-configured"
     fi
+    # Migrate the settings shortcut seeded by older releases off the dock.
+    # Keep its desktop entry available in Launchpad and the applications menu.
+    local dockitem
+    for dockitem in "$HOME/.config/plank/mactahoe/launchers/"*.dockitem; do
+        [ -f "$dockitem" ] || continue
+        if [[ "${dockitem##*/}" =~ ^[0-9]+\.dockitem$ ]] && \
+            grep -Fq '/io.github.adfoxtheme.XfceWidgets.desktop' "$dockitem"; then
+            rm -f -- "$dockitem"
+        fi
+    done
     local component
     for component in session widgets dock; do
         cat > "$HOME/.config/autostart/mactahoe-xfce-$component.desktop" <<EOF

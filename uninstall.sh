@@ -41,6 +41,7 @@ restore_item() {
 # Stop the panel before restoring rc files; otherwise it can overwrite them on exit.
 restore_menu=false
 if [ -f "$BACKUP_DIR/xfce-menu-files" ]; then
+    "$HOME/.local/bin/mactahoe-xfce-menu" --stop 2>/dev/null || true
     source "$ROOT_DIR/scripts/xfce-menu.sh"
     stop_xfce_panel
     restore_menu=true

@@ -74,8 +74,11 @@ install_xfce_menu() (
     cp "$ROOT_DIR/vendor/MacTahoe-gtk-theme/src/assets/gnome-shell/activities/activities-apple.svg" \
         "$HOME/.local/share/mactahoe-apps/mactahoe-xfce-menu/apple.svg"
     install -m 0755 "$ROOT_DIR/apps/launchers/mactahoe-xfce-menu" "$HOME/.local/bin/"
+    cp "$ROOT_DIR/scripts/launchpad.py" "$ROOT_DIR/config/launchpad.css" \
+        "$HOME/.local/share/mactahoe-apps/mactahoe-xfce-menu/"
     cp "$ROOT_DIR/config/xfce-menu.css" "$HOME/.config/gtk-3.0/mactahoe-menu.css"
     python3 "$ROOT_DIR/scripts/xfce_menu.py" css "$HOME/.config/gtk-3.0/gtk.css"
+    "$HOME/.local/bin/mactahoe-xfce-menu" --stop
     local key value type rc
     for plugin in "${menu_plugins[@]}"; do
         relative=".config/xfce4/panel/whiskermenu-$plugin.rc"
@@ -110,5 +113,5 @@ EOF
         rc="$HOME/$relative"
         python3 "$ROOT_DIR/scripts/xfce_menu.py" rc "$rc" "${rc_settings[@]}"
     done
-    printf 'MacTahoe applications menu installed. Open the Apple button or Launchpad on the dock.\n'
+    printf 'MacTahoe applications menu installed. Apple opens the panel menu; Launchpad opens the fullscreen app grid.\n'
 )

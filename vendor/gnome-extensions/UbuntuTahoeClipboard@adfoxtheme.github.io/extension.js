@@ -20,7 +20,7 @@ function scrollItemIntoView(scrollView, actor) {
         }
     } catch (e) {}
     try {
-        const vadj = scrollView.vadjustment || scrollView.get_vscroll_bar()?.get_adjustment();
+        const vadj = scrollView.vadjustment || scrollView.get_vscroll_bar?.()?.get_adjustment?.();
         if (!vadj) return;
         const [success, , y] = actor.transform_stage_point(0, 0);
         const [sSuccess, , sY] = scrollView.transform_stage_point(0, 0);
@@ -221,19 +221,6 @@ class ClipboardIndicator extends PanelMenu.Button {
         });
         this._scrollView._delegate = this._listSection;
         this._listSection.actor = this._scrollView;
-
-        const vscroll = this._scrollView.get_vscroll_bar();
-        if (vscroll) {
-            vscroll.add_style_class_name('tahoe-clip-scrollbar');
-            for (const child of vscroll.get_children()) {
-                if (child.name === 'trough') {
-                    child.add_style_class_name('tahoe-clip-trough');
-                } else {
-                    child.name = 'vhandle';
-                    child.add_style_class_name('tahoe-clip-handle');
-                }
-            }
-        }
 
         this.menu.addMenuItem(this._listSection);
 

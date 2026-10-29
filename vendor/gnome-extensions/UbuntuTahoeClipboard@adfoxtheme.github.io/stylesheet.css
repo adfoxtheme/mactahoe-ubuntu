@@ -1,0 +1,88 @@
+/* UbuntuTahoeClipboard styling - Pixel perfect alignment */
+
+/* Header Item */
+.tahoe-clip-header-item {
+    margin: 2px 8px !important;
+    padding: 6px 10px !important;
+    background: transparent !important;
+}
+
+.tahoe-clip-header-box {
+    spacing: 8px;
+}
+
+.tahoe-clip-header-title {
+    font-weight: bold;
+    font-size: 13.5px;
+    color: #e0e0e0;
+}
+
+/* Search Item */
+.tahoe-clip-search-item {
+    margin: 2px 8px 6px 8px !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.tahoe-clip-search-entry {
+    min-width: 320px;
+    border-radius: 8px;
+    padding: 6px 10px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.tahoe-clip-search-entry:focus {
+    border-color: -st-accent-color;
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Separator */
+.tahoe-clip-separator {
+    margin: 4px 8px !important;
+    opacity: 0.25;
+}
+
+/* Clipboard list rows */
+.tahoe-clip-menu-item {
+    margin: 2px 8px !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    transition: background-color 150ms ease;
+}
+
+.tahoe-clip-item-box {
+    spacing: 10px;
+}
+
+.tahoe-clip-item-icon {
+    icon-size: 16px;
+    opacity: 0.85;
+}
+
+.tahoe-clip-label {
+    font-size: 13px;
+    color: #e8e8e8;
+}
+
+/* Delete / Clear buttons */
+.tahoe-clip-delete-btn {
+    padding: 4px 8px;
+    border-radius: 6px;
+    opacity: 0.55;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    transition: all 150ms ease;
+}
+
+.tahoe-clip-delete-btn:hover {
+    opacity: 1.0;
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.tahoe-clip-delete-btn:active {
+    background-color: rgba(255, 255, 255, 0.28);
+}

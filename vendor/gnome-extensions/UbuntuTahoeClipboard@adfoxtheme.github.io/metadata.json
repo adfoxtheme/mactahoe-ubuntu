@@ -1,0 +1,17 @@
+{
+  "name": "UbuntuTahoeClipboard",
+  "description": "Quản lý lịch sử sao chép phong cách macOS Tahoe (Lưu tối đa 20 mục, phím tắt Win + Alt + Space)",
+  "uuid": "UbuntuTahoeClipboard@adfoxtheme.github.io",
+  "settings-schema": "org.gnome.shell.extensions.ubuntutahoeclipboard",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51"
+  ],
+  "url": "https://github.com/adfoxtheme/mactahoe-ubuntu",
+  "version": 2
+}

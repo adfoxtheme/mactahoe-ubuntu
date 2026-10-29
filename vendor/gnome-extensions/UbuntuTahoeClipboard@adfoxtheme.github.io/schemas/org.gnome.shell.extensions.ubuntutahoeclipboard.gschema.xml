@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.ubuntutahoeclipboard" path="/org/gnome/shell/extensions/ubuntutahoeclipboard/">
+    <key name="toggle-menu" type="as">
+      <default><![CDATA[['<Super><Alt>space']]]></default>
+      <summary>Phím tắt mở menu Clipboard</summary>
+      <description>Tổ hợp phím để bật tắt menu lịch sử sao chép</description>
+    </key>
+    <key name="history-size" type="i">
+      <default>20</default>
+      <summary>Số lượng mục lưu tối đa</summary>
+      <description>Lưu tối đa 20 mục gần nhất</description>
+    </key>
+  </schema>
+</schemalist>

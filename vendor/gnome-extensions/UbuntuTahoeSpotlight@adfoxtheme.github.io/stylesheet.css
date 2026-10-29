@@ -1,0 +1,169 @@
+/* UbuntuTahoeSpotlight - macOS Tahoe Style Spotlight */
+
+.tahoe-spotlight-modal {
+    width: 660px !important;
+    background-color: rgba(26, 28, 36, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.tahoe-spotlight-content {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.tahoe-spotlight-container {
+    width: 660px;
+}
+
+/* 1. Search Header Box */
+.tahoe-spotlight-search-box {
+    padding: 12px 18px;
+    spacing: 12px;
+}
+
+.tahoe-spotlight-search-icon {
+    icon-size: 22px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.tahoe-spotlight-entry {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 16.5px !important;
+    padding: 4px 0 !important;
+}
+
+.tahoe-spotlight-entry:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.tahoe-spotlight-esc-badge {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* 2. Glass Separator */
+.tahoe-spotlight-separator {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* 3. Results Section */
+.tahoe-spotlight-scrollview {
+    max-height: 420px;
+    padding: 0;
+}
+
+.tahoe-spotlight-results-box {
+    padding: 6px 8px;
+    spacing: 2px;
+}
+
+/* Item Row */
+.tahoe-spotlight-item {
+    padding: 6px 10px !important;
+    border-radius: 12px !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: background-color 100ms ease;
+}
+
+.tahoe-spotlight-item:hover,
+.tahoe-spotlight-item.selected {
+    background-color: #007aff !important; /* Vibrant macOS Tahoe Blue */
+}
+
+.tahoe-spotlight-item-box {
+    spacing: 10px;
+}
+
+.tahoe-spotlight-icon-bin {
+    width: 42px;
+    height: 42px;
+}
+
+.tahoe-spotlight-item-icon {
+    icon-size: 28px;
+    color: #ffffff;
+}
+
+.tahoe-spotlight-item-text-box {
+    spacing: 1px;
+}
+
+.tahoe-spotlight-item-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.tahoe-spotlight-item-sub {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.tahoe-spotlight-item.selected .tahoe-spotlight-item-sub {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.tahoe-spotlight-item-badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.tahoe-spotlight-item.selected .tahoe-spotlight-item-badge {
+    background-color: rgba(255, 255, 255, 0.24) !important;
+    color: #ffffff !important;
+}
+
+/* Empty State */
+.tahoe-spotlight-empty-box {
+    padding: 32px 16px;
+    spacing: 10px;
+}
+
+.tahoe-spotlight-empty-icon {
+    icon-size: 36px;
+    opacity: 0.4;
+}
+
+.tahoe-spotlight-empty-label {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Footer Bar */
+.tahoe-spotlight-footer {
+    padding: 8px 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0 0 18px 18px;
+}
+
+.tahoe-spotlight-footer-hint {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.tahoe-spotlight-footer-brand {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.35);
+}

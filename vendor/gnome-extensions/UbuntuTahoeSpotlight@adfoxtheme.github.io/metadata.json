@@ -1,0 +1,17 @@
+{
+  "name": "UbuntuTahoeSpotlight",
+  "description": "Tìm kiếm Spotlight phong cách macOS Tahoe (Mở nhanh ứng dụng, máy tính, tác vụ hệ thống bằng Super + Alt + F)",
+  "uuid": "UbuntuTahoeSpotlight@adfoxtheme.github.io",
+  "settings-schema": "org.gnome.shell.extensions.ubuntutahoespotlight",
+  "shell-version": [
+    "45",
+    "46",
+    "47",
+    "48",
+    "49",
+    "50",
+    "51"
+  ],
+  "url": "https://github.com/adfoxtheme/mactahoe-ubuntu",
+  "version": 1
+}

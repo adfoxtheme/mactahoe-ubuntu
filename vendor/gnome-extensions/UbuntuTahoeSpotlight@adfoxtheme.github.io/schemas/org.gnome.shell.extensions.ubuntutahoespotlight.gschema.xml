@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.ubuntutahoespotlight" path="/org/gnome/shell/extensions/ubuntutahoespotlight/">
+    <key name="toggle-spotlight" type="as">
+      <default><![CDATA[['<Super><Alt>f']]]></default>
+      <summary>Phím tắt mở Spotlight</summary>
+      <description>Tổ hợp phím để bật tắt tìm kiếm Spotlight phong cách macOS Tahoe</description>
+    </key>
+    <key name="max-results" type="i">
+      <default>8</default>
+      <summary>Số lượng kết quả tối đa</summary>
+      <description>Số kết quả tìm kiếm hiển thị đồng thời</description>
+    </key>
+  </schema>
+</schemalist>

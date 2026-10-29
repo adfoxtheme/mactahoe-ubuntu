@@ -1,0 +1,80 @@
+/* MacTahoe application menu. Selectors are restricted to the Xfce menu. */
+#whiskermenu-window {
+  background-color: rgba(27, 29, 39, 0.96);
+  color: #f5f5fc;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  padding: 14px;
+  font-family: "SF Pro Display", Sans;
+}
+#whiskermenu-window .search-area { margin: 4px 4px 14px; }
+#whiskermenu-window .search-area entry {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f5fc;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  min-height: 34px;
+  padding: 4px 12px;
+  box-shadow: none;
+}
+#whiskermenu-window .search-area entry:focus {
+  border-color: #80b4ff;
+  box-shadow: 0 0 0 2px rgba(90, 155, 255, 0.22);
+}
+#whiskermenu-window .categories { padding: 4px 10px 4px 0; }
+#whiskermenu-window .category-button {
+  background: transparent;
+  color: #d7dae8;
+  border: none;
+  border-radius: 11px;
+  padding: 8px;
+  margin: 2px 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+#whiskermenu-window .category-button:hover,
+#whiskermenu-window .command-button:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+#whiskermenu-window .category-button:checked {
+  background: rgba(94, 155, 255, 0.24);
+  color: #ffffff;
+}
+#whiskermenu-window .launchers,
+#whiskermenu-window .launchers-pane,
+#whiskermenu-window scrolledwindow,
+#whiskermenu-window viewport {
+  background: transparent;
+  color: #f5f5fc;
+  border: none;
+}
+#whiskermenu-window iconview {
+  background: transparent;
+  color: #f5f5fc;
+  border-radius: 14px;
+  padding: 10px;
+}
+#whiskermenu-window iconview:selected,
+#whiskermenu-window .launchers:selected {
+  background: rgba(94, 155, 255, 0.28);
+  color: #ffffff;
+  border-radius: 14px;
+}
+#whiskermenu-window .title-area {
+  margin-top: 12px;
+  padding: 10px 4px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+#whiskermenu-window .profile-username { font-weight: 600; color: #e7eaf4; }
+#whiskermenu-window .command-button {
+  background: transparent;
+  color: #d7dae8;
+  border: none;
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 7px;
+}
+#whiskermenu-button { border-radius: 9px; padding: 0 7px; }
+#whiskermenu-button:hover,
+#whiskermenu-button:checked { background: rgba(255, 255, 255, 0.15); }

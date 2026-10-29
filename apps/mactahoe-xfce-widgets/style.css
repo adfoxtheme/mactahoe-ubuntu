@@ -1,0 +1,4 @@
+window.tahoe-desktop, .tahoe-desktop scrolledwindow,
+.tahoe-desktop viewport, .tahoe-desktop box { background: transparent; }
+.tahoe-desktop scrollbar { background: transparent; }
+.tahoe-desktop scrollbar slider { background: rgba(255,255,255,.18); min-width: 3px; border-radius: 4px; }

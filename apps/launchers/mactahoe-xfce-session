@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+export GDK_BACKEND=x11
+STATE_DIR="$HOME/.local/state/mactahoe-ubuntu"
+support="$HOME/.local/share/mactahoe-apps/mactahoe-xfce-session"
+[ -r "$STATE_DIR/latest-backup" ] || exit 0
+BACKUP_DIR="$(cat "$STATE_DIR/latest-backup")"
+[ "$(dirname "$BACKUP_DIR")" = "$STATE_DIR" ] && [ -d "$BACKUP_DIR" ] || exit 1
+source "$support/desktop.sh"
+# Xfdesktop can initialize its monitor/workspace settings after autostart begins.
+for ((attempt=0; attempt<5; attempt++)); do
+    if xfconf-query -c xfce4-desktop -l 2>/dev/null | grep -q '/backdrop/'; then
+        break
+    fi
+    sleep 1
+done
+apply_xfce
+printf 'MacTahoe theme and wallpaper applied to the current Xfce session.\n'

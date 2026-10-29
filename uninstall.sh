@@ -15,6 +15,13 @@ if [ -f "$STATE_DIR/latest-backup" ]; then
         BACKUP_DIR="$candidate"
     fi
 fi
+if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR/xfconf" ]; then
+    if ! command -v xfconf-query >/dev/null 2>&1 ||
+       ! xfconf-query -c xsettings -l >/dev/null 2>&1; then
+        printf 'Run uninstall.sh from Xfce to restore its settings before removing the theme.\n' >&2
+        exit 1
+    fi
+fi
 ICON_MANAGER_DIR="$HOME/.local/share/mactahoe-icon-manager"
 LOCAL_APPLICATIONS="$HOME/.local/share/applications"
 
@@ -30,6 +37,49 @@ restore_item() {
         rm -rf "$target"
     fi
 }
+
+# Stop the panel before restoring rc files; otherwise it can overwrite them on exit.
+restore_menu=false
+if [ -f "$BACKUP_DIR/xfce-menu-files" ]; then
+    "$HOME/.local/bin/mactahoe-xfce-menu" --stop 2>/dev/null || true
+    source "$ROOT_DIR/scripts/xfce-menu.sh"
+    stop_xfce_panel
+    restore_menu=true
+    trap 'if [ "$restore_menu" = true ]; then start_xfce_panel; fi' EXIT
+    while IFS= read -r relative; do
+        case "$relative" in .config/xfce4/panel/whiskermenu-*.rc) restore_item "$relative" ;; esac
+    done < "$BACKUP_DIR/xfce-menu-files"
+    for relative in .local/bin/mactahoe-xfce-menu \
+        .local/share/mactahoe-apps/mactahoe-xfce-menu \
+        .config/gtk-3.0/gtk.css .config/gtk-3.0/mactahoe-menu.css; do
+        restore_item "$relative"
+    done
+fi
+
+# Stop only the Tahoe instances before restoring their launchers.
+if [ -f "$BACKUP_DIR/plank-before.ini" ]; then
+    "$HOME/.local/bin/mactahoe-xfce-widgets" --stop 2>/dev/null || true
+    "$HOME/.local/bin/mactahoe-xfce-dock" stop 2>/dev/null || true
+    dconf reset -f /net/launchpad/plank/docks/mactahoe/
+    dconf load /net/launchpad/plank/docks/mactahoe/ < "$BACKUP_DIR/plank-before.ini"
+    for relative in \
+        .local/bin/mactahoe-xfce-session \
+        .local/share/mactahoe-apps/mactahoe-xfce-session \
+        .config/autostart/mactahoe-xfce-session.desktop \
+        .local/bin/mactahoe-xfce-widgets .local/bin/mactahoe-xfce-dock \
+        .local/share/mactahoe-apps/mactahoe-xfce-widgets \
+        .local/share/applications/io.github.adfoxtheme.XfceWidgets.desktop \
+        .local/share/applications/io.github.adfoxtheme.Launchpad.desktop \
+        .config/autostart/mactahoe-xfce-widgets.desktop \
+        .config/autostart/mactahoe-xfce-dock.desktop \
+        .config/plank/mactahoe .local/share/plank/themes/MacTahoe; do
+        restore_item "$relative"
+    done
+fi
+# The LightDM installer keeps a system backup so it can be restored from a TTY.
+if [ -f "$STATE_DIR/lightdm-installed" ]; then
+    "$ROOT_DIR/install-lightdm.sh" --uninstall
+fi
 
 # 1. Dừng các tiến trình và dịch vụ
 systemctl --user disable --now color-scheme-sync.service 2>/dev/null || true
@@ -80,6 +130,7 @@ for path in .local/bin/mactahoe-icon-manager \
     restore_item "$path"
 done
 
+if [ ! -f "$BACKUP_DIR/xfce-only" ]; then
 # 4. Gỡ extension GNOME Shell
 for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io \
     UbuntuTahoeWidgets@adfoxtheme.github.io \
@@ -95,6 +146,8 @@ for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.i
 done
 gnome-extensions enable ubuntu-dock@ubuntu.com 2>/dev/null || true
 gnome-extensions enable dash-to-dock@micxgx.gmail.com 2>/dev/null || true
+
+fi
 
 # 6. Đóng và khôi phục cấu hình Firefox
 for firefox_process in firefox firefox-bin firefox-esr; do
@@ -203,6 +256,14 @@ if [ -d "$HOME/Pictures/Wallpapers/MacTahoe" ]; then
     rmdir "$HOME/Pictures/Wallpapers/MacTahoe" 2>/dev/null || true
 fi
 
+if [ -n "$BACKUP_DIR" ] && [ -d "$BACKUP_DIR/xfconf" ]; then
+    source "$ROOT_DIR/scripts/desktop.sh"
+    restore_xfce
+    if [ -e "$BACKUP_DIR/captured/home/.config/xfce4/panel" ]; then
+        restore_item .config/xfce4/panel
+    fi
+fi
+
 # 10. Khôi phục hoặc reset cài đặt GNOME (dconf/gsettings)
 reset_gnome_settings() {
     if [ -r "$ROOT_DIR/config/gsettings.tsv" ]; then
@@ -248,7 +309,7 @@ if [ -n "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/dconf-before.ini" ]; then
     else
         reset_gnome_settings
     fi
-else
+elif [ ! -f "$BACKUP_DIR/xfce-only" ]; then
     reset_gnome_settings
 fi
 
@@ -381,4 +442,4 @@ rm -f "$STATE_DIR/latest-backup" "$STATE_DIR/project-path" 2>/dev/null || true
 rmdir "$STATE_DIR" 2>/dev/null || true
 
 printf '\nUninstall finished. Pre-existing system packages were preserved.\n'
-printf 'Log out and back in to fully reset the GNOME session.\n'
+printf 'Log out and back in to reload the desktop.\n'

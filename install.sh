@@ -11,17 +11,17 @@ if [ "$EUID" -eq 0 ]; then
     printf 'Run as your normal user, without sudo.\n' >&2
     exit 1
 fi
-if [ ! -r /etc/os-release ] || ! command -v gsettings >/dev/null 2>&1; then
-    printf 'This installer requires Ubuntu, Debian, Fedora, or CachyOS/Arch and a running GNOME session.\n' >&2
+if [ ! -r /etc/os-release ]; then
+    printf 'This installer requires Ubuntu, Debian, Kali, Fedora, or CachyOS/Arch and a running GNOME or Xfce session.\n' >&2
     exit 1
 fi
 . /etc/os-release
 distribution_id="${ID:-}"
 distribution_like="${ID_LIKE:-}"
-if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && \
+if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && [ "$distribution_id" != kali ] && \
    [ "$distribution_id" != fedora ] && [ "$distribution_id" != cachyos ] && \
    [ "$distribution_id" != arch ] && [[ ! "$distribution_like" =~ arch ]]; then
-    printf 'This installer currently supports Ubuntu, Debian, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
+    printf 'This installer currently supports Ubuntu, Debian, Kali, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
         "${PRETTY_NAME:-unknown}" "$distribution_id" >&2
     exit 1
 fi
@@ -41,10 +41,25 @@ else
         exit 1
     fi
 fi
-shell_major="$(gnome-shell --version | grep -oE '[0-9]+' | head -n1)"
-if [ -z "$shell_major" ] || [ "$shell_major" -lt 48 ]; then
-    printf 'This installer requires GNOME Shell 48 or newer; detected %s.\n' "${shell_major:-unknown}" >&2
+source "$ROOT_DIR/scripts/desktop.sh"
+detect_desktop
+if [ "$desktop" = xfce ] && [ "${XDG_SESSION_TYPE:-x11}" != x11 ]; then
+    printf 'The Xfce dock and widgets require an X11 session. Log in to Xfce on X11.\n' >&2
     exit 1
+fi
+if [ "$desktop" = xfce ] && [ "$distribution_id" != kali ] && \
+   [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ]; then
+    printf 'Xfce installation currently supports Kali, Ubuntu, and Debian.\n' >&2
+    exit 1
+fi
+if [ "$desktop" = gnome ]; then
+    shell_version="$(gnome-shell --version 2>/dev/null || true)"
+    shell_major="${shell_version##* }"
+    shell_major="${shell_major%%.*}"
+    if ! [[ "$shell_major" =~ ^[0-9]+$ ]] || [ "$shell_major" -lt 48 ]; then
+        printf 'This installer requires GNOME Shell 48 or newer; detected %s.\n' "${shell_major:-unknown}" >&2
+        exit 1
+    fi
 fi
 for firefox_process in firefox firefox-bin firefox-esr; do
     if pgrep -u "$UID" -x "$firefox_process" >/dev/null 2>&1; then
@@ -73,9 +88,15 @@ if [ -z "$BACKUP_DIR" ]; then
     BACKUP_DIR="$(mktemp -d "$STATE_DIR/backup-$(date +%Y%m%d-%H%M%S)-XXXXXX")"
 fi
 
+if [ "$desktop" = xfce ] && [ ! -e "$BACKUP_DIR/dconf-before.ini" ]; then
+    touch "$BACKUP_DIR/xfce-only"
+elif [ "$desktop" = gnome ]; then
+    rm -f "$BACKUP_DIR/xfce-only"
+fi
+
 if [ "$distribution_id" = fedora ]; then
     package_list=(breeze-icon-theme dconf fontconfig \
-        libadwaita gtk4 gnome-extensions-app \
+        libadwaita gtk4 gtk3 gnome-extensions-app \
         gnome-shell-extension-user-theme gnome-tweaks ImageMagick \
         glib2-devel librsvg2-tools python3-gobject python3-pillow sassc)
     dnf_snapshot="$BACKUP_DIR/dnf-packages-before-mactahoe"
@@ -96,7 +117,7 @@ if [ "$distribution_id" = fedora ]; then
     fi
 elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$distribution_like" =~ arch ]]; then
     package_list=(breeze-icons dconf fontconfig \
-        libadwaita gtk4 extension-manager \
+        libadwaita gtk4 gtk3 extension-manager \
         gnome-shell-extensions gnome-tweaks imagemagick \
         glib2 glib2-devel librsvg python-gobject python-pillow sassc)
     pacman_snapshot="$BACKUP_DIR/pacman-packages-before-mactahoe"
@@ -117,9 +138,14 @@ elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$d
     fi
 else
     package_list=(breeze-icon-theme dconf-cli fontconfig \
-        gir1.2-adw-1 gir1.2-gtk-4.0 gnome-shell-extension-manager \
+        gir1.2-adw-1 gir1.2-gtk-4.0 gir1.2-gtk-3.0 gnome-shell-extension-manager \
         gnome-shell-extension-user-theme gnome-tweaks imagemagick \
         libglib2.0-dev-bin librsvg2-bin python3-gi python3-pil sassc)
+    if [ "$desktop" = xfce ]; then
+        package_list=(breeze-icon-theme fontconfig imagemagick libglib2.0-dev-bin
+            librsvg2-bin python3-gi python3-pil gir1.2-gtk-4.0 gir1.2-adw-1 sassc
+            gir1.2-gtk-3.0 python3-psutil python3-cairo python3-gi-cairo dconf-cli xfce4-appfinder xfce4-whiskermenu-plugin)
+    fi
     apt_snapshot="$BACKUP_DIR/apt-packages-before-mactahoe"
     apt_installed="$BACKUP_DIR/apt-packages-installed-by-mactahoe"
     if [ ! -e "$BACKUP_DIR/apt-tracking-version" ] && [ ! -e "$BACKUP_DIR/apt-tracking-legacy" ]; then
@@ -132,6 +158,10 @@ else
     fi
     sudo apt-get update
     sudo apt-get install -y "${package_list[@]}"
+    if [ "$desktop" = xfce ]; then
+        source "$ROOT_DIR/scripts/install-plank.sh"
+        install_plank
+    fi
     if [ -f "$apt_snapshot" ] && [ ! -e "$BACKUP_DIR/apt-tracking-version" ]; then
         dpkg-query -W -f='${db:Status-Abbrev}\t${binary:Package}\n' \
             | awk '$1 ~ /^ii/ {print $2}' | LC_ALL=C sort -u > "$BACKUP_DIR/apt-packages-after-mactahoe"
@@ -148,7 +178,7 @@ mkdir -p "$HOME/.local/share/gnome-shell/extensions" \
     "$HOME/.local/share/icons/hicolor/scalable/apps" \
     "$HOME/Pictures/Wallpapers/MacTahoe"
 
-if command -v dconf >/dev/null 2>&1 && [ ! -f "$BACKUP_DIR/dconf-before.ini" ]; then
+if [ "$desktop" = gnome ] && command -v dconf >/dev/null 2>&1 && [ ! -f "$BACKUP_DIR/dconf-before.ini" ]; then
     dconf dump / > "$BACKUP_DIR/dconf-before.ini" || true
 fi
 for path in gtk-3.0 gtk-4.0; do
@@ -205,7 +235,13 @@ mkdir -p "$HOME/.local/share/fonts/MacTahoe"
 cp -a "$ROOT_DIR/assets/fonts/SF-Pro" "$ROOT_DIR/assets/fonts/SF-Mono" \
     "$HOME/.local/share/fonts/MacTahoe/"
 fc-cache -f "$HOME/.local/share/fonts/MacTahoe"
-(cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l --shell -i apple -p default)
+if [ "$desktop" = xfce ]; then
+    # Vendor setup also updates Whisker Menu opacity.
+    backup_item .config/xfce4/panel
+    (cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l)
+else
+    (cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l --shell -i apple -p default)
+fi
 (cd "$ROOT_DIR/vendor/MacTahoe-icon-theme" && ./install.sh -t blue)
 mkdir -p "$HOME/.local/share/icons/MacTahoe-cursors" "$HOME/.local/share/icons/MacTahoe-dark-cursors"
 cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist/." "$HOME/.local/share/icons/MacTahoe-cursors/"
@@ -237,6 +273,7 @@ cp "$ROOT_DIR/apps/image-compressor/assets/vn.ihoan.ImageCompressor.svg" \
 cp "$ROOT_DIR/apps/mactahoe-app-themer/assets/io.github.adfoxtheme.MacTahoeAppThemer.svg" \
     "$HOME/.local/share/icons/hicolor/scalable/apps/"
 
+if [ "$desktop" = gnome ]; then
 EXTENSION_IDS=(UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io UbuntuTahoeWidgets@adfoxtheme.github.io)
 COMPATIBLE_EXTENSION_IDS=()
 INCOMPATIBLE_EXTENSION_IDS=(blur-my-shell@aunetx globalmenu@ShiroOSL.github.io \
@@ -324,6 +361,12 @@ variant = "[" + ", ".join(repr(uuid) for uuid in enabled) + "]"
 subprocess.run(["gsettings", "set", schema, key, variant], check=True)
 PY
 
+else
+    apply_xfce
+    source "$ROOT_DIR/scripts/xfce-extras.sh"
+    install_xfce_extras
+fi
+
 cp "$ROOT_DIR/desktop/mactahoe-icon-manager.desktop" "$HOME/.local/share/applications/"
 sed "s|^Exec=am-lich-viet-nam$|Exec=$HOME/.local/bin/am-lich-viet-nam|" \
     "$ROOT_DIR/desktop/vn.ihoan.AmLich.desktop" \
@@ -334,9 +377,11 @@ sed "s|^Exec=image-compressor$|Exec=$HOME/.local/bin/image-compressor|" \
 sed "s|^Exec=mactahoe-app-themer$|Exec=$HOME/.local/bin/mactahoe-app-themer|" \
     "$ROOT_DIR/desktop/io.github.adfoxtheme.MacTahoeAppThemer.desktop" \
     > "$HOME/.local/share/applications/io.github.adfoxtheme.MacTahoeAppThemer.desktop"
+if [ "$desktop" = gnome ]; then
 cp "$ROOT_DIR/systemd/color-scheme-sync.service" "$HOME/.config/systemd/user/"
 systemctl --user daemon-reload
 systemctl --user enable --now color-scheme-sync.service
+fi
 
 # Khởi tạo profile mặc định nếu Firefox (DEB/APT/RPM/Pacman) chưa từng mở
 if [ -f /etc/debian_version ] || [ -f /etc/fedora-release ] || [ -f /etc/arch-release ] || [ -f /etc/cachyos-release ] || \
@@ -416,4 +461,9 @@ if [ -d "$HOME/snap/firefox" ]; then
 fi
 
 update-desktop-database "$HOME/.local/share/applications" || true
-printf '\nInstalled. Log out and back in to load GNOME Shell extensions.\nBackup: %s\n' "$BACKUP_DIR"
+source "$ROOT_DIR/scripts/login-theme.sh"
+if ! install_login_theme; then
+    printf 'Desktop installed, but login theming failed. Fix the error above and rerun install.sh.\n' >&2
+    exit 1
+fi
+printf '\nInstalled. Log out and back in to reload the desktop.\nBackup: %s\n' "$BACKUP_DIR"

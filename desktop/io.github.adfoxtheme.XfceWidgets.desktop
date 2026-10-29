@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=MacTahoe · Widget & Dock
+Comment=Cài đặt đồng hồ, thời tiết, hệ thống, âm lịch, nhắc nghỉ và dock Xfce
+Exec=mactahoe-xfce-widgets --preferences
+Icon=preferences-desktop
+Terminal=false
+Categories=Settings;DesktopSettings;
+OnlyShowIn=XFCE;

@@ -14,17 +14,21 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 if [ ! -r /etc/os-release ] || ! command -v gsettings >/dev/null 2>&1; then
-    printf 'This installer requires Ubuntu, Debian, Fedora, or CachyOS/Arch and a running GNOME session.\n' >&2
+    printf 'This installer requires Ubuntu, Debian, Kali, Fedora, or CachyOS/Arch.\n' >&2
     exit 1
 fi
 . /etc/os-release
 distribution_id="${ID:-}"
 distribution_like="${ID_LIKE:-}"
-if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && \
+if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && [ "$distribution_id" != kali ] && \
    [ "$distribution_id" != fedora ] && [ "$distribution_id" != cachyos ] && \
    [ "$distribution_id" != arch ] && [[ ! "$distribution_like" =~ arch ]]; then
-    printf 'This installer currently supports Ubuntu, Debian, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
+    printf 'This installer currently supports Ubuntu, Debian, Kali, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
         "${PRETTY_NAME:-unknown}" "$distribution_id" >&2
+    exit 1
+fi
+if [ "$(python3 "$ROOT_DIR/scripts/display_manager.py")" != gdm ]; then
+    printf 'GDM is not the active/configured display manager.\n' >&2
     exit 1
 fi
 shell_version="$(gnome-shell --version 2>/dev/null || true)"
@@ -39,10 +43,6 @@ if ! command -v gdm >/dev/null 2>&1 && ! command -v gdm3 >/dev/null 2>&1 && \
    [ ! -x /usr/sbin/gdm ] && [ ! -x /usr/sbin/gdm3 ] && \
    [ ! -x /usr/bin/gdm ] && [ ! -x /usr/bin/gdm3 ]; then
     printf 'GDM is not installed; refusing to change the active display manager.\n' >&2
-    exit 1
-fi
-if ! gsettings get org.gnome.desktop.interface gtk-theme >/dev/null 2>&1; then
-    printf 'Run this from an active GNOME desktop session.\n' >&2
     exit 1
 fi
 if [ ! -f "$GDM_DIR/gnome-shell-theme.gresource.xml" ] || \

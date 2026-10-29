@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+dock_pids() {
+    local candidate
+    while read -r candidate; do
+        # Separate X11 sessions (including test displays) must not stop each other.
+        if grep -zFxq "DISPLAY=${DISPLAY:-}" "/proc/$candidate/environ" 2>/dev/null; then
+            printf '%s\n' "$candidate"
+        fi
+    done < <(pgrep -u "$UID" -f '^plank --name=mactahoe$' || true)
+}
+case "${1:-start}" in
+    stop)
+        # Match only our named dock, preserving any existing personal Plank dock.
+        while read -r candidate; do
+            kill "$candidate" 2>/dev/null || true
+        done < <(dock_pids)
+        for ((attempt=0; attempt<20; attempt++)); do
+            [ -n "$(dock_pids)" ] || exit 0
+            sleep 0.1
+        done
+        printf 'The Tahoe dock did not stop; close it before reinstalling.\n' >&2
+        exit 1
+        ;;
+    preferences) exec plank --name=mactahoe --preferences ;;
+    start) ;;
+    *) printf 'Usage: %s [start|stop|preferences]\n' "$0" >&2; exit 2 ;;
+esac
+if [ "${XDG_SESSION_TYPE:-x11}" != x11 ]; then
+    printf 'The Tahoe Plank dock requires an X11 session.\n' >&2
+    exit 1
+fi
+runtime_dir="${XDG_RUNTIME_DIR:-$HOME/.cache}/mactahoe-xfce"
+mkdir -p "$runtime_dir"
+display_key="${DISPLAY:-default}"
+display_key="${display_key//[^a-zA-Z0-9]/_}"
+exec 9>"$runtime_dir/dock-$display_key.lock"
+flock -n 9 || exit 0
+exec plank --name=mactahoe

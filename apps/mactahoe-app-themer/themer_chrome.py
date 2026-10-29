@@ -87,6 +87,7 @@ def detect_chrome():
             found.append({
                 "type": item["type"],
                 "config_dir": cfg,
+                "sandbox_root": item.get("sandbox_root"),
                 "is_themed": current_is_themed,
                 "system_theme": val,
             })
@@ -151,7 +152,7 @@ def apply_chrome_theme():
 
     for inst in status["installations"]:
         cfg = inst["config_dir"]
-        sandbox_root = inst["sandbox_root"]
+        sandbox_root = inst.get("sandbox_root")
 
         # Flatpak: populate theme into the sandbox so GtkUi can resolve it
         if sandbox_root:

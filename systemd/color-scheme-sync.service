@@ -1,4 +1,7 @@
 [Unit]
+# Run only inside GNOME so other sessions (Hyprland, KDE...) on the same user are not touched
+PartOf=gnome-session.target
+After=gnome-session.target
 Description=Sync GTK/Shell theme with GNOME color-scheme
 
 [Service]
@@ -8,4 +11,4 @@ Restart=always
 RestartSec=3
 
 [Install]
-WantedBy=default.target
+WantedBy=gnome-session.target

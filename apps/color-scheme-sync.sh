@@ -2,15 +2,21 @@
 set -u
 
 write_ini() {
-    local file="$1" prefer="$2"
+    local file="$1" prefer="$2" iface
     mkdir -p "$(dirname "$file")"
     if [ -f "$file" ]; then
-        grep -v '^gtk-application-prefer-dark-theme' "$file" > "$file.tmp" || true
+        grep -vE '^gtk-application-prefer-dark-theme|^gtk-interface-color-scheme' "$file" > "$file.tmp" || true
         mv "$file.tmp" "$file"
     else
         printf '[Settings]\n' > "$file"
     fi
     printf 'gtk-application-prefer-dark-theme=%s\n' "$prefer" >> "$file"
+    # GTK >= 4.16 replaced gtk-application-prefer-dark-theme with
+    # gtk-interface-color-scheme. Chrome (GtkUi) reads the new key, so it must
+    # be written as well or browsers keep a light color scheme for their
+    # contents (e.g. white New Tab page) even when the GTK theme is dark.
+    if [ "$prefer" = "1" ]; then iface="dark"; else iface="default"; fi
+    printf 'gtk-interface-color-scheme=%s\n' "$iface" >> "$file"
 }
 
 apply() {

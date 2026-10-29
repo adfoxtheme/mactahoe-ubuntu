@@ -24,15 +24,15 @@ Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng đ
   </tr>
   <tr>
     <th align="center">Quản lý icon MacTahoe</th>
-    <th align="center">Giao diện ứng dụng (Firefox & Brave)</th>
+    <th align="center">Giao diện ứng dụng (Firefox, Brave & Chrome)</th>
   </tr>
   <tr>
     <td><img src="assets/screenshots/mactahoe-icon-manager.png" alt="Ứng dụng thay thế icon MacTahoe cho các ứng dụng" width="100%"></td>
-    <td><img src="assets/screenshots/mactahoe-app-themer.png" alt="Ứng dụng chỉnh giao diện Tahoe cho Firefox và Brave" width="100%"></td>
+    <td><img src="assets/screenshots/mactahoe-app-themer.png" alt="Ứng dụng chỉnh giao diện Tahoe cho Firefox, Brave và Chrome" width="100%"></td>
   </tr>
   <tr>
     <th align="center">Quản lý và tuỳ chỉnh tiện ích</th>
-    <th align="center">Trình duyệt hiển thị (Safari Tahoe & Brave)</th>
+    <th align="center">Trình duyệt hiển thị (Safari Tahoe, Brave & Chrome)</th>
   </tr>
   <tr>
     <td><img src="assets/screenshots/mactahoe-extensions.png" alt="Quản lý và tuỳ chỉnh tiện ích mở rộng" width="100%"></td>

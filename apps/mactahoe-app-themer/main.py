@@ -15,6 +15,7 @@ from gi.repository import Gtk, Adw, Gio, GLib
 
 import themer_firefox
 import themer_brave
+import themer_chrome
 
 APP_ID = "io.github.adfoxtheme.MacTahoeAppThemer"
 
@@ -33,6 +34,7 @@ class AppThemerWindow(Adw.PreferencesWindow):
         # Build groups
         self._build_firefox_group()
         self._build_brave_group()
+        self._build_chrome_group()
         self._build_system_info_group()
 
         # Initial data refresh
@@ -110,6 +112,43 @@ class AppThemerWindow(Adw.PreferencesWindow):
         self.brave_action_row.add_suffix(btn_box)
         self.brave_group.add(self.brave_action_row)
 
+    def _build_chrome_group(self):
+        self.chrome_group = Adw.PreferencesGroup()
+        self.chrome_group.set_title("Google Chrome (Đồng bộ GTK & MacTahoe)")
+        self.chrome_group.set_description(
+            "Đồng bộ theme GTK MacTahoe vào Google Chrome để giao diện trình duyệt "
+            "(tab, thanh công cụ, New Tab) theo đúng màu tối của MacTahoe"
+        )
+        self.page.add(self.chrome_group)
+
+        # Status row
+        self.chrome_status_row = Adw.ActionRow()
+        self.chrome_status_row.set_title("Trạng thái")
+        self.chrome_status_row.set_subtitle("Đang kiểm tra...")
+        self.chrome_status_row.set_icon_name("google-chrome")
+        self.chrome_group.add(self.chrome_status_row)
+
+        # Action row
+        self.chrome_action_row = Adw.ActionRow()
+        self.chrome_action_row.set_title("Giao diện GTK")
+        self.chrome_action_row.set_subtitle("Kết nối theme GTK MacTahoe hoặc đặt lại giao diện mặc định")
+
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        btn_box.set_valign(Gtk.Align.CENTER)
+
+        self.chrome_apply_btn = Gtk.Button(label="Áp dụng")
+        self.chrome_apply_btn.add_css_class("suggested-action")
+        self.chrome_apply_btn.connect("clicked", self.on_chrome_apply)
+        btn_box.append(self.chrome_apply_btn)
+
+        self.chrome_restore_btn = Gtk.Button(label="Khôi phục")
+        self.chrome_restore_btn.add_css_class("destructive-action")
+        self.chrome_restore_btn.connect("clicked", self.on_chrome_restore)
+        btn_box.append(self.chrome_restore_btn)
+
+        self.chrome_action_row.add_suffix(btn_box)
+        self.chrome_group.add(self.chrome_action_row)
+
     def _build_system_info_group(self):
         sys_group = Adw.PreferencesGroup()
         sys_group.set_title("Thông tin môi trường")
@@ -179,6 +218,22 @@ class AppThemerWindow(Adw.PreferencesWindow):
             self.brave_apply_btn.set_sensitive(True)
             self.brave_restore_btn.set_sensitive(br_info["is_themed"])
 
+        # 3. Check Chrome
+        ch_info = themer_chrome.detect_chrome()
+        if not ch_info["is_installed"]:
+            self.chrome_status_row.set_subtitle("Chưa cài đặt trên máy")
+            self.chrome_apply_btn.set_sensitive(False)
+            self.chrome_restore_btn.set_sensitive(False)
+        else:
+            status_text = f"Đã cài đặt: {ch_info['type_str']}"
+            if ch_info["is_themed"]:
+                status_text += " • [Đã kết nối GTK MacTahoe]"
+            else:
+                status_text += " • [Giao diện mặc định của Chrome]"
+            self.chrome_status_row.set_subtitle(status_text)
+            self.chrome_apply_btn.set_sensitive(True)
+            self.chrome_restore_btn.set_sensitive(ch_info["is_themed"])
+
     def on_firefox_apply(self, btn):
         res = themer_firefox.apply_firefox_theme()
         self.refresh_status()
@@ -196,6 +251,16 @@ class AppThemerWindow(Adw.PreferencesWindow):
 
     def on_brave_restore(self, btn):
         res = themer_brave.restore_brave_default()
+        self.refresh_status()
+        self.add_toast(Adw.Toast(title=res["message"], timeout=3))
+
+    def on_chrome_apply(self, btn):
+        res = themer_chrome.apply_chrome_theme()
+        self.refresh_status()
+        self.add_toast(Adw.Toast(title=res["message"], timeout=3))
+
+    def on_chrome_restore(self, btn):
+        res = themer_chrome.restore_chrome_default()
         self.refresh_status()
         self.add_toast(Adw.Toast(title=res["message"], timeout=3))
 

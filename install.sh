@@ -206,6 +206,11 @@ cp -a "$ROOT_DIR/assets/fonts/SF-Pro" "$ROOT_DIR/assets/fonts/SF-Mono" \
     "$HOME/.local/share/fonts/MacTahoe/"
 fc-cache -f "$HOME/.local/share/fonts/MacTahoe"
 (cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l --shell -i apple -p default)
+# Install the full GTK 3/4 theme into ~/.themes so that GTK3 apps and
+# Chrome's GtkUi can actually resolve "MacTahoe-Dark". Without this only
+# libadwaita apps get themed (via the gtk-4.0 config override) and browsers
+# like Google Chrome end up with a mixed light/dark UI.
+(cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -d "$HOME/.themes" -c dark)
 (cd "$ROOT_DIR/vendor/MacTahoe-icon-theme" && ./install.sh -t blue)
 mkdir -p "$HOME/.local/share/icons/MacTahoe-cursors" "$HOME/.local/share/icons/MacTahoe-dark-cursors"
 cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist/." "$HOME/.local/share/icons/MacTahoe-cursors/"

@@ -37,53 +37,42 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
   min-width: 100px;
   max-width: 172px;
   min-height: 40px;
-  border: none;
-  box-shadow: $toggle_shadow !important;
-  color: $toggle_fg_color;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  color: white;
 }
 
 .quick-toggle {
-  background-color: $toggle_bg_color !important;
+  background-color: rgba(0, 0, 0, 0.32) !important;
   border-radius: $circular_radius;
-  color: $toggle_fg_color;
+  color: white;
   padding: $base_padding * 3 !important;
 
   &:hover {
-    background-color: $toggle_hover_bg_color !important;
-    color: $toggle_fg_color;
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    border-color: rgba(255, 255, 255, 0.40) !important;
+    color: white;
   }
 
   &:active {
-    background-color: $toggle_active_bg_color !important;
-    color: $toggle_fg_color;
+    background-color: rgba(0, 0, 0, 0.55) !important;
+    color: white;
   }
 
   &:checked {
-    background-color: $toggle_checked_bg_color !important;
-    color: $toggle_checked_fg_color;
+    background-color: st-transparentize(-st-accent-color, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.38) !important;
+    color: white !important;
 
     &:hover {
-      color: $toggle_checked_fg_color;
-
-      @if $shell_version =='old' {
-        background-color: mix($text_color, $toggle_checked_bg_color, 6%) !important;
-      }
-
-      @else {
-        background-color: st-mix($text_color, $toggle_checked_bg_color, 6%) !important;
-      }
+      color: white !important;
+      background-color: st-lighten(-st-accent-color, 6%) !important;
+      border-color: rgba(255, 255, 255, 0.50) !important;
     }
 
     &:active {
-      color: $toggle_checked_fg_color;
-
-      @if $shell_version =='old' {
-        background-color: mix($text_color, $toggle_checked_bg_color, 15%) !important;
-      }
-
-      @else {
-        background-color: st-mix($text_color, $toggle_checked_bg_color, 15%) !important;
-      }
+      color: white !important;
+      background-color: st-darken(-st-accent-color, 6%) !important;
     }
   }
 
@@ -124,20 +113,21 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
 }
 
 .quick-toggle-has-menu {
-  background-color: $toggle_bg_color !important;
+  background-color: rgba(0, 0, 0, 0.32) !important;
   border-radius: $circular_radius;
   padding: $base_padding 0 !important;
 
   &:hover {
-    background-color: $toggle_hover_bg_color !important;
+    background-color: rgba(0, 0, 0, 0.45) !important;
+    border-color: rgba(255, 255, 255, 0.40) !important;
   }
 
   &:active {
-    background-color: $toggle_active_bg_color !important;
+    background-color: rgba(0, 0, 0, 0.55) !important;
   }
 
   &:checked {
-    background-color: $toggle_menu_checked_bg_color !important;
+    background-color: rgba(0, 0, 0, 0.32) !important;
   }
 
   & .quick-toggle {
@@ -148,28 +138,32 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
     &, &:hover, &:active, &:checked {
       background: none !important;
       box-shadow: none !important;
-      color: $toggle_fg_color;
+      border: none !important;
+      color: white;
     }
 
     .quick-toggle-icon {
       border-radius: $circular_radius;
       min-height: 40px !important;
       min-width: 40px !important;
-      background-color: $toggle_bg_color;
+      background-color: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       transition: none;
     }
 
     &:hover .quick-toggle-icon {
-      background-color: $toggle_hover_bg_color;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.35);
     }
 
     &:active .quick-toggle-icon {
-      background-color: $toggle_active_bg_color;
+      background-color: rgba(255, 255, 255, 0.25);
     }
 
     &:checked .quick-toggle-icon {
-      color: $toggle_checked_fg_color;
-      background-color: $toggle_checked_bg_color;
+      color: -st-accent-color !important;
+      background-color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.7) !important;
     }
 
     &:ltr {
@@ -236,12 +230,13 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
 }
 
 .quick-slider {
-  background-color: $toggle_bg_color;
+  background-color: rgba(0, 0, 0, 0.32) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
   border-radius: $wm_radius;
-  box-shadow: $toggle_shadow !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
   min-height: 40px;
   padding: $base_padding * 3 !important;
-  color: $toggle_fg_color;
+  color: white;
 
   & > StBoxLayout {
     spacing: $base_padding;
@@ -275,12 +270,12 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
 }
 
 .quick-toggle-menu {
-  color: $toggle_fg_color !important;
-  background-color: $toggle_menu_bg_color !important;
+  color: white !important;
+  background-color: rgba(0, 0, 0, 0.32) !important;
   border-radius: $popop_menuitem_radius + $base_padding * 3;
   padding: $base_padding * 3;
-  border: 1px solid rgba(white, 0.1) !important;
-  box-shadow: 0 5px 10px 0 rgba(black, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35) !important;
 
   @if($GNOME_SHELL =='48') {
     margin: $base_padding * 2 $base_padding * 6;
@@ -346,24 +341,30 @@ $toggle_shadow: if($trans =='true', inset 0 0 4px rgba(white, 0.35), 0 5px 10px 
   }
 
   .icon-button {
-    background-color: $toggle_bg_color;
-    color: $toggle_fg_color;
+    background-color: #ffffff !important;
+    color: -st-accent-color !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
     border-radius: $circular_radius;
     min-height: $menuitem_size !important;
     min-width: $menuitem_size !important;
     padding: $base_padding * 3;
-    box-shadow: $toggle_shadow !important;
 
     &:hover {
-      background-color: $toggle_hover_bg_color;
+      background-color: rgba(255, 255, 255, 0.88) !important;
+      border-color: rgba(255, 255, 255, 0.70) !important;
+      color: -st-accent-color !important;
     }
 
     &:active {
-      background-color: $toggle_active_bg_color;
+      background-color: rgba(255, 255, 255, 0.72) !important;
+      color: -st-accent-color !important;
     }
 
-    > StIcon {
-      -st-icon-style: symbolic;
+    > StIcon,
+    StIcon {
+      color: -st-accent-color !important;
+      -st-icon-style: symbolic !important;
       icon-size: $base_icon_size;
     }
   }

@@ -211,6 +211,10 @@ fc-cache -f "$HOME/.local/share/fonts/MacTahoe"
 # libadwaita apps get themed (via the gtk-4.0 config override) and browsers
 # like Google Chrome end up with a mixed light/dark UI.
 (cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -d "$HOME/.themes" -c dark)
+if [ -f "$ROOT_DIR/config/gnome-shell.css" ]; then
+    mkdir -p "$HOME/.themes/MacTahoe-Dark/gnome-shell"
+    cp -f "$ROOT_DIR/config/gnome-shell.css" "$HOME/.themes/MacTahoe-Dark/gnome-shell/gnome-shell.css"
+fi
 (cd "$ROOT_DIR/vendor/MacTahoe-icon-theme" && ./install.sh -t blue)
 mkdir -p "$HOME/.local/share/icons/MacTahoe-cursors" "$HOME/.local/share/icons/MacTahoe-dark-cursors"
 cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist/." "$HOME/.local/share/icons/MacTahoe-cursors/"

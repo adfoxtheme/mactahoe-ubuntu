@@ -68,6 +68,7 @@ class WeatherWidget extends St.DrawingArea {
                 weatherCity: this._settings.get_string('weather-city'),
                 weatherLat: this._settings.get_double('weather-lat'),
                 weatherLon: this._settings.get_double('weather-lon'),
+                _settings: this._settings,
             });
             this._weatherData = data;
             this.queue_repaint();

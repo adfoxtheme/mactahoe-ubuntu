@@ -11,15 +11,15 @@ org.gnome.desktop.interface font-antialiasing 'rgba'
 org.gnome.desktop.interface font-hinting 'medium'
 org.gnome.desktop.wm.preferences titlebar-font 'SF Pro Display Bold 11'
 org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:'
-org.gnome.shell favorite-apps ['firefox_firefox.desktop', 'google-chrome.desktop', 'microsoft-edge.desktop', 'planmaker-free24.desktop', 'presentations-free24.desktop', 'textmaker-free24.desktop', 'vn.ihoan.ImageCompressor.desktop', 'ai.storyteller.vectorcraft.desktop', 'ai.storyteller.photocraft.desktop', 'snap-store_snap-store.desktop', 'org.gnome.Settings.desktop', 'antigravity-ide-snap_antigravity-ide.desktop', 'antigravity.desktop', 'chatgpt.desktop', 'ai.opencode.desktop.desktop', 'qoder.desktop', 'vn.ihoan.AmLich.desktop', 'org.gnome.Nautilus.desktop']
+org.gnome.shell favorite-apps ['brave-browser.desktop', 'firefox_firefox.desktop', 'google-chrome.desktop', 'microsoft-edge.desktop', 'planmaker-free24.desktop', 'presentations-free24.desktop', 'textmaker-free24.desktop', 'vn.ihoan.ImageCompressor.desktop', 'ai.storyteller.vectorcraft.desktop', 'ai.storyteller.photocraft.desktop', 'snap-store_snap-store.desktop', 'org.gnome.Settings.desktop', 'antigravity-ide-snap_antigravity-ide.desktop', 'antigravity.desktop', 'chatgpt.desktop', 'ai.opencode.desktop.desktop', 'qoder.desktop', 'vn.ihoan.AmLich.desktop', 'org.gnome.Nautilus.desktop']
 org.gnome.shell.extensions.user-theme name 'MacTahoe-Dark'
 org.gnome.shell.extensions.ubuntutahoe enabled true
-org.gnome.shell.extensions.ubuntutahoe clock-position 1
-org.gnome.shell.extensions.ubuntutahoe clock-offset 20
+org.gnome.shell.extensions.ubuntutahoe clock-position 0
+org.gnome.shell.extensions.ubuntutahoe clock-offset 0
 org.gnome.shell.extensions.ubuntutahoe hide-activities true
-org.gnome.shell.extensions.ubuntutahoe enable-globalmenu true
+org.gnome.shell.extensions.ubuntutahoe enable-globalmenu false
 org.gnome.shell.extensions.ubuntutahoe enable-blur true
-org.gnome.shell.extensions.ubuntutahoe enable-kimpanel true
+org.gnome.shell.extensions.ubuntutahoe enable-kimpanel false
 org.gnome.shell.extensions.globalmenu show-indicator true
 org.gnome.shell.extensions.globalmenu show-logo-menu true
 org.gnome.shell.extensions.globalmenu hide-overview-button true
@@ -48,3 +48,8 @@ org.gnome.shell.extensions.blur-my-shell sigma 30
 org.gnome.shell.extensions.blur-my-shell brightness 0.6
 org.gnome.shell.extensions.ubuntutahoedock dash-max-icon-size 45
 org.gnome.shell.extensions.ubuntutahoedock click-action 'minimize'
+org.gnome.shell.extensions.ubuntutahoedock multi-monitor true
+org.gnome.shell.extensions.ubuntutahoewidgets target-monitor 1
+org.gnome.shell.extensions.clipboard-indicator toggle-menu ['<Super>v']
+org.gnome.shell.extensions.clipboard-indicator open-at-cursor true
+org.gnome.shell.extensions.clipboard-indicator paste-on-select true

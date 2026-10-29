@@ -66,6 +66,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
 
         // Watch settings changes
         this._settingsChangedIds = [
+            this._settings.connect('changed::target-monitor', () => this._relayout()),
             this._settings.connect('changed::show-clock', () => this._rebuildAndRelayout()),
             this._settings.connect('changed::show-weather', () => this._rebuildAndRelayout()),
             this._settings.connect('changed::show-system', () => this._rebuildAndRelayout()),
@@ -141,8 +142,30 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         this._relayout();
     }
 
+    _getMonitor() {
+        const target = this._settings.get_int('target-monitor');
+        const monitors = Main.layoutManager.monitors;
+        if (!monitors || monitors.length === 0)
+            return Main.layoutManager.primaryMonitor;
+
+        if (target === -1)
+            return Main.layoutManager.primaryMonitor;
+
+        // If specific monitor 0, 1, 2 is requested and exists
+        if (target >= 0 && target < monitors.length)
+            return monitors[target];
+
+        // If target is 1 (second monitor) and there are at least 2 monitors
+        if (target === 1 && monitors.length > 1) {
+            const nonPrimary = monitors.find(m => m !== Main.layoutManager.primaryMonitor);
+            if (nonPrimary) return nonPrimary;
+        }
+
+        return Main.layoutManager.primaryMonitor;
+    }
+
     _relayout() {
-        const monitor = Main.layoutManager.primaryMonitor;
+        const monitor = this._getMonitor();
         if (!monitor) return;
 
         // Clock layout (left)

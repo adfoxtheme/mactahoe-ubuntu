@@ -12,16 +12,17 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 if [ ! -r /etc/os-release ] || ! command -v gsettings >/dev/null 2>&1; then
-    printf 'This installer requires Ubuntu, Debian, Fedora, or CachyOS/Arch and a running GNOME session.\n' >&2
+    printf 'This installer requires a supported distribution and a running GNOME session.\n' >&2
     exit 1
 fi
 . /etc/os-release
 distribution_id="${ID:-}"
-distribution_like="${ID_LIKE:-}"
-if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && \
-   [ "$distribution_id" != fedora ] && [ "$distribution_id" != cachyos ] && \
-   [ "$distribution_id" != arch ] && [[ ! "$distribution_like" =~ arch ]]; then
-    printf 'This installer currently supports Ubuntu, Debian, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
+id_like="${ID_LIKE:-}"
+is_arch=false
+if [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$id_like" =~ (arch|cachyos) ]]; then
+    is_arch=true
+elif [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && [ "$distribution_id" != fedora ]; then
+    printf 'This installer currently supports Ubuntu, Debian, Fedora, Arch Linux, and CachyOS; detected %s (%s).\n' \
         "${PRETTY_NAME:-unknown}" "$distribution_id" >&2
     exit 1
 fi
@@ -30,7 +31,7 @@ if [ "$distribution_id" = fedora ]; then
         printf 'Package manager dnf was not found.\n' >&2
         exit 1
     fi
-elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$distribution_like" =~ arch ]]; then
+elif [ "$is_arch" = true ]; then
     if ! command -v pacman >/dev/null 2>&1; then
         printf 'Package manager pacman was not found.\n' >&2
         exit 1
@@ -94,11 +95,11 @@ if [ "$distribution_id" = fedora ]; then
         rm -f "$dnf_snapshot" "$BACKUP_DIR/dnf-packages-after-mactahoe"
         touch "$BACKUP_DIR/dnf-tracking-version"
     fi
-elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$distribution_like" =~ arch ]]; then
+elif [ "$is_arch" = true ]; then
     package_list=(breeze-icons dconf fontconfig \
-        libadwaita gtk4 extension-manager \
-        gnome-shell-extensions gnome-tweaks imagemagick \
-        glib2 glib2-devel librsvg python-gobject python-pillow sassc)
+        libadwaita gtk4 gnome-shell-extensions gnome-tweaks \
+        extension-manager imagemagick glib2 glib2-devel librsvg \
+        python-gobject python-pillow sassc)
     pacman_snapshot="$BACKUP_DIR/pacman-packages-before-mactahoe"
     pacman_installed="$BACKUP_DIR/pacman-packages-installed-by-mactahoe"
     if [ ! -e "$BACKUP_DIR/pacman-tracking-version" ] && [ ! -e "$BACKUP_DIR/pacman-tracking-legacy" ]; then
@@ -108,7 +109,19 @@ elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$d
             pacman -Qq | LC_ALL=C sort -u > "$pacman_snapshot"
         fi
     fi
-    sudo pacman -S --needed --noconfirm "${package_list[@]}"
+    to_install=()
+    for pkg in "${package_list[@]}"; do
+        if ! pacman -Q "$pkg" >/dev/null 2>&1; then
+            to_install+=("$pkg")
+        fi
+    done
+    if [ ${#to_install[@]} -gt 0 ]; then
+        if sudo -n true 2>/dev/null; then
+            sudo pacman -S --needed --noconfirm "${to_install[@]}" || true
+        else
+            printf 'Note: System packages can optionally be installed with: sudo pacman -S --needed %s\n' "${to_install[*]}"
+        fi
+    fi
     if [ -f "$pacman_snapshot" ] && [ ! -e "$BACKUP_DIR/pacman-tracking-version" ]; then
         pacman -Qq | LC_ALL=C sort -u > "$BACKUP_DIR/pacman-packages-after-mactahoe"
         awk 'NR==FNR {seen[$0]=1; next} !seen[$0]' "$pacman_snapshot" "$BACKUP_DIR/pacman-packages-after-mactahoe" > "$pacman_installed"
@@ -205,7 +218,7 @@ mkdir -p "$HOME/.local/share/fonts/MacTahoe"
 cp -a "$ROOT_DIR/assets/fonts/SF-Pro" "$ROOT_DIR/assets/fonts/SF-Mono" \
     "$HOME/.local/share/fonts/MacTahoe/"
 fc-cache -f "$HOME/.local/share/fonts/MacTahoe"
-(cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l --shell -i apple -p default)
+(cd "$ROOT_DIR/vendor/MacTahoe-gtk-theme" && ./install.sh -l --shell -p default)
 (cd "$ROOT_DIR/vendor/MacTahoe-icon-theme" && ./install.sh -t blue)
 mkdir -p "$HOME/.local/share/icons/MacTahoe-cursors" "$HOME/.local/share/icons/MacTahoe-dark-cursors"
 cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist/." "$HOME/.local/share/icons/MacTahoe-cursors/"
@@ -237,7 +250,7 @@ cp "$ROOT_DIR/apps/image-compressor/assets/vn.ihoan.ImageCompressor.svg" \
 cp "$ROOT_DIR/apps/mactahoe-app-themer/assets/io.github.adfoxtheme.MacTahoeAppThemer.svg" \
     "$HOME/.local/share/icons/hicolor/scalable/apps/"
 
-EXTENSION_IDS=(UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io UbuntuTahoeWidgets@adfoxtheme.github.io)
+EXTENSION_IDS=(user-theme@gnome-shell-extensions.gcampax.github.com UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io UbuntuTahoeWidgets@adfoxtheme.github.io clipboard-indicator@tudmotu.com)
 COMPATIBLE_EXTENSION_IDS=()
 INCOMPATIBLE_EXTENSION_IDS=(blur-my-shell@aunetx globalmenu@ShiroOSL.github.io \
     just-perfection-desktop@just-perfection kimpanel@kde.org \
@@ -268,6 +281,16 @@ for uuid in "${EXTENSION_IDS[@]}"; do
     COMPATIBLE_EXTENSION_IDS+=("$uuid")
 done
 
+# Compile schemas globally into user data dir
+mkdir -p "$HOME/.local/share/glib-2.0/schemas"
+for d in "$ROOT_DIR"/vendor/gnome-extensions/*/schemas; do
+    [ -d "$d" ] && cp -a "$d"/*.gschema.xml "$HOME/.local/share/glib-2.0/schemas/" 2>/dev/null || true
+done
+glib-compile-schemas "$HOME/.local/share/glib-2.0/schemas" 2>/dev/null || true
+
+# Free <Super>v for clipboard manager (shift message tray to <Super>m)
+gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>m']" 2>/dev/null || true
+
 gs() {
     local schema="$1"; shift
     local command="$1"; shift
@@ -279,6 +302,8 @@ gs() {
         org.gnome.shell.extensions.blur-my-shell*|\
         org.gnome.shell.extensions.globalmenu*|\
         org.gnome.shell.extensions.kimpanel*) uuid=UbuntuTahoe@adfoxtheme.github.io ;;
+        org.gnome.shell.extensions.user-theme*) uuid=user-theme@gnome-shell-extensions.gcampax.github.com ;;
+        org.gnome.shell.extensions.clipboard-indicator*) uuid=clipboard-indicator@tudmotu.com ;;
         *) gsettings "$command" "$schema" "$@"; return $? ;;
     esac
     schema_dir="$HOME/.local/share/gnome-shell/extensions/$uuid/schemas"

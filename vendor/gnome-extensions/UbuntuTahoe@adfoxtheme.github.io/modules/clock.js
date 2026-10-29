@@ -8,28 +8,52 @@ export class TahoeClockManager {
         this._panelBoxes = null;
         this._signals = [];
         this._repositioning = false;
+        this._currentBoxIndex = -1;
+        this._currentOffset = 0;
     }
 
-    enable(targetBoxIndex = 1, targetOffset = 20) {
+    enable(targetBoxIndex = 0, targetOffset = 0) {
+        if (targetBoxIndex < 0) {
+            return;
+        }
+
         this._dateMenu = Main.panel.statusArea.dateMenu;
         if (!this._dateMenu) return;
 
         this._panelBoxes = [
-            Main.panel._centerBox,
-            Main.panel._rightBox,
-            Main.panel._leftBox,
+            Main.panel._centerBox, // 0: Center (GNOME default)
+            Main.panel._rightBox,  // 1: Right (macOS style)
+            Main.panel._leftBox,   // 2: Left
         ];
 
+        this._currentBoxIndex = targetBoxIndex;
+        this._currentOffset = targetOffset;
         this._applyPosition(targetBoxIndex, targetOffset);
 
         // Keep clock in desired position if other items are added/reordered
         this._signals = this._panelBoxes.map(box => {
             return box.connect('child-added', () => {
-                if (!this._repositioning) {
-                    this._applyPosition(targetBoxIndex, targetOffset);
+                if (!this._repositioning && this._currentBoxIndex >= 0) {
+                    this._applyPosition(this._currentBoxIndex, this._currentOffset);
                 }
             });
         });
+    }
+
+    reposition(targetBoxIndex = 0, targetOffset = 0) {
+        if (targetBoxIndex < 0) {
+            this.disable();
+            return;
+        }
+
+        if (!this._dateMenu) {
+            this.enable(targetBoxIndex, targetOffset);
+            return;
+        }
+
+        this._currentBoxIndex = targetBoxIndex;
+        this._currentOffset = targetOffset;
+        this._applyPosition(targetBoxIndex, targetOffset);
     }
 
     _applyPosition(targetBoxIndex, targetOffset) {
@@ -103,6 +127,7 @@ export class TahoeClockManager {
         this._dateMenu = null;
         this._originalBox = null;
         this._panelBoxes = null;
+        this._currentBoxIndex = -1;
     }
 }
 

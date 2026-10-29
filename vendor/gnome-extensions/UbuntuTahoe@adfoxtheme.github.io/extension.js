@@ -15,6 +15,7 @@ export default class UbuntuTahoeExtension extends Extension {
         this._kimpanelManager = null;
         this._blurManager = null;
         this._suiteSettings = null;
+        this._settingsChangedIds = [];
     }
 
     _getSchemaSettings(schemaId) {
@@ -43,111 +44,161 @@ export default class UbuntuTahoeExtension extends Extension {
         console.log('[UbuntuTahoe] Enabling macOS Tahoe suite...');
         this._suiteSettings = this.getSettings();
 
-        // 1. Clock Position (Move to right box, offset 20)
+        // 1. Clock Position
+        this._updateClock();
+
+        // 2. Activities Button
+        this._updateActivities();
+
+        // 3. Global Menu
+        this._updateGlobalMenu();
+
+        // 4. Input Method Panel (Kimpanel)
+        this._updateKimpanel();
+
+        // 5. Blur
+        this._updateBlur();
+
+        // Listen for live setting changes
+        this._settingsChangedIds = [
+            this._suiteSettings.connect('changed::clock-position', () => this._updateClock()),
+            this._suiteSettings.connect('changed::clock-offset', () => this._updateClock()),
+            this._suiteSettings.connect('changed::hide-activities', () => this._updateActivities()),
+            this._suiteSettings.connect('changed::enable-globalmenu', () => this._updateGlobalMenu()),
+            this._suiteSettings.connect('changed::enable-kimpanel', () => this._updateKimpanel()),
+            this._suiteSettings.connect('changed::enable-blur', () => this._updateBlur()),
+        ];
+
+        console.log('[UbuntuTahoe] macOS Tahoe suite enabled successfully.');
+    }
+
+    _updateClock() {
         try {
             const pos = this._suiteSettings.get_int('clock-position');
             const offset = this._suiteSettings.get_int('clock-offset');
-            this._clockManager = new TahoeClockManager();
-            this._clockManager.enable(pos, offset);
-        } catch (err) {
-            console.error('[UbuntuTahoe] Failed to reposition clock:', err);
-        }
-
-        // 2. Hide Activities button
-        try {
-            if (this._suiteSettings.get_boolean('hide-activities')) {
-                this._activitiesManager = new TahoeActivitiesManager();
-                this._activitiesManager.enable();
+            if (pos < 0) {
+                if (this._clockManager) {
+                    this._clockManager.disable();
+                    this._clockManager = null;
+                }
+                return;
+            }
+            if (!this._clockManager) {
+                this._clockManager = new TahoeClockManager();
+                this._clockManager.enable(pos, offset);
+            } else {
+                this._clockManager.reposition(pos, offset);
             }
         } catch (err) {
-            console.error('[UbuntuTahoe] Failed to hide activities:', err);
+            console.error('[UbuntuTahoe] Failed to update clock position:', err);
         }
+    }
 
-        // 3. Global Menu (Application Menu bar)
+    _updateActivities() {
         try {
-            if (this._suiteSettings.get_boolean('enable-globalmenu')) {
-                const globalMenuSettings = this._getSchemaSettings('org.gnome.shell.extensions.globalmenu');
-                this._globalMenuManager = new TahoeGlobalMenuManager(
-                    this.path,
-                    globalMenuSettings,
-                    this.metadata.uuid
-                );
-                this._globalMenuManager.enable();
+            const hide = this._suiteSettings.get_boolean('hide-activities');
+            if (hide) {
+                if (!this._activitiesManager) {
+                    this._activitiesManager = new TahoeActivitiesManager();
+                    this._activitiesManager.enable();
+                }
+            } else if (this._activitiesManager) {
+                this._activitiesManager.disable();
+                this._activitiesManager = null;
             }
         } catch (err) {
-            console.error('[UbuntuTahoe] Failed to enable Global Menu:', err);
+            console.error('[UbuntuTahoe] Failed to update activities button:', err);
         }
+    }
 
-        // 4. Input Method Panel (Kimpanel)
+    _updateGlobalMenu() {
         try {
-            if (this._suiteSettings.get_boolean('enable-kimpanel')) {
-                const kimSettings = this._getSchemaSettings('org.gnome.shell.extensions.kimpanel');
-                this._kimpanelManager = new TahoeKimpanelManager(kimSettings);
-                this._kimpanelManager.enable();
+            const enable = this._suiteSettings.get_boolean('enable-globalmenu');
+            if (enable) {
+                if (!this._globalMenuManager) {
+                    const globalMenuSettings = this._getSchemaSettings('org.gnome.shell.extensions.globalmenu');
+                    this._globalMenuManager = new TahoeGlobalMenuManager(
+                        this.path,
+                        globalMenuSettings,
+                        this.metadata.uuid
+                    );
+                    this._globalMenuManager.enable();
+                }
+            } else if (this._globalMenuManager) {
+                this._globalMenuManager.disable();
+                this._globalMenuManager = null;
             }
         } catch (err) {
-            console.error('[UbuntuTahoe] Failed to enable Kimpanel:', err);
+            console.error('[UbuntuTahoe] Failed to update Global Menu:', err);
         }
+    }
 
-        // 5. Blur (Overview & AppFolders)
+    _updateKimpanel() {
         try {
-            if (this._suiteSettings.get_boolean('enable-blur')) {
-                const blurSettings = this._getSchemaSettings('org.gnome.shell.extensions.blur-my-shell');
-                this._blurManager = new TahoeBlurManager(blurSettings);
-                this._blurManager.enable();
+            const enable = this._suiteSettings.get_boolean('enable-kimpanel');
+            if (enable) {
+                if (!this._kimpanelManager) {
+                    const kimSettings = this._getSchemaSettings('org.gnome.shell.extensions.kimpanel');
+                    this._kimpanelManager = new TahoeKimpanelManager(kimSettings);
+                    this._kimpanelManager.enable();
+                }
+            } else if (this._kimpanelManager) {
+                this._kimpanelManager.disable();
+                this._kimpanelManager = null;
             }
         } catch (err) {
-            console.error('[UbuntuTahoe] Failed to enable Blur Manager:', err);
+            console.error('[UbuntuTahoe] Failed to update Kimpanel:', err);
         }
+    }
 
-        console.log('[UbuntuTahoe] macOS Tahoe suite enabled successfully.');
+    _updateBlur() {
+        try {
+            const enable = this._suiteSettings.get_boolean('enable-blur');
+            if (enable) {
+                if (!this._blurManager) {
+                    const blurSettings = this._getSchemaSettings('org.gnome.shell.extensions.blur-my-shell');
+                    this._blurManager = new TahoeBlurManager(blurSettings);
+                    this._blurManager.enable();
+                }
+            } else if (this._blurManager) {
+                this._blurManager.disable();
+                this._blurManager = null;
+            }
+        } catch (err) {
+            console.error('[UbuntuTahoe] Failed to update Blur:', err);
+        }
     }
 
     disable() {
         console.log('[UbuntuTahoe] Disabling macOS Tahoe suite...');
 
+        if (this._settingsChangedIds && this._suiteSettings) {
+            this._settingsChangedIds.forEach(id => this._suiteSettings.disconnect(id));
+            this._settingsChangedIds = [];
+        }
+
         if (this._blurManager) {
-            try {
-                this._blurManager.disable();
-            } catch (err) {
-                console.error('[UbuntuTahoe] Error disabling blur:', err);
-            }
+            try { this._blurManager.disable(); } catch (err) { console.error('[UbuntuTahoe] Error disabling blur:', err); }
             this._blurManager = null;
         }
 
         if (this._kimpanelManager) {
-            try {
-                this._kimpanelManager.disable();
-            } catch (err) {
-                console.error('[UbuntuTahoe] Error disabling kimpanel:', err);
-            }
+            try { this._kimpanelManager.disable(); } catch (err) { console.error('[UbuntuTahoe] Error disabling kimpanel:', err); }
             this._kimpanelManager = null;
         }
 
         if (this._globalMenuManager) {
-            try {
-                this._globalMenuManager.disable();
-            } catch (err) {
-                console.error('[UbuntuTahoe] Error disabling global menu:', err);
-            }
+            try { this._globalMenuManager.disable(); } catch (err) { console.error('[UbuntuTahoe] Error disabling global menu:', err); }
             this._globalMenuManager = null;
         }
 
         if (this._activitiesManager) {
-            try {
-                this._activitiesManager.disable();
-            } catch (err) {
-                console.error('[UbuntuTahoe] Error restoring activities:', err);
-            }
+            try { this._activitiesManager.disable(); } catch (err) { console.error('[UbuntuTahoe] Error restoring activities:', err); }
             this._activitiesManager = null;
         }
 
         if (this._clockManager) {
-            try {
-                this._clockManager.disable();
-            } catch (err) {
-                console.error('[UbuntuTahoe] Error restoring clock position:', err);
-            }
+            try { this._clockManager.disable(); } catch (err) { console.error('[UbuntuTahoe] Error restoring clock position:', err); }
             this._clockManager = null;
         }
 

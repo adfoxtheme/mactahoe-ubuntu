@@ -1,9 +1,14 @@
-# MacTahoe cho GNOME
+# MacTahoe CachyOS
 
-Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng độc quyền dành cho môi trường GNOME.
+Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng tối ưu hóa đặc biệt cho **CachyOS**, **Arch Linux** và môi trường **GNOME Shell 51+**.
+
+> [!TIP]
+> **Bản Fork MacTahoe CachyOS & GNOME Shell 51+ (bởi 1440isme):**
+> Hỗ trợ tương thích toàn diện GNOME 51+, hỗ trợ đa màn hình (chuyển widget sang màn hình 2), tùy biến topbar linh hoạt (bật/tắt Global Menu, đặt đồng hồ giữa), tìm kiếm tọa độ thời tiết tự động và tích hợp trình quản lý Clipboard (<kbd>Super</kbd> + <kbd>V</kbd>). Xem chi tiết tại [docs/CACHYOS_GNOME51_CHANGELOG.md](docs/CACHYOS_GNOME51_CHANGELOG.md).
 
 > [!NOTE]
 > **Hệ điều hành hỗ trợ & đã kiểm thử thực tế (Tested):**
+> - **CachyOS / Arch Linux** (GNOME 48 – GNOME 51+)
 > - **Ubuntu 26.04** (GNOME 48 trở lên)
 > - **Debian 13 (Trixie)** (GNOME 48 trở lên)
 > - **Fedora 40, 41, 42+** (GNOME 48 trở lên)
@@ -72,7 +77,7 @@ Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng đ
 Mở Terminal ở bất kỳ thư mục nào, dán nguyên lệnh này để tải repo rồi tự động cài đặt:
 
 ```bash
-cd "$HOME" && if [ -d mactahoe-ubuntu/.git ]; then git -C mactahoe-ubuntu pull --ff-only; else git clone https://github.com/adfoxtheme/mactahoe-ubuntu.git mactahoe-ubuntu; fi && cd "$HOME/mactahoe-ubuntu" && ./install.sh
+cd "$HOME" && if [ -d mactahoe-cachyos/.git ]; then git -C mactahoe-cachyos pull --ff-only; else git clone -b cachyos-support https://github.com/1440isme/mactahoe-cachyos.git mactahoe-cachyos; fi && cd "$HOME/mactahoe-cachyos" && ./install.sh
 ```
 
 ### Cập nhật mã nguồn mới & Cài đặt lại (Update & Reinstall)
@@ -80,7 +85,8 @@ cd "$HOME" && if [ -d mactahoe-ubuntu/.git ]; then git -C mactahoe-ubuntu pull -
 Khi repo có bản cập nhật mới (như thêm tính năng cho thanh Dock, tiện ích Widgets, ứng dụng mới hoặc sửa lỗi), dán lệnh sau vào Terminal để tự động kéo code mới nhất từ GitHub và cài đặt lại ngay lập tức:
 
 ```bash
-cd "$HOME/mactahoe-ubuntu" && git pull && ./install.sh
+(cd "$HOME/mactahoe-cachyos" 2>/dev/null || cd "$HOME/mactahoe-ubuntu") && git pull && ./install.sh
+```
 ```
 
 Sau khi cài xong, đăng xuất (Log out) rồi đăng nhập lại để GNOME nạp phiên bản mới của các tiện ích mở rộng.

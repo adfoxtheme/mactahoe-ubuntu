@@ -96,11 +96,30 @@ function sendGetRequest(url) {
     });
 }
 
+export async function resolveCoordinates(cityName) {
+    try {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=5&language=vi&format=json`;
+        const data = await sendGetRequest(url);
+        if (data && data.results && data.results.length > 0) {
+            return data.results.map(r => ({
+                name: r.name,
+                lat: r.latitude,
+                lon: r.longitude,
+                country: r.country || '',
+                admin1: r.admin1 || '',
+            }));
+        }
+    } catch (e) {
+        console.warn('[UbuntuTahoeWidgets] Geocoding lookup error:', e.message);
+    }
+    return [];
+}
+
 export async function fetchWeather(settings) {
     const apiKey = (settings.weatherApiKey || '').trim();
-    const city = (settings.weatherCity || 'Hà Nội').trim();
-    const lat = settings.weatherLat || 21.0285;
-    const lon = settings.weatherLon || 105.8542;
+    let city = (settings.weatherCity || 'Hà Nội').trim();
+    let lat = settings.weatherLat ?? 21.0285;
+    let lon = settings.weatherLon ?? 105.8542;
 
     const now = new Date();
     const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
@@ -144,7 +163,27 @@ export async function fetchWeather(settings) {
         }
     }
 
-    // 2. Fallback to Open-Meteo
+    // 2. Open-Meteo Mode (Free, no API key):
+    // Check if coordinates need geocoding (e.g. if city name was changed but lat/lon still default Hanoi)
+    const isDefaultHanoiCoords = Math.abs(lat - 21.0285) < 0.005 && Math.abs(lon - 105.8542) < 0.005;
+    const isHanoiName = city.toLowerCase().includes('hà nội') || city.toLowerCase().includes('hanoi');
+    if ((isDefaultHanoiCoords && !isHanoiName) || !lat || !lon) {
+        const results = await resolveCoordinates(city);
+        if (results.length > 0) {
+            lat = results[0].lat;
+            lon = results[0].lon;
+            city = results[0].name;
+            if (settings._settings && typeof settings._settings.set_double === 'function') {
+                try {
+                    settings._settings.set_double('weather-lat', lat);
+                    settings._settings.set_double('weather-lon', lon);
+                    settings._settings.set_string('weather-city', city);
+                } catch (_) {}
+            }
+        }
+    }
+
+    // Fetch accurate forecast using exact latitude and longitude
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FHo_Chi_Minh`;
         const data = await sendGetRequest(url);

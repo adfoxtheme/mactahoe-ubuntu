@@ -81,8 +81,9 @@ for path in .local/bin/mactahoe-icon-manager \
 done
 
 # 4. Gỡ extension GNOME Shell
-for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io \
-    UbuntuTahoeWidgets@adfoxtheme.github.io \
+for uuid in user-theme@gnome-shell-extensions.gcampax.github.com \
+    UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io \
+    UbuntuTahoeWidgets@adfoxtheme.github.io clipboard-indicator@tudmotu.com \
     blur-my-shell@aunetx globalmenu@ShiroOSL.github.io \
     just-perfection-desktop@just-perfection kimpanel@kde.org; do
     gnome-extensions disable "$uuid" 2>/dev/null || true
@@ -95,6 +96,7 @@ for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.i
 done
 gnome-extensions enable ubuntu-dock@ubuntu.com 2>/dev/null || true
 gnome-extensions enable dash-to-dock@micxgx.gmail.com 2>/dev/null || true
+gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Super>v', '<Super>m']" 2>/dev/null || true
 
 # 6. Đóng và khôi phục cấu hình Firefox
 for firefox_process in firefox firefox-bin firefox-esr; do
@@ -285,6 +287,7 @@ elif [ -n "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/pacman-tracking-legacy" ]; then
         if [ "${#installed_legacy_pacman_packages[@]}" -gt 0 ]; then
             sudo pacman -R --noconfirm "${installed_legacy_pacman_packages[@]}" || true
         fi
+    fi
     fi
 elif [ -n "$BACKUP_DIR" ] && [ -f "$BACKUP_DIR/dnf-packages-installed-by-mactahoe" ]; then
     mapfile -t dnf_packages_to_remove < <(

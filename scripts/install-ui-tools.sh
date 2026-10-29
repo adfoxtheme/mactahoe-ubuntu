@@ -6,15 +6,17 @@ if [ ! -r /etc/os-release ]; then
     exit 1
 fi
 . /etc/os-release
-if [ "${ID:-}" != ubuntu ]; then
-    printf 'This installer currently supports Ubuntu only.\n' >&2
+distribution_id="${ID:-}"
+id_like="${ID_LIKE:-}"
+
+if [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$id_like" =~ (arch|cachyos) ]]; then
+    sudo pacman -S --needed gnome-tweaks extension-manager
+elif [ "$distribution_id" = fedora ]; then
+    sudo dnf install -y gnome-tweaks gnome-extensions-app
+elif [ "$distribution_id" = ubuntu ] || [ "$distribution_id" = debian ]; then
+    sudo apt-get update
+    sudo apt-get install -y gnome-tweaks gnome-shell-extension-manager
+else
+    printf 'Unsupported distribution: %s\n' "$distribution_id" >&2
     exit 1
 fi
-
-if ! command -v apt-get >/dev/null 2>&1; then
-    printf 'Package manager apt-get was not found.\n' >&2
-    exit 1
-fi
-
-sudo apt-get update
-sudo apt-get install -y gnome-tweaks gnome-shell-extension-manager

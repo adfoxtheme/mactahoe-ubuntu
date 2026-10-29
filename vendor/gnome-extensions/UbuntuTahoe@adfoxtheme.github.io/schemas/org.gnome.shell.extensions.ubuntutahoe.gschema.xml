@@ -8,25 +8,25 @@
     </key>
 
     <key name="clock-position" type="i">
-      <default>1</default>
+      <default>0</default>
       <summary>Clock panel box position</summary>
-      <description>0 for center, 1 for right, 2 for left</description>
+      <description>-1 for untouched, 0 for center (GNOME default), 1 for right (macOS), 2 for left</description>
     </key>
 
     <key name="clock-offset" type="i">
-      <default>20</default>
+      <default>0</default>
       <summary>Clock offset inside panel box</summary>
       <description>Index offset of clock inside target panel box</description>
     </key>
 
     <key name="hide-activities" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Hide Activities button</summary>
       <description>Hide the default GNOME Activities button</description>
     </key>
 
     <key name="enable-globalmenu" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Enable Global Menu</summary>
       <description>Show macOS-style application menu on panel</description>
     </key>
@@ -38,7 +38,7 @@
     </key>
 
     <key name="enable-kimpanel" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Enable Kimpanel</summary>
       <description>Enable Input Method Panel</description>
     </key>

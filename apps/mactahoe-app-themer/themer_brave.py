@@ -135,6 +135,15 @@ def ensure_system_gtk3_theme():
         print(f"[Brave Themer] Could not update {USER_GTK3_SETTINGS}: {e}")
 
 
+def is_brave_running():
+    import subprocess
+    try:
+        out = subprocess.check_output(["pgrep", "-u", str(os.getuid()), "brave"]).decode().strip()
+        return bool(out)
+    except Exception:
+        return False
+
+
 def apply_brave_theme():
     """Apply MacTahoe GTK theming to all detected Brave installations."""
     status = detect_brave()
@@ -145,6 +154,7 @@ def apply_brave_theme():
     ensure_system_gtk3_theme()
 
     updated_count = 0
+    running = is_brave_running()
 
     for inst in status["installations"]:
         cfg = inst["config_dir"]
@@ -193,9 +203,13 @@ def apply_brave_theme():
 
         updated_count += 1
 
+    msg = f"Đã kết nối giao diện GTK MacTahoe cho Brave ({status['type_str']})!"
+    if running:
+        msg += " Hãy đóng và mở lại Brave để nạp giao diện mới."
+
     return {
         "success": True,
-        "message": f"Đã kết nối giao diện GTK MacTahoe cho Brave ({status['type_str']})!",
+        "message": msg,
         "count": updated_count,
     }
 

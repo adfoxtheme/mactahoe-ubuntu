@@ -27,6 +27,12 @@
       <description>Bật hoặc tắt widget theo dõi thời gian và nhắc nhở nghỉ ngơi</description>
     </key>
 
+    <key name="target-monitor" type="i">
+      <default>-1</default>
+      <summary>Màn hình hiển thị widget</summary>
+      <description>-1 cho màn hình chính (Primary), 1 cho màn hình thứ 2, 0 cho màn hình 1, 2 cho màn hình 3, v.v.</description>
+    </key>
+
     <key name="weather-api-key" type="s">
       <default>""</default>
       <summary>OpenWeather API Key</summary>

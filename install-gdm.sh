@@ -14,16 +14,17 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 if [ ! -r /etc/os-release ] || ! command -v gsettings >/dev/null 2>&1; then
-    printf 'This installer requires Ubuntu, Debian, Fedora, or CachyOS/Arch and a running GNOME session.\n' >&2
+    printf 'This installer requires a supported distribution and a running GNOME session.\n' >&2
     exit 1
 fi
 . /etc/os-release
 distribution_id="${ID:-}"
-distribution_like="${ID_LIKE:-}"
-if [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && \
-   [ "$distribution_id" != fedora ] && [ "$distribution_id" != cachyos ] && \
-   [ "$distribution_id" != arch ] && [[ ! "$distribution_like" =~ arch ]]; then
-    printf 'This installer currently supports Ubuntu, Debian, Fedora, and CachyOS/Arch; detected %s (%s).\n' \
+id_like="${ID_LIKE:-}"
+is_arch=false
+if [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$id_like" =~ (arch|cachyos) ]]; then
+    is_arch=true
+elif [ "$distribution_id" != ubuntu ] && [ "$distribution_id" != debian ] && [ "$distribution_id" != fedora ]; then
+    printf 'This installer currently supports Ubuntu, Debian, Fedora, Arch Linux, and CachyOS; detected %s (%s).\n' \
         "${PRETTY_NAME:-unknown}" "$distribution_id" >&2
     exit 1
 fi
@@ -36,8 +37,7 @@ if ! [[ "$shell_major" =~ ^[0-9]+$ ]] || [ "$shell_major" -lt 48 ]; then
     exit 1
 fi
 if ! command -v gdm >/dev/null 2>&1 && ! command -v gdm3 >/dev/null 2>&1 && \
-   [ ! -x /usr/sbin/gdm ] && [ ! -x /usr/sbin/gdm3 ] && \
-   [ ! -x /usr/bin/gdm ] && [ ! -x /usr/bin/gdm3 ]; then
+   [ ! -x /usr/sbin/gdm ] && [ ! -x /usr/sbin/gdm3 ]; then
     printf 'GDM is not installed; refusing to change the active display manager.\n' >&2
     exit 1
 fi
@@ -59,14 +59,26 @@ if [ "$distribution_id" = fedora ]; then
         GDM_RESOURCE=/usr/share/gnome-shell/gnome-shell-theme.gresource
     fi
     sudo dnf install -y "${packages[@]}"
-elif [ "$distribution_id" = cachyos ] || [ "$distribution_id" = arch ] || [[ "$distribution_like" =~ arch ]]; then
-    packages=(glib2 glib2-devel sassc)
+elif [ "$is_arch" = true ]; then
+    packages=(glib2 sassc)
     if [ -f /usr/share/gnome-shell/theme/gnome-shell-theme.gresource ]; then
         GDM_RESOURCE=/usr/share/gnome-shell/theme/gnome-shell-theme.gresource
     else
         GDM_RESOURCE=/usr/share/gnome-shell/gnome-shell-theme.gresource
     fi
-    sudo pacman -S --needed --noconfirm "${packages[@]}"
+    to_install=()
+    for pkg in "${packages[@]}"; do
+        if ! pacman -Q "$pkg" >/dev/null 2>&1; then
+            to_install+=("$pkg")
+        fi
+    done
+    if [ ${#to_install[@]} -gt 0 ]; then
+        if [ -t 0 ] || sudo -n true 2>/dev/null; then
+            sudo pacman -S --needed --noconfirm "${to_install[@]}" || true
+        else
+            printf 'Note: Root privileges required to install: %s\n' "${to_install[*]}"
+        fi
+    fi
 elif [ "$distribution_id" = ubuntu ]; then
     packages=(libglib2.0-bin libglib2.0-dev-bin sassc yaru-theme-gnome-shell)
     GDM_RESOURCE=/usr/share/gnome-shell/theme/Yaru/gnome-shell-theme.gresource

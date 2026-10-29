@@ -48,7 +48,7 @@ org.gnome.shell.extensions.blur-my-shell sigma 30
 org.gnome.shell.extensions.blur-my-shell brightness 0.6
 org.gnome.shell.extensions.ubuntutahoedock dash-max-icon-size 45
 org.gnome.shell.extensions.ubuntutahoedock click-action 'minimize'
-org.gnome.shell.extensions.ubuntutahoeclipboard toggle-menu "['<Super><Alt>space']"
+org.gnome.shell.extensions.ubuntutahoeclipboard toggle-menu ['<Super><Alt>space']
 org.gnome.shell.extensions.ubuntutahoeclipboard history-size 20
-org.gnome.shell.extensions.ubuntutahoespotlight toggle-spotlight "['<Super><Alt>f']"
+org.gnome.shell.extensions.ubuntutahoespotlight toggle-spotlight ['<Super><Alt>f']
 org.gnome.shell.extensions.ubuntutahoespotlight max-results 8

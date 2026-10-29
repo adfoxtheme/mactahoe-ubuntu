@@ -10,8 +10,8 @@ StScrollBar {
   margin: 6px;
 
   StScrollView & {
-    min-width: 8px;
-    min-height: 8px;
+    min-width: 6px;
+    min-height: 6px;
   }
 
   StBin#trough {
@@ -19,12 +19,15 @@ StScrollBar {
     background-color: $divider_color;
   }
 
-  StButton#vhandle, StButton#hhandle {
+  StButton#vhandle, StButton#hhandle,
+  StWidget#vhandle, StWidget#hhandle,
+  .vhandle, .hhandle,
+  StWidget.vhandle, StWidget.hhandle {
     border-radius: $circular_radius;
-    background-color: $hint_fg_color;
-    border: 4px solid transparent; //would be nice to margin or at least to transparent
+    background-color: -st-accent-color;
+    border: none;
 
-    &:hover { background-color: $alt_fg_color; }
-    &:active { background-color: $fg_color; }
+    &:hover { background-color: st-lighten(-st-accent-color, 15%); }
+    &:active { background-color: st-darken(-st-accent-color, 10%); }
   }
 }

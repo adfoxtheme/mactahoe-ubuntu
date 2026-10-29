@@ -86,3 +86,57 @@
 .tahoe-clip-delete-btn:active {
     background-color: rgba(255, 255, 255, 0.28);
 }
+
+/* Scrollable List Section */
+.tahoe-clip-scrollview {
+    max-height: 400px;
+    padding: 0;
+}
+
+.tahoe-clip-scrollview StScrollBar,
+.tahoe-clip-scrollbar {
+    min-width: 6px !important;
+    margin: 4px 4px 4px 2px !important;
+    padding: 0 !important;
+}
+
+/* Scrollbar Track (Trough) */
+.tahoe-clip-trough,
+.tahoe-clip-scrollview #trough,
+.tahoe-clip-scrollbar #trough {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 9999px !important;
+}
+
+/* Scrollbar Drag Handle (Thumb) */
+.tahoe-clip-handle,
+.vhandle,
+.tahoe-clip-scrollview .vhandle,
+.tahoe-clip-scrollview StWidget.vhandle,
+.tahoe-clip-scrollbar .vhandle,
+.tahoe-clip-scrollbar StWidget.vhandle,
+.tahoe-clip-scrollbar StWidget {
+    background-color: -st-accent-color !important;
+    border-radius: 9999px !important;
+    border: none !important;
+    min-height: 32px !important;
+    min-width: 5px !important;
+}
+
+.tahoe-clip-handle:hover,
+.vhandle:hover,
+.tahoe-clip-scrollview .vhandle:hover,
+.tahoe-clip-scrollview StWidget.vhandle:hover,
+.tahoe-clip-scrollbar .vhandle:hover,
+.tahoe-clip-scrollbar StWidget:hover {
+    background-color: st-lighten(-st-accent-color, 15%) !important;
+}
+
+.tahoe-clip-handle:active,
+.vhandle:active,
+.tahoe-clip-scrollview .vhandle:active,
+.tahoe-clip-scrollview StWidget.vhandle:active,
+.tahoe-clip-scrollbar .vhandle:active,
+.tahoe-clip-scrollbar StWidget:active {
+    background-color: st-darken(-st-accent-color, 10%) !important;
+}

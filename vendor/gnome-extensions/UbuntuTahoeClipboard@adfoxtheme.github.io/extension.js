@@ -8,7 +8,31 @@ import Gio from 'gi://Gio';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as AnimationUtils from 'resource:///org/gnome/shell/misc/animationUtils.js';
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+
+function scrollItemIntoView(scrollView, actor) {
+    if (!scrollView || !actor) return;
+    try {
+        if (typeof AnimationUtils?.ensureActorVisibleInScrollView === 'function') {
+            AnimationUtils.ensureActorVisibleInScrollView(scrollView, actor);
+            return;
+        }
+    } catch (e) {}
+    try {
+        const vadj = scrollView.vadjustment || scrollView.get_vscroll_bar()?.get_adjustment();
+        if (!vadj) return;
+        const [success, , y] = actor.transform_stage_point(0, 0);
+        const [sSuccess, , sY] = scrollView.transform_stage_point(0, 0);
+        if (success && sSuccess) {
+            const relY = y - sY;
+            if (relY < 0) vadj.value += relY;
+            else if (relY + actor.height > scrollView.height) {
+                vadj.value += (relY + actor.height - scrollView.height);
+            }
+        }
+    } catch (e) {}
+}
 
 const HISTORY_PATH = GLib.build_filenamev([GLib.get_user_data_dir(), 'clipboard-manager', 'history.json']);
 
@@ -186,6 +210,31 @@ class ClipboardIndicator extends PanelMenu.Button {
 
         // 3. Scrollable List Section
         this._listSection = new PopupMenu.PopupMenuSection();
+
+        this._scrollView = new St.ScrollView({
+            style_class: 'tahoe-clip-scrollview',
+            style: 'max-height: 400px;',
+            hscrollbar_policy: St.PolicyType.NEVER,
+            vscrollbar_policy: St.PolicyType.AUTOMATIC,
+            overlay_scrollbars: false,
+            child: this._listSection.box,
+        });
+        this._scrollView._delegate = this._listSection;
+        this._listSection.actor = this._scrollView;
+
+        const vscroll = this._scrollView.get_vscroll_bar();
+        if (vscroll) {
+            vscroll.add_style_class_name('tahoe-clip-scrollbar');
+            for (const child of vscroll.get_children()) {
+                if (child.name === 'trough') {
+                    child.add_style_class_name('tahoe-clip-trough');
+                } else {
+                    child.name = 'vhandle';
+                    child.add_style_class_name('tahoe-clip-handle');
+                }
+            }
+        }
+
         this.menu.addMenuItem(this._listSection);
 
         this._renderItems('');
@@ -219,6 +268,13 @@ class ClipboardIndicator extends PanelMenu.Button {
                 (target) => this._copyItem(target),
                 (target) => this._deleteItem(target)
             );
+            // Only auto-scroll when navigating via keyboard (arrow keys), NOT on mouse motion!
+            item.connect('notify::active', () => {
+                const event = Clutter.get_current_event();
+                if (item.active && event && event.type() === Clutter.EventType.KEY_PRESS) {
+                    scrollItemIntoView(this._scrollView, item);
+                }
+            });
             this._listSection.addMenuItem(item);
         });
     }

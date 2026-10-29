@@ -70,6 +70,7 @@ for path in .local/bin/mactahoe-icon-manager \
     .local/share/applications/vn.ihoan.AmLich.desktop \
     .local/share/applications/vn.ihoan.ImageCompressor.desktop \
     .local/share/applications/io.github.adfoxtheme.MacTahoeAppThemer.desktop \
+    .local/share/mactahoe-apps/mactahoe-icon-manager \
     .local/share/mactahoe-apps/am-lich-viet-nam \
     .local/share/mactahoe-apps/image-compressor \
     .local/share/mactahoe-apps/mactahoe-app-themer \

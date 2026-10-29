@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+    export GDK_BACKEND=wayland
+    unset DISPLAY XAUTHORITY
+fi
+
+APP_DIR="$HOME/.local/share/mactahoe-apps/mactahoe-icon-manager"
+if [ ! -d "$APP_DIR" ]; then
+    APP_DIR="$HOME/.local/share/mactahoe-icon-manager"
+fi
+
+exec /usr/bin/python3 "$APP_DIR/main.py" "$@"

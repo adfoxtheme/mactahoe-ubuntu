@@ -5,7 +5,6 @@ Name[vi]=Quản lý icon MacTahoe
 Comment=Set MacTahoe icons for installed and system applications
 Comment[vi]=Đổi icon MacTahoe cho ứng dụng đã cài và ứng dụng hệ thống
 Exec=mactahoe-icon-manager
-TryExec=mactahoe-icon-manager
 Icon=preferences-desktop-theme
 Terminal=false
 Categories=Settings;DesktopSettings;

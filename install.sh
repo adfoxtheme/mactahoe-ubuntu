@@ -217,18 +217,21 @@ cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist/." "$HOME/.local/share/
 cp -a "$ROOT_DIR/vendor/MacTahoe-icon-theme/cursors/dist-dark/." "$HOME/.local/share/icons/MacTahoe-dark-cursors/"
 cp -a "$ROOT_DIR/assets/wallpapers/." "$HOME/Pictures/Wallpapers/MacTahoe/"
 
-cp "$ROOT_DIR/apps/mactahoe-icon-manager" \
-    "$ROOT_DIR/apps/color-scheme-sync.sh" "$HOME/.local/bin/"
-cp "$ROOT_DIR/apps/launchers/am-lich-viet-nam" \
+cp "$ROOT_DIR/apps/color-scheme-sync.sh" "$HOME/.local/bin/"
+cp "$ROOT_DIR/apps/launchers/mactahoe-icon-manager" \
+    "$ROOT_DIR/apps/launchers/am-lich-viet-nam" \
     "$ROOT_DIR/apps/launchers/image-compressor" \
     "$ROOT_DIR/apps/launchers/mactahoe-app-themer" "$HOME/.local/bin/"
 chmod +x "$HOME/.local/bin/mactahoe-icon-manager" \
     "$HOME/.local/bin/am-lich-viet-nam" "$HOME/.local/bin/image-compressor" \
     "$HOME/.local/bin/mactahoe-app-themer" \
     "$HOME/.local/bin/color-scheme-sync.sh"
-mkdir -p "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam" \
+mkdir -p "$HOME/.local/share/mactahoe-apps/mactahoe-icon-manager" \
+    "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam" \
     "$HOME/.local/share/mactahoe-apps/image-compressor" \
     "$HOME/.local/share/mactahoe-apps/mactahoe-app-themer"
+cp -a "$ROOT_DIR/apps/mactahoe-icon-manager/." \
+    "$HOME/.local/share/mactahoe-apps/mactahoe-icon-manager/"
 cp -a "$ROOT_DIR/apps/am-lich-viet-nam/." \
     "$HOME/.local/share/mactahoe-apps/am-lich-viet-nam/"
 cp -a "$ROOT_DIR/apps/image-compressor/." \
@@ -330,7 +333,9 @@ variant = "[" + ", ".join(repr(uuid) for uuid in enabled) + "]"
 subprocess.run(["gsettings", "set", schema, key, variant], check=True)
 PY
 
-cp "$ROOT_DIR/desktop/mactahoe-icon-manager.desktop" "$HOME/.local/share/applications/"
+sed "s|^Exec=mactahoe-icon-manager$|Exec=$HOME/.local/bin/mactahoe-icon-manager|" \
+    "$ROOT_DIR/desktop/mactahoe-icon-manager.desktop" \
+    > "$HOME/.local/share/applications/mactahoe-icon-manager.desktop"
 sed "s|^Exec=am-lich-viet-nam$|Exec=$HOME/.local/bin/am-lich-viet-nam|" \
     "$ROOT_DIR/desktop/vn.ihoan.AmLich.desktop" \
     > "$HOME/.local/share/applications/vn.ihoan.AmLich.desktop"

@@ -46,7 +46,7 @@ Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng đ
 - `assets/fonts/SF-Pro/` và `assets/fonts/SF-Mono/`: font đang dùng.
 - `assets/wallpapers/`: wallpaper ngày và đêm.
 - `assets/screenshots/`: ảnh giới thiệu desktop, Overview và giao diện ứng dụng.
-- `apps/`: trình quản lý icon MacTahoe, cùng mã nguồn và test cho **Âm lịch Việt Nam** (`apps/am-lich-viet-nam/`), **Nén ảnh** (`apps/image-compressor/`) và **Giao diện ứng dụng** (`apps/mactahoe-app-themer/`).
+- `apps/`: các ứng dụng GTK4 gồm **Quản lý icon** (`apps/mactahoe-icon-manager/`), **Âm lịch Việt Nam** (`apps/am-lich-viet-nam/`), **Nén ảnh** (`apps/image-compressor/`) và **Giao diện ứng dụng** (`apps/mactahoe-app-themer/`).
 - `desktop/`: launcher ứng dụng.
 - `vendor/gnome-extensions/`: các tiện ích độc quyền gồm giao diện hợp nhất **UbuntuTahoe**, thanh dock macOS **UbuntuTahoeDock** (có sẵn icon Launchpad), bộ widget desktop Native **UbuntuTahoeWidgets** (thay thế hoàn toàn Conky, tích hợp OpenWeather) và quản lý bảng nhớ tạm **UbuntuTahoeClipboard** (lưu 20 mục gần nhất, tìm kiếm và phím tắt Win + Alt + Space).
 - `docs/extension-settings/current-gnome-extensions.md`: các extension đang bật và cấu hình Blur/My Shell, Global Menu trên máy.

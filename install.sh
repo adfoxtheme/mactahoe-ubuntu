@@ -352,7 +352,9 @@ sed "s|^Exec=mactahoe-app-themer$|Exec=$HOME/.local/bin/mactahoe-app-themer|" \
     > "$HOME/.local/share/applications/io.github.adfoxtheme.MacTahoeAppThemer.desktop"
 cp "$ROOT_DIR/systemd/color-scheme-sync.service" "$HOME/.config/systemd/user/"
 systemctl --user daemon-reload
-systemctl --user enable --now color-scheme-sync.service
+# reenable drops the old default.target link left by earlier installs
+systemctl --user reenable color-scheme-sync.service
+systemctl --user start color-scheme-sync.service
 
 # Khởi tạo profile mặc định nếu Firefox (DEB/APT/RPM/Pacman) chưa từng mở
 if [ -f /etc/debian_version ] || [ -f /etc/fedora-release ] || [ -f /etc/arch-release ] || [ -f /etc/cachyos-release ] || \

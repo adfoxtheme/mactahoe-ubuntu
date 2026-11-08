@@ -1,0 +1,1443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.ubuntutahoeglass" path="/org/gnome/shell/extensions/ubuntutahoeglass/">
+
+    <key name="preferences-advanced" type="b">
+      <default>false</default>
+      <summary>Show advanced preferences</summary>
+      <description>Choose between shared controls and individual surface settings.</description>
+    </key>
+
+    <key name="enable-dock-glass" type="b">
+      <default>true</default>
+      <summary>Enable glass effect for Dock</summary>
+      <description>Whether to apply the liquid glass effect to the dash to dock.</description>
+    </key>
+    <key name="dock-glass-expand" type="i">
+      <default>0</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="dock-margin-bottom" type="i">
+      <default>0</default>
+      <summary>Bottom margin</summary>
+    </key>
+    <key name="dock-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="dock-tint-strength" type="d">
+      <default>0.12</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="dock-blur-radius" type="i">
+      <default>4</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="dock-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the overall brightness of the dock.</description>
+    </key>
+    <key name="dock-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the dock.</description>
+    </key>
+    <key name="dock-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the dock.</description>
+    </key>
+    <key name="dock-corner-radius" type="d">
+      <default>24.0</default>
+      <summary>Corner radius</summary>
+    </key>
+
+    <key name="enable-menu-glass" type="b">
+      <default>true</default>
+      <summary>Enable glass effect for Menus</summary>
+    </key>
+    <key name="menu-glass-expand" type="i">
+      <default>12</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="enable-menu-animation" type="b">
+      <default>true</default>
+      <summary>Enable menu animation</summary>
+    </key>
+    <key name="menu-grow-from-button" type="b">
+      <default>true</default>
+      <summary>Grow the menu out of its button</summary>
+      <description>While animations are on, the glass leaves the button as a drop and stretches into the menu, and goes back into the button when the menu closes.</description>
+    </key>
+    <key name="menu-morph-speed" type="d">
+      <default>1.0</default>
+      <summary>Menu morph speed</summary>
+      <description>How fast the menu grows out of the button, and how fast it shrinks back into it. Default speed is 1.0</description>
+    </key>
+    <key name="menu-spring-stiffness" type="d">
+      <default>120.0</default>
+      <summary>Spring stiffness</summary>
+    </key>
+    <key name="menu-spring-damping" type="d">
+      <default>22.0</default>
+      <summary>Spring damping</summary>
+    </key>
+    <key name="menu-spring-mass" type="d">
+      <default>1.0</default>
+      <summary>Spring mass</summary>
+    </key>
+    <key name="menu-animation-interval-ms" type="i">
+      <range min="0" max="50"/>
+      <default>16</default>
+      <summary>Animation interval (ms)</summary>
+      <description>Minimum time between open/close animation updates. The animation is driven by the frame clock, so anything up to one frame (16) means every frame; 33 and 50 cap it at 30 and 20 fps.</description>
+    </key>
+    <key name="menu-x-offset" type="i">
+      <default>0</default>
+      <summary>X offset</summary>
+    </key>
+    <key name="menu-y-offset" type="i">
+      <default>17</default> <summary>Y offset</summary>
+    </key>
+    <key name="menu-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Enable adaptive text color</summary>
+    </key>
+    <key name="menu-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>Which text color to settle on when the background does not clearly favour either one: "auto", "light" or "dark".</description>
+    </key>
+    <key name="menu-sample-per-element" type="b">
+      <default>false</default>
+      <summary>Sample per element</summary>
+    </key>
+    <key name="menu-sample-interval-ms" type="i">
+      <default>400</default>
+      <summary>Sample interval (ms)</summary>
+    </key>
+    <key name="menu-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="menu-tint-strength" type="d">
+      <default>0.20</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="menu-blur-radius" type="i">
+      <default>8</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="enable-keyboard-menu-glass" type="b">
+      <default>true</default>
+      <summary>Keyboard layout menu</summary>
+      <description>Applies the panel menu glass to the keyboard layout menu, when that indicator is present.</description>
+    </key>
+    <key name="enable-vitals-menu-glass" type="b">
+      <default>true</default>
+      <summary>Vitals menu</summary>
+      <description>Applies the panel menu glass to the Vitals extension menu, when that extension is running.</description>
+    </key>
+    <key name="enable-extra-menu-glass" type="b">
+      <default>true</default>
+      <summary>Glass for additional top panel menus</summary>
+      <description>Automatically apply glass to detected panel dropdowns. Calendar and Quick Settings have separate controls.</description>
+    </key>
+    <key name="enable-dump-shortcut" type="b">
+      <default>false</default>
+      <summary>Enable the diagnostic dump shortcut</summary>
+      <description>Registers dump-loop-keybinding (Ctrl+Alt+L by default). Off by default so it cannot collide with the user's own shortcuts; turn it on only when capturing a problem for a bug report.</description>
+    </key>
+    <key name="dump-loop-keybinding" type="as">
+      <default><![CDATA[['<Control><Alt>l']]]></default>
+      <summary>Toggle the periodic diagnostic dump</summary>
+      <description>Starts a 100 ms interval dump of every live glass into the journal for 60 seconds, or stops one already running.</description>
+    </key>
+    <key name="disabled-extra-menus" type="as">
+      <default>[]</default>
+      <summary>Panel menus excluded from glass</summary>
+      <description>Panel indicator names disabled individually in preferences.</description>
+    </key>
+    <key name="enable-blur-my-shell" type="b">
+      <default>false</default>
+      <summary>Blur my Shell</summary>
+      <description>Whether the extension is enabled.</description>
+    </key>
+    <key name="blur-my-shell-popup-blur" type="b">
+      <default>false</default>
+      <summary>Blur my Shell is blurring popups</summary>
+      <description>Written by the shell at runtime while Blur my Shell blurs popups and Liquid Glass draws glass there, so the preferences window can warn that the blur shows through the glass.</description>
+    </key>
+    <key name="blur-my-shell-panel-blur" type="b">
+      <default>false</default>
+      <summary>Blur my Shell is blurring the panel</summary>
+      <description>Written by the shell at runtime while Blur my Shell blurs the panel and Liquid Glass draws glass there, so the preferences window can warn that the blur shows through the glass.</description>
+    </key>
+    <key name="blur-my-shell-dock-blur" type="b">
+      <default>false</default>
+      <summary>Blur my Shell is blurring the dock</summary>
+      <description>Written by the shell at runtime while Blur my Shell blurs the dock and Liquid Glass draws glass there, so the preferences window can warn that the blur shows through the glass.</description>
+    </key>
+    <key name="blur-my-shell-applications-blur" type="b">
+      <default>false</default>
+      <summary>Blur my Shell is blurring the applications</summary>
+      <description>Written by the shell at runtime while Blur my Shell blurs the applications and Liquid Glass draws glass there, so the preferences window can warn that the blur shows through the glass.</description>
+    </key>
+    <key name="blur-my-shell-override" type="b">
+      <default>false</default>
+      <summary>Turn off Blur my Shell's blur where there is glass</summary>
+      <description>While Liquid Glass runs, it turns off Blur my Shell's blur for the parts listed in blur-my-shell-override-parts that also have glass, and turns it back on when this is off, when they lose their glass, or when Liquid Glass is turned off.</description>
+    </key>
+    <key name="blur-my-shell-override-parts" type="as">
+      <default>['popups', 'panel', 'dock']</default>
+      <summary>Parts of Blur my Shell to override</summary>
+      <description>Any of "popups" (menus, Quick Settings, notifications and OSDs; Blur my Shell blurs dialogs and switchers with the same setting), "panel" (the top bar), "dock" (Dash to Dock) and "applications" (application windows).</description>
+    </key>
+    <key name="blur-my-shell-overridden" type="as">
+      <default>[]</default>
+      <summary>Blur my Shell parts turned off by Liquid Glass</summary>
+      <description>Written by the shell at runtime: the parts whose blur Liquid Glass turned off and turns back on, kept here so that a restart of the shell still turns them back on.</description>
+    </key>
+    <key name="detected-extra-menus" type="as">
+      <default>[]</default>
+      <summary>Detected optional panel menus</summary>
+      <description>Written by the shell at runtime so the preferences window can offer a toggle only for menus that actually exist.</description>
+    </key>
+    <key name="enable-panel-menu-animation" type="b">
+      <default>false</default>
+      <summary>Enable panel menu animation</summary>
+    </key>
+    <key name="panel-menu-grow-from-button" type="b">
+      <default>true</default>
+      <summary>Grow the menu out of its button</summary>
+      <description>While animations are on, the glass leaves the button as a drop and stretches into the menu, and goes back into the button when the menu closes.</description>
+    </key>
+    <key name="panel-menu-morph-speed" type="d">
+      <default>1.0</default>
+      <summary>Menu morph speed</summary>
+      <description>How fast the menu grows out of the button, and how fast it shrinks back into it. Default speed is 1.0</description>
+    </key>
+    <key name="panel-menu-spring-stiffness" type="d">
+      <default>120.0</default>
+      <summary>Spring stiffness</summary>
+    </key>
+    <key name="panel-menu-spring-damping" type="d">
+      <default>22.0</default>
+      <summary>Spring damping</summary>
+    </key>
+    <key name="panel-menu-spring-mass" type="d">
+      <default>1.0</default>
+      <summary>Spring mass</summary>
+    </key>
+    <key name="panel-menu-animation-interval-ms" type="i">
+      <range min="0" max="50"/>
+      <default>16</default>
+      <summary>Animation interval (ms)</summary>
+      <description>Minimum time between open/close animation updates. The animation is driven by the frame clock, so anything up to one frame (16) means every frame; 33 and 50 cap it at 30 and 20 fps.</description>
+    </key>
+    <key name="panel-menu-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="panel-menu-tint-strength" type="d">
+      <default>0.50</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="panel-menu-blur-radius" type="i">
+      <default>8</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="panel-menu-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="panel-menu-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+    </key>
+    <key name="panel-menu-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+    </key>
+    <key name="panel-menu-corner-radius" type="d">
+      <default>16.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="panel-menu-glass-expand" type="i">
+      <default>3</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="panel-menu-x-offset" type="i">
+      <default>5</default>
+      <summary>X offset</summary>
+    </key>
+    <key name="panel-menu-y-offset" type="i">
+      <default>17</default>
+      <summary>Y offset</summary>
+    </key>
+    <key name="panel-menu-scale" type="d">
+      <default>1.0</default>
+      <summary>Menu scale</summary>
+      <description>Scales the whole panel menu, including its glass, like zooming a window. 1.0 is the size GNOME renders.</description>
+    </key>
+    <key name="panel-menu-settled-height-scale" type="d">
+      <default>0.0</default>
+      <summary>Remembered Quick Settings height ratio</summary>
+      <description>Cache, not a preference. Quick Settings reports no height until it has been opened once, so the ratio can only be measured after that; it is kept here so later sessions do not have to guess. 0 means not measured yet.</description>
+    </key>
+    <key name="panel-menu-match-quick-settings-height" type="b">
+      <default>false</default>
+      <summary>Match Quick Settings height</summary>
+      <description>Scales the panel menu so its opened height matches the Quick Settings menu, so the two panel dropdowns line up. Overrides the manual scale.</description>
+    </key>
+    <key name="panel-menu-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Enable adaptive text color</summary>
+    </key>
+    <key name="panel-menu-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>Which text color to settle on when the background does not clearly favour either one: "auto", "light" or "dark".</description>
+    </key>
+    <key name="panel-menu-sample-interval-ms" type="i">
+      <default>400</default>
+      <summary>Sample interval (ms)</summary>
+    </key>
+    <key name="menu-settled-height-scale" type="d">
+      <default>0.0</default>
+      <summary>Remembered Quick Settings height ratio</summary>
+      <description>Cache, not a preference. Quick Settings reports no height until it has been opened once, so the ratio can only be measured after that; it is kept here so later sessions do not have to guess. 0 means not measured yet.</description>
+    </key>
+    <key name="menu-match-quick-settings-height" type="b">
+      <default>false</default>
+      <summary>Match Quick Settings height</summary>
+      <description>Scales the panel menu so its opened height matches the Quick Settings menu, so the two panel dropdowns line up. Overrides the manual scale.</description>
+    </key>
+    <key name="menu-scale" type="d">
+      <default>1.0</default>
+      <summary>Menu scale</summary>
+      <description>Scales the whole panel menu, including its glass, like zooming a window. 1.0 is the size GNOME renders.</description>
+    </key>
+    <key name="menu-corner-radius" type="d">
+      <default>60.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="menu-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the overall brightness of the menu.</description>
+    </key>
+    <key name="menu-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the menu.</description>
+    </key>
+    <key name="menu-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the menu.</description>
+    </key>
+
+    <key name="enable-notification-glass" type="b">
+      <default>true</default>
+      <summary>Enable glass effect for Notifications</summary>
+    </key>
+    <key name="notification-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Enable adaptive text color</summary>
+    </key>
+    <key name="notification-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>Which text color to settle on when the background does not clearly favour either one: "auto", "light" or "dark".</description>
+    </key>
+    <key name="notification-sample-per-element" type="b">
+      <default>false</default>
+      <summary>Sample per element</summary>
+    </key>
+    <key name="notification-sample-interval-ms" type="i">
+      <default>200</default>
+      <summary>Sample interval (ms)</summary>
+    </key>
+    <key name="notification-hide-safety-margin" type="i">
+      <default>7</default>
+      <summary>Hide safety margin</summary>
+    </key>
+    <key name="notification-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="notification-tint-strength" type="d">
+      <default>0.36</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="notification-blur-radius" type="i">
+      <default>10</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="notification-corner-radius" type="d">
+      <default>30.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="notification-glass-expand" type="i">
+      <default>12</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="notification-y-offset" type="i">
+      <default>10</default>
+      <summary>Y offset</summary>
+    </key>
+    <key name="notification-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the overall brightness of the notifications.</description>
+    </key>
+    <key name="notification-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the notifications.</description>
+    </key>
+    <key name="notification-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the notifications.</description>
+    </key>
+
+    <key name="enable-quick-settings-glass" type="b">
+      <default>false</default>
+      <summary>Enable glass effect for Quick Settings</summary>
+    </key>
+    <key name="quick-settings-toggle-animation" type="b">
+      <default>false</default>
+      <summary>Animate the buttons as Quick Settings opens in Individual buttons mode</summary>
+      <description>The buttons spring out of the middle of the menu, those nearest the panel button first. Follows the desktop's reduced motion setting.</description>
+    </key>
+    <key name="enable-quick-settings-animation" type="b">
+      <default>false</default>
+      <summary>Enable quick settings animation</summary>
+    </key>
+    <key name="quick-settings-grow-from-button" type="b">
+      <default>true</default>
+      <summary>Grow the menu out of its button</summary>
+      <description>While animations are on, the glass leaves the button as a drop and stretches into the menu, and goes back into it when the menu closes.</description>
+    </key>
+    <key name="quick-settings-morph-speed" type="d">
+      <default>1.0</default>
+      <summary>Menu morph speed</summary>
+      <description>How fast the menu grows out of the button, and how fast it shrinks back into it. Default speed is 1.0</description>
+    </key>
+    <key name="quick-settings-spring-stiffness" type="d">
+      <default>120.0</default>
+      <summary>Spring stiffness</summary>
+    </key>
+    <key name="quick-settings-spring-damping" type="d">
+      <default>22.0</default>
+      <summary>Spring damping</summary>
+    </key>
+    <key name="quick-settings-spring-mass" type="d">
+      <default>1.0</default>
+      <summary>Spring mass</summary>
+    </key>
+    <key name="quick-settings-animation-interval-ms" type="i">
+      <range min="0" max="50"/>
+      <default>16</default>
+      <summary>Animation interval (ms)</summary>
+      <description>Minimum time between open/close animation updates. The animation is driven by the frame clock, so anything up to one frame (16) means every frame; 33 and 50 cap it at 30 and 20 fps.</description>
+    </key>
+    <key name="quick-settings-enable-adaptive-text-color" type="b">
+      <default>false</default>
+      <summary>Enable adaptive text color</summary>
+    </key>
+    <key name="quick-settings-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>Which text color to settle on when the background does not clearly favour either one: "auto", "light" or "dark".</description>
+    </key>
+    <key name="quick-settings-sample-per-element" type="b">
+      <default>false</default>
+      <summary>Sample per element</summary>
+    </key>
+    <key name="quick-settings-sample-interval-ms" type="i">
+      <default>400</default>
+      <summary>Sample interval (ms)</summary>
+    </key>
+    <key name="quick-settings-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="quick-settings-tint-strength" type="d">
+      <default>0.36</default>
+      <summary>Custom color strength</summary>
+      <description>How strongly quick-settings-tint-color is applied. Independent of quick-settings-toggle-tint-strength.</description>
+    </key>
+    <key name="quick-settings-blur-radius" type="i">
+      <default>5</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="quick-settings-corner-radius" type="d">
+      <default>24.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="quick-settings-glass-expand" type="i">
+      <default>0</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="quick-settings-y-offset" type="i">
+      <default>0</default>
+      <summary>Y offset</summary>
+    </key>
+    <key name="quick-settings-x-offset" type="i">
+      <default>0</default>
+      <summary>X offset</summary>
+    </key>
+    <key name="quick-settings-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the overall brightness of the quick settings.</description>
+    </key>
+    <key name="quick-settings-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the quick settings.</description>
+    </key>
+    <key name="quick-settings-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the quick settings.</description>
+    </key>
+    <key name="quick-settings-apply-to" type="i">
+      <default>1</default>
+      <summary>Apply glass effect to</summary>
+      <description>0 = Background (whole panel), 1 = Toggles (individual toggle buttons only)</description>
+    </key>
+    <key name="quick-settings-toggle-tint-strength" type="d">
+      <default>0.5</default>
+      <summary>Base color strength</summary>
+      <description>How strongly each toggle's own original color is applied, independently of quick-settings-tint-strength. 0 applies none of it, 1 applies it fully. Only used when quick-settings-apply-to is Toggles.</description>
+    </key>
+    <key name="quick-settings-toggle-corner-radius" type="d">
+      <default>18.0</default>
+      <summary>Toggle corner radius</summary>
+      <description>Corner radius applied to each individual toggle's glass shape. Only used when quick-settings-apply-to is Toggles.</description>
+    </key>
+
+    <key name="enable-osd-glass" type="b">
+      <default>true</default>
+      <summary>Enable glass effect for OSD</summary>
+    </key>
+    <key name="osd-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Enable adaptive text color</summary>
+    </key>
+    <key name="osd-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>Which text color to settle on when the background does not clearly favour either one: "auto", "light" or "dark".</description>
+    </key>
+    <key name="osd-sample-interval-ms" type="i">
+      <default>400</default>
+      <summary>Sample interval (ms)</summary>
+    </key>
+    <key name="osd-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="osd-tint-strength" type="d">
+      <default>0.12</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="osd-blur-radius" type="i">
+      <default>5</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="osd-corner-radius" type="d">
+      <default>30.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="osd-glass-expand" type="i">
+      <default>12</default>
+      <summary>Glass expand pixels</summary>
+    </key>
+    <key name="osd-y-offset" type="i">
+      <default>17</default>
+      <summary>Y offset</summary>
+    </key>
+    <key name="osd-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the overall brightness of the on-screen displays.</description>
+    </key>
+    <key name="osd-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the on-screen displays.</description>
+    </key>
+    <key name="osd-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the on-screen displays.</description>
+    </key>
+
+    <key name="enable-application-glass" type="b">
+      <default>false</default>
+      <summary>Enable glass effect for application windows</summary>
+      <description>Apply the liquid glass effect to whitelisted application windows.</description>
+    </key>
+    <key name="application-glass-all-windows" type="b">
+      <default>true</default>
+      <summary>Apply to all windows</summary>
+      <description>Apply the glass effect to all application windows, bypassing the whitelist.</description>
+    </key>
+    <key name="application-window-whitelist" type="as">
+      <default>[]</default>
+      <summary>Whitelisted window classes</summary>
+      <description>WM_CLASS names (from xprop) that receive the glass effect. Only listed windows are affected when "apply to all windows" is off.</description>
+    </key>
+    <key name="application-window-blacklist" type="as">
+      <default>[]</default>
+      <summary>Blacklisted window classes</summary>
+      <description>WM_CLASS names that never receive the glass effect. Only consulted when "apply to all windows" is on.</description>
+    </key>
+    <key name="application-corner-on-maximized" type="b">
+      <default>false</default>
+      <summary>Corner on maximized windows</summary>
+      <description>Whether the glass effect should be applied to the corners of the screen when the window is maximized.</description>
+    </key>
+    <key name="application-glass-on-maximized" type="b">
+      <default>true</default>
+      <summary>Glass on maximized windows</summary>
+      <description>Whether the glass effect should be applied to the window when it is maximized.</description>
+    </key>
+    <key name="application-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="application-tint-strength" type="d">
+      <default>0.20</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="application-blur-radius" type="i">
+      <default>12</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="application-corner-radius" type="d">
+      <default>0.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="application-custom-corner-radii" type="s">
+      <default>"{}"</default>
+      <summary>Custom corner radii per application (JSON)</summary>
+      <description>JSON mapping of wm_class or app_id to corner radius in pixels, e.g. {"google-chrome": 8, "alacritty": 0}</description>
+    </key>
+    <key name="application-content-opacity" type="d">
+      <default>0.85</default>
+      <summary>Window content opacity</summary>
+      <description>Opacity of the window content layer to let the glass effect show through (0.0 to 1.0).</description>
+    </key>
+    <key name="application-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the brightness of the glass effect behind application windows.</description>
+    </key>
+    <key name="application-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the glass effect behind application windows.</description>
+    </key>
+    <key name="application-saturation" type="d">
+      <default>1.0</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the glass effect behind application windows.</description>
+    </key>
+    <!-- The desktop's own right-click menu. It is configured separately from
+         application windows, with smaller corners and a more opaque body so
+         it stays readable. -->
+    <key name="enable-desktop-menu-glass" type="b">
+      <default>false</default>
+      <summary>Enable glass effect for the desktop menu</summary>
+      <description>Apply the liquid glass effect to the menu that opens when you right-click the desktop. Independent of the application window glass.</description>
+    </key>
+    <key name="desktop-menu-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="desktop-menu-tint-strength" type="d">
+      <default>0.20</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="desktop-menu-blur-radius" type="i">
+      <default>8</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="desktop-menu-corner-radius" type="d">
+      <default>12.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="desktop-menu-content-opacity" type="d">
+      <default>0.90</default>
+      <summary>Menu content opacity</summary>
+      <description>Opacity of the menu's own content layer to let the glass effect show through (0.0 to 1.0).</description>
+    </key>
+    <key name="desktop-menu-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+      <description>Adjusts the brightness of the glass effect behind the desktop menu.</description>
+    </key>
+    <key name="desktop-menu-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+      <description>Adjusts the contrast of the glass effect behind the desktop menu.</description>
+    </key>
+    <key name="desktop-menu-saturation" type="d">
+      <default>1.0</default>
+      <summary>Saturation</summary>
+      <description>Adjusts the saturation of the glass effect behind the desktop menu.</description>
+    </key>
+
+    <key name="glass-blur-downscale" type="i">
+      <default>2</default>
+      <summary>Blur resolution</summary>
+      <description>Divisor for the resolution the background blur is computed at. 2 = half resolution (default). 4 = quarter resolution: every blur pass touches a quarter as many pixels and uses a quarter of the texture memory, but the blur becomes visibly coarser and fine detail behind the glass is lost. Any other value is treated as 2.</description>
+    </key>
+
+    <key name="blur-method" type="i">
+      <default>0</default>
+      <summary>Blur method</summary>
+      <description>0 = Gaussian Blur (Recommended), 1 = Dual Kawase (Performance)</description>
+    </key>
+
+    <key name="glass-max-z" type="d">
+      <default>88.0</default>
+      <summary>Maximum Z depth (Thickness)</summary>
+      <description>Controls the physical thickness or depth of the glass effect.</description>
+    </key>
+
+    <key name="glass-displacement-scale" type="d">
+      <default>10.5</default>
+      <summary>Displacement scale</summary>
+      <description>Controls the strength of the light refraction distortion.</description>
+    </key>
+
+    <key name="glass-edge-smoothing" type="d">
+      <default>0.5</default>
+      <summary>Edge smoothing</summary>
+      <description>Geometry anti-aliasing feathering width for the glass edges.</description>
+    </key>
+
+    <key name="glass-profile-shape-n" type="d">
+      <default>3.6</default>
+      <summary>Profile shape N</summary>
+      <description>Controls the superellipse profile shape of the glass surface curvature.</description>
+    </key>
+
+    <key name="glass-ior" type="d">
+      <default>2.40</default>
+      <summary>Index of Refraction (IOR)</summary>
+      <description>Simulates the material's optical density (glass is typically 1.5 - 2.4).</description>
+    </key>
+
+    <key name="glass-chroma-strength" type="d">
+      <range min="0.0" max="1.0"/>
+      <default>0.0</default>
+      <summary>Chromatic aberration strength</summary>
+      <description>RGB color separation caused by refraction, as a fraction of the refraction's displacement: blue is shifted that much further than green, and red that much less.</description>
+    </key>
+
+    <key name="glass-corner-smoothing" type="d">
+      <range min="0.0" max="1.0"/>
+      <default>0.6</default>
+      <summary>Corner smoothing</summary>
+      <description>0 gives circular corners. Higher values give continuous corners whose curve starts up to (1 + value) times the corner radius from the corner, keeping the corner's midpoint in place. Application windows always keep circular corners.</description>
+    </key>
+
+    <key name="glass-backdrop-highlights" type="b">
+      <default>true</default>
+      <summary>Backdrop-colored highlights</summary>
+      <description>Tints the edge light, highlights and sheen with the color behind the glass instead of plain white.</description>
+    </key>
+
+    <key name="glass-specular-intensity" type="d">
+      <default>0.0</default>
+      <summary>Specular intensity</summary>
+      <description>The brightness of specular highlights on the glass surface.</description>
+    </key>
+    
+    <key name="glass-shininess" type="d">
+      <default>42.0</default>
+      <summary>Shininess</summary>
+      <description>Controls the sharpness of the specular reflections.</description>
+    </key>
+
+    <key name="glass-rim-width" type="d">
+      <default>2.3</default>
+      <summary>Rim light width</summary>
+      <description>The width of the rim lighting band near the edges.</description>
+    </key>
+
+    <key name="glass-rim-intensity" type="d">
+      <default>0.5</default>
+      <summary>Rim light intensity</summary>
+      <description>The overall brightness of the rim lighting.</description>
+    </key>
+
+    <key name="glass-rim-directional-power" type="d">
+      <default>1.9</default>
+      <summary>Rim directional power</summary>
+      <description>Controls how the light direction affects the rim mask.</description>
+    </key>
+
+    <key name="glass-rim-power" type="d">
+      <default>3.0</default>
+      <summary>Rim Fresnel power</summary>
+      <description>Controls the Fresnel effect falloff for the rim light.</description>
+    </key>
+
+    <key name="glass-rim-light-color-intensity" type="d">
+      <default>1.0</default>
+      <summary>Rim light color intensity</summary>
+      <description>Multiplier for the rim light color brightness.</description>
+    </key>
+
+    <key name="glass-sheen-intensity" type="d">
+      <default>0.0</default>
+      <summary>Sheen intensity</summary>
+      <description>The intensity of the background sheen across the glass surface.</description>
+    </key>
+
+    <key name="glass-light-angle-deg" type="d">
+      <default>230.0</default>
+      <summary>Light angle (Degrees)</summary>
+      <description>The directional angle of the virtual light source illuminating the glass.</description>
+    </key>
+
+    <key name="shadow-radius" type="d">
+      <default>50.0</default>
+      <summary>Drop shadow radius (px)</summary>
+      <description>How far the drop shadow extends past the glass edge. Helps the glass stay visible on light backgrounds (e.g. white). Set to 0 to disable.</description>
+    </key>
+
+    <key name="shadow-intensity" type="d">
+      <default>0.07</default>
+      <summary>Drop shadow intensity</summary>
+      <description>How dark the drop shadow is. 0.0 = invisible, 1.0 = maximum darkness. Helps the glass stay visible on light backgrounds (e.g. white).</description>
+    </key>
+
+    <key name="glass-ao-intensity" type="d">
+      <range min="0.0" max="1.0"/>
+      <default>0.65</default>
+      <summary>Inner edge AO darkening intensity</summary>
+    </key>
+    <key name="glass-ao-radius" type="d">
+      <range min="0.0" max="50.0"/>
+      <default>1.0</default>
+      <summary>Inner edge AO darkening radius (px)</summary>
+    </key>
+
+    <key name="output-logs" type="b">
+      <default>false</default>
+      <summary>Output logs</summary>
+      <description>Output logs to the terminal.</description>
+    </key>
+
+    <key name="glass-debug-diagnostics" type="b">
+      <default>false</default>
+      <summary>Per-paint render diagnostics</summary>
+      <description>Collect the per-paint state that global._lgGlass.dump() reports (backdrop copy, blur and composite rects, texture pool, blur result). This runs on every paint of every glass surface, so it costs performance even when logging is off. Leave this disabled unless you are debugging a rendering problem.</description>
+    </key>
+
+    <key name="top-bar-style" type="s">
+      <default>"off"</default>
+      <summary>Top bar glass</summary>
+      <description>"off" keeps the top bar as the theme draws it, "pill" puts one glass pill across it, "islands" puts a pill behind each of its three groups of buttons, "center" shrinks the bar to its buttons in the middle of the screen behind one pill.</description>
+    </key>
+    <key name="top-bar-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="top-bar-tint-strength" type="d">
+      <default>0.12</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="top-bar-blur-radius" type="i">
+      <default>5</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="top-bar-corner-radius" type="d">
+      <default>99.0</default>
+      <summary>Corner radius</summary>
+      <description>Anything from half the bar's height up makes round ends.</description>
+    </key>
+    <key name="top-bar-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="top-bar-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+    </key>
+    <key name="top-bar-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+    </key>
+    <key name="top-bar-margin-top" type="i">
+      <range min="0" max="100"/>
+      <default>3</default>
+      <summary>Margin top (px)</summary>
+      <description>Space between the pills and the screen's edge; the bar grows to make room for it.</description>
+    </key>
+    <key name="top-bar-margin-bottom" type="i">
+      <range min="0" max="100"/>
+      <default>3</default>
+      <summary>Margin bottom (px)</summary>
+      <description>Space between the pills and the screen's edge; the bar grows to make room for it.</description>
+    </key>
+    <key name="top-bar-margin-left" type="i">
+      <range min="0" max="100"/>
+      <default>6</default>
+      <summary>Margin left (px)</summary>
+      <description>Space between the pills and the screen's edge; the bar grows to make room for it.</description>
+    </key>
+    <key name="top-bar-margin-right" type="i">
+      <range min="0" max="100"/>
+      <default>6</default>
+      <summary>Margin right (px)</summary>
+      <description>Space between the pills and the screen's edge; the bar grows to make room for it.</description>
+    </key>
+    <key name="top-bar-padding-top" type="i">
+      <range min="0" max="100"/>
+      <default>0</default>
+      <summary>Padding top (px)</summary>
+      <description>Space between the pills' edge and the buttons inside them.</description>
+    </key>
+    <key name="top-bar-padding-bottom" type="i">
+      <range min="0" max="100"/>
+      <default>0</default>
+      <summary>Padding bottom (px)</summary>
+      <description>Space between the pills' edge and the buttons inside them.</description>
+    </key>
+    <key name="top-bar-padding-left" type="i">
+      <range min="0" max="100"/>
+      <default>4</default>
+      <summary>Padding left (px)</summary>
+      <description>Space between the pills' edge and the buttons inside them.</description>
+    </key>
+    <key name="top-bar-padding-right" type="i">
+      <range min="0" max="100"/>
+      <default>4</default>
+      <summary>Padding right (px)</summary>
+      <description>Space between the pills' edge and the buttons inside them.</description>
+    </key>
+    <key name="top-bar-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Adapt the top bar's text color to what is behind it</summary>
+    </key>
+    <key name="top-bar-sample-interval-ms" type="i">
+      <default>1000</default>
+      <summary>How often the top bar's text color is checked (ms)</summary>
+    </key>
+    <key name="top-bar-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>"light" or "dark" decides when both are equally readable; "auto" favours neither.</description>
+    </key>
+
+    <key name="enable-desktop-widgets" type="b">
+      <default>false</default>
+      <summary>Show widgets on the desktop</summary>
+    </key>
+    <key name="desktop-widgets" type="as">
+      <default>['weather', 'events', 'media']</default>
+      <summary>Desktop widgets</summary>
+      <description>Which widgets are shown: "weather", "events" (up next) and "media" (now playing).</description>
+    </key>
+    <key name="media-visualizer" type="b">
+      <default>true</default>
+      <summary>Bars that follow the sound on the Now Playing widget</summary>
+      <description>While a player plays, the widget listens to the default output and shows its loudness in five bands. GNOME shows the microphone indicator while it listens.</description>
+    </key>
+    <key name="desktop-widgets-position" type="s">
+      <default>"top-right"</default>
+      <summary>Where the widgets are stacked</summary>
+      <description>"top-left", "top-right", "bottom-left", "bottom-right" or "center" of the primary monitor. A widget that was dragged stays where it was dropped.</description>
+    </key>
+    <key name="desktop-widget-anchors" type="s">
+      <default>"{}"</default>
+      <summary>Where single widgets are stacked instead</summary>
+      <description>JSON: widget id to "top-left", "top-right", "bottom-left", "bottom-right" or "center", for the widgets put somewhere other than desktop-widgets-position from their menu.</description>
+    </key>
+    <key name="desktop-item-positions" type="s">
+      <default>"{}"</default>
+      <summary>Where desktop items were dragged</summary>
+      <description>JSON: item id to the fraction [x, y] of the work area its center was dropped at.</description>
+    </key>
+    <key name="desktop-items-first-workspace-only" type="b">
+      <default>false</default>
+      <summary>Show the glass clock and the widgets only on the first workspace</summary>
+      <description>They slide away with the first workspace when another one is shown.</description>
+    </key>
+    <key name="weather-place" type="(sdd)">
+      <default>("", 0.0, 0.0)</default>
+      <summary>Place for the weather widget</summary>
+      <description>Name, latitude and longitude of a place found in the preferences. Empty: the location set in GNOME Weather.</description>
+    </key>
+    <key name="weather-temperature-unit" type="s">
+      <default>"auto"</default>
+      <summary>Temperature unit</summary>
+      <description>"auto", "celsius" or "fahrenheit".</description>
+    </key>
+    <key name="desktop-widget-menu-animation" type="s">
+      <choices>
+        <choice value="off"/>
+        <choice value="spring"/>
+        <choice value="morph"/>
+      </choices>
+      <default>"off"</default>
+      <summary>How the menu of the desktop items opens</summary>
+      <description>"morph": the glass grows out of a drop where you clicked; "spring": the menu scales up on a spring; "off": it just appears. The speed and springs are those of the other top bar menus.</description>
+    </key>
+    <key name="desktop-widget-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="desktop-widget-tint-strength" type="d">
+      <default>0.12</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="desktop-widget-blur-radius" type="i">
+      <default>8</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="desktop-widget-corner-radius" type="d">
+      <default>28.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="desktop-widget-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="desktop-widget-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+    </key>
+    <key name="desktop-widget-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+    </key>
+    <key name="desktop-widget-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Adapt the desktop items' text color to what is behind them</summary>
+    </key>
+    <key name="desktop-widget-sample-interval-ms" type="i">
+      <default>2000</default>
+      <summary>How often the desktop items' text color is checked (ms)</summary>
+    </key>
+    <key name="desktop-widget-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>"light" or "dark" decides when both are equally readable; "auto" favours neither.</description>
+    </key>
+    <key name="enable-glass-clock" type="b">
+      <default>true</default>
+      <summary>Show a clock with glass digits on the desktop</summary>
+    </key>
+    <key name="glass-clock-position" type="s">
+      <default>"center"</default>
+      <summary>Where the glass clock is</summary>
+      <description>"top-left", "top-right", "bottom-left", "bottom-right" or "center" of the primary monitor, unless it was dragged.</description>
+    </key>
+    <key name="glass-clock-font" type="s">
+      <default>"Barlow Condensed Light"</default>
+      <summary>Font of the glass clock</summary>
+      <description>A font description without a size, such as "Cantarell Bold": one of the fonts the extension ships (Antonio, Barlow Condensed, Saira Extra Condensed, Sofia Sans Extra Condensed) with a weight (Light, Regular, SemiBold, Bold), or any installed font. Empty uses the interface font in bold.</description>
+    </key>
+    <key name="glass-clock-size" type="i">
+      <range min="48" max="960"/>
+      <default>400</default>
+      <summary>Size of the glass clock's digits (px)</summary>
+    </key>
+    <key name="glass-clock-stretch" type="d">
+      <range min="0.3" max="4.0"/>
+      <default>1.3</default>
+      <summary>Width of the glass clock's digits, relative to their height</summary>
+    </key>
+    <key name="glass-clock-tall-style" type="s">
+      <choices>
+        <choice value="even"/>
+        <choice value="upright"/>
+      </choices>
+      <default>"upright"</default>
+      <summary>How the glass clock's digits are made taller</summary>
+      <description>"even": the digits grow evenly, every stroke keeping its width. "upright": mostly their straight upright strokes grow, while curves, bars and the colon's dots keep their shape; the parts above and below a join in the middle grow alike.</description>
+    </key>
+    <key name="glass-clock-height" type="d">
+      <range min="1.0" max="3.0"/>
+      <default>2.0</default>
+      <summary>Height of the glass clock's digits, relative to the font</summary>
+      <description>Above 1 the digits are made taller as glass-clock-tall-style says, every stroke keeping its width.</description>
+    </key>
+    <key name="glass-clock-format" type="s">
+      <default>"system"</default>
+      <summary>Time format</summary>
+      <description>"system" follows the clock format in Settings, "24h" or "12h".</description>
+    </key>
+    <key name="glass-clock-show-date" type="b">
+      <default>false</default>
+      <summary>Show the date above the glass clock</summary>
+    </key>
+    <key name="glass-clock-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="glass-clock-tint-strength" type="d">
+      <default>0.24</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="glass-clock-blur-radius" type="i">
+      <default>2</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="glass-clock-brightness" type="d">
+      <default>1.15</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="glass-clock-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+    </key>
+    <key name="glass-clock-saturation" type="d">
+      <default>1.3</default>
+      <summary>Saturation</summary>
+    </key>
+
+    <key name="icon-style-dock" type="b">
+      <default>false</default>
+      <summary>Glass icons in the dock</summary>
+      <description>Redraws application icons in Dash to Dock as glass plates under a one-color symbol.</description>
+    </key>
+    <key name="icon-style-launcher" type="b">
+      <default>false</default>
+      <summary>Glass icons in the launcher</summary>
+      <description>Redraws application icons in the launcher's results as glass plates under a one-color symbol.</description>
+    </key>
+    <key name="icon-style-app-grid" type="b">
+      <default>false</default>
+      <summary>Glass icons in the app grid</summary>
+      <description>Redraws application icons in the overview's app grid, folders included, as glass plates under a one-color symbol.</description>
+    </key>
+    <key name="icon-style-mode" type="s">
+      <choices>
+        <choice value="tinted"/>
+        <choice value="mono"/>
+        <choice value="clear"/>
+      </choices>
+      <default>"tinted"</default>
+      <summary>Icon look</summary>
+      <description>tinted: plates in the icon color; mono: grey plates; clear: nearly transparent plates.</description>
+    </key>
+    <key name="icon-style-use-accent" type="b">
+      <default>true</default>
+      <summary>Icon color from the accent color</summary>
+      <description>Tints the icons in the system accent color (GNOME 47 and later) instead of icon-style-color.</description>
+    </key>
+    <key name="icon-style-color" type="s">
+      <default>"#3584e4"</default>
+      <summary>Icon color (Hex)</summary>
+    </key>
+    <key name="icon-style-tint-variant" type="s">
+      <choices>
+        <choice value="dark"/>
+        <choice value="light"/>
+      </choices>
+      <default>"light"</default>
+      <summary>Tinted icons' variant</summary>
+      <description>"dark": dark glass under a symbol in the color. "light": glass in the color under an almost white symbol.</description>
+    </key>
+    <key name="icon-style-tuning" type="a{sd}">
+      <default>{}</default>
+      <summary>Icon glass tuning</summary>
+      <description>Values that replace the numbers the icon looks are drawn with, by name.</description>
+    </key>
+    <key name="icon-style-tint-strength" type="d">
+      <range min="0" max="1"/>
+      <default>0.0</default>
+      <summary>Tint strength</summary>
+      <description>How much of the color the outer plate of a tinted icon takes, from the dark glass alone (0) to the full color (1).</description>
+    </key>
+    <key name="icon-style-size" type="d">
+      <range min="0.8" max="1.3"/>
+      <default>1.02</default>
+      <summary>Icon size</summary>
+      <description>The redrawn icons' size, as a share of the size the dock or the launcher gives them.</description>
+    </key>
+    <key name="icon-style-symbol-opacity" type="d">
+      <range min="0" max="1"/>
+      <default>1.0</default>
+      <summary>Symbol opacity</summary>
+      <description>How strongly the symbol on the plates shows.</description>
+    </key>
+    <key name="icon-style-all-apps" type="b">
+      <default>true</default>
+      <summary>Style all applications' icons</summary>
+      <description>When on, every icon is styled except those in icon-style-blacklist; when off, only those in icon-style-whitelist.</description>
+    </key>
+    <key name="icon-style-whitelist" type="as">
+      <default>[]</default>
+      <summary>Applications whose icons are styled</summary>
+      <description>Desktop file ids (and "show-apps" for the Show Apps button). Only consulted when icon-style-all-apps is off.</description>
+    </key>
+    <key name="icon-style-blacklist" type="as">
+      <default>[]</default>
+      <summary>Applications whose icons are left as they are</summary>
+      <description>Desktop file ids (and "show-apps" for the Show Apps button). Only consulted when icon-style-all-apps is on.</description>
+    </key>
+
+    <key name="enable-launcher" type="b">
+      <default>true</default>
+      <summary>Search launcher</summary>
+      <description>A search field on glass in the middle of the screen, opened with the launcher shortcut. It shows the same results as the overview's search.</description>
+    </key>
+    <key name="launcher-shortcut" type="as">
+      <default><![CDATA[['<Super><Alt>space']]]></default>
+      <summary>Shortcut that opens the launcher</summary>
+    </key>
+    <key name="launcher-tint-color" type="s">
+      <default>"#ffffff"</default>
+      <summary>Tint color (Hex)</summary>
+    </key>
+    <key name="launcher-tint-strength" type="d">
+      <default>0.5</default>
+      <summary>Tint strength</summary>
+    </key>
+    <key name="launcher-blur-radius" type="i">
+      <default>12</default>
+      <summary>Blur radius</summary>
+    </key>
+    <key name="launcher-corner-radius" type="d">
+      <default>28.0</default>
+      <summary>Corner radius</summary>
+    </key>
+    <key name="launcher-width" type="i">
+      <range min="320" max="1400"/>
+      <default>680</default>
+      <summary>Launcher width</summary>
+      <description>Width of the search field and its results, in logical pixels. The panel never grows wider than the screen.</description>
+    </key>
+    <key name="launcher-pinned-height" type="i">
+      <range min="240" max="1200"/>
+      <default>470</default>
+      <summary>Pinned items height</summary>
+      <description>The least height of the pinned items page, in logical pixels. The page scrolls past 70% of the screen's height.</description>
+    </key>
+    <key name="launcher-pinned-icon-size" type="i">
+      <range min="32" max="96"/>
+      <default>56</default>
+      <summary>Pinned icon size</summary>
+      <description>Size of the application icons on the pinned items page, in logical pixels. The page fits as many columns as its width allows and spreads the tiles over the row.</description>
+    </key>
+    <key name="launcher-brightness" type="d">
+      <default>1.0</default>
+      <summary>Brightness</summary>
+    </key>
+    <key name="launcher-contrast" type="d">
+      <default>1.0</default>
+      <summary>Contrast</summary>
+    </key>
+    <key name="launcher-saturation" type="d">
+      <default>1.5</default>
+      <summary>Saturation</summary>
+    </key>
+    <key name="launcher-enable-adaptive-text-color" type="b">
+      <default>true</default>
+      <summary>Adapt the launcher's text color to what is behind it</summary>
+    </key>
+    <key name="launcher-sample-interval-ms" type="i">
+      <default>600</default>
+      <summary>How often the launcher's text color is checked (ms)</summary>
+    </key>
+    <key name="launcher-adaptive-text-preference" type="s">
+      <default>"auto"</default>
+      <summary>Preferred text color</summary>
+      <description>"light" or "dark" decides when both are equally readable; "auto" favours neither.</description>
+    </key>
+    <key name="launcher-pinned" type="aa{ss}">
+      <default>[]</default>
+      <summary>Pinned launcher results</summary>
+      <description>Each with the search provider's id ("provider"), the result's id ("id"), and the name, description and icon it is shown with.</description>
+    </key>
+    <key name="launcher-pinned-transition" type="s">
+      <choices>
+        <choice value="morph"/>
+        <choice value="tween"/>
+      </choices>
+      <default>"morph"</default>
+      <summary>How the launcher changes to its pinned items</summary>
+      <description>"morph": the glass flows into its new shape on a spring, with the content seen deep in it; "tween": the glass eases to its new shape and the content fades.</description>
+    </key>
+    <key name="launcher-spring-response" type="d">
+      <default>0.42</default>
+      <summary>Spring response</summary>
+      <description>How fast the springs respond to changes in the menu's size.</description>
+    </key>
+    <key name="launcher-spring-damping-fraction" type="d">
+      <default>0.72</default>
+      <summary>Spring damping fraction</summary>
+      <description>How much the springs damp when they reach their target.</description>
+    </key>
+
+    <key name="dock-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Dock</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="dock-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Dock</summary>
+    </key>
+    <key name="dock-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Dock (Hex)</summary>
+    </key>
+    <key name="menu-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Calendar</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="menu-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Calendar</summary>
+    </key>
+    <key name="menu-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Calendar (Hex)</summary>
+    </key>
+    <key name="panel-menu-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Other top bar menus</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="panel-menu-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Other top bar menus</summary>
+    </key>
+    <key name="panel-menu-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Other top bar menus (Hex)</summary>
+    </key>
+    <key name="notification-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Notifications</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="notification-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Notifications</summary>
+    </key>
+    <key name="notification-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Notifications (Hex)</summary>
+    </key>
+    <key name="quick-settings-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Quick settings</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="quick-settings-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Quick settings</summary>
+    </key>
+    <key name="quick-settings-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Quick settings (Hex)</summary>
+    </key>
+    <key name="osd-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Volume and brightness</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="osd-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Volume and brightness</summary>
+    </key>
+    <key name="osd-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Volume and brightness (Hex)</summary>
+    </key>
+    <key name="application-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Application windows</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="application-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Application windows</summary>
+    </key>
+    <key name="application-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Application windows (Hex)</summary>
+    </key>
+    <key name="desktop-menu-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Desktop menu</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="desktop-menu-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Desktop menu</summary>
+    </key>
+    <key name="desktop-menu-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Desktop menu (Hex)</summary>
+    </key>
+    <key name="top-bar-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Top bar</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="top-bar-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Top bar</summary>
+    </key>
+    <key name="top-bar-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Top bar (Hex)</summary>
+    </key>
+    <key name="desktop-widget-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Desktop widgets</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="desktop-widget-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Desktop widgets</summary>
+    </key>
+    <key name="desktop-widget-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Desktop widgets (Hex)</summary>
+    </key>
+    <key name="launcher-outline-enabled" type="b">
+      <default>false</default>
+      <summary>Outline on Launcher</summary>
+      <description>Draws a line along the visible edge of the glass, inside the shadow, to make it easier to see.</description>
+    </key>
+    <key name="launcher-outline-width" type="d">
+      <default>1.0</default>
+      <range min="0.5" max="10"/>
+      <summary>Outline width on Launcher</summary>
+    </key>
+    <key name="launcher-outline-color" type="s">
+      <default>"#000000"</default>
+      <summary>Outline color on Launcher (Hex)</summary>
+    </key>
+  </schema>
+</schemalist>

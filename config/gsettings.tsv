@@ -52,3 +52,6 @@ org.gnome.shell.extensions.ubuntutahoeclipboard toggle-menu ['<Super><Alt>space'
 org.gnome.shell.extensions.ubuntutahoeclipboard history-size 20
 org.gnome.shell.extensions.ubuntutahoespotlight toggle-spotlight ['<Super><Alt>f']
 org.gnome.shell.extensions.ubuntutahoespotlight max-results 8
+org.gnome.shell.extensions.ubuntutahoeglass enable-dock-glass true
+org.gnome.shell.extensions.ubuntutahoeglass dock-blur-radius 2
+org.gnome.shell.extensions.ubuntutahoeglass dock-corner-radius 30.0

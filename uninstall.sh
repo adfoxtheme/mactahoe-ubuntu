@@ -84,7 +84,7 @@ done
 # 4. Gỡ extension GNOME Shell
 for uuid in UbuntuTahoe@adfoxtheme.github.io UbuntuTahoeDock@adfoxtheme.github.io \
     UbuntuTahoeWidgets@adfoxtheme.github.io UbuntuTahoeClipboard@adfoxtheme.github.io \
-    UbuntuTahoeSpotlight@adfoxtheme.github.io \
+    UbuntuTahoeSpotlight@adfoxtheme.github.io UbuntuTahoeGlass@adfoxtheme.github.io \
     blur-my-shell@aunetx globalmenu@ShiroOSL.github.io \
     just-perfection-desktop@just-perfection kimpanel@kde.org; do
     gnome-extensions disable "$uuid" 2>/dev/null || true
@@ -215,6 +215,7 @@ reset_gnome_settings() {
                 org.gnome.shell.extensions.ubuntutahoewidgets*) uuid=UbuntuTahoeWidgets@adfoxtheme.github.io ;;
                 org.gnome.shell.extensions.ubuntutahoeclipboard*) uuid=UbuntuTahoeClipboard@adfoxtheme.github.io ;;
                 org.gnome.shell.extensions.ubuntutahoespotlight*) uuid=UbuntuTahoeSpotlight@adfoxtheme.github.io ;;
+                org.gnome.shell.extensions.ubuntutahoeglass*) uuid=UbuntuTahoeGlass@adfoxtheme.github.io ;;
                 org.gnome.shell.extensions.ubuntutahoe*|\
                 org.gnome.shell.extensions.blur-my-shell*|\
                 org.gnome.shell.extensions.globalmenu*|\

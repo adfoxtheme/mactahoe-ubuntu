@@ -1,0 +1,31 @@
+/* Clears the shell's own background from a surface that gets glass. */
+.liquid-glass-transparent,
+.liquid-glass-transparent-keep-border {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    background-image: none !important;
+
+    /* The open and close animations are driven from JavaScript. */
+    transition: none !important;
+    transition-duration: 0ms !important;
+}
+
+.liquid-glass-transparent {
+    border: none !important;
+}
+
+.liquid-glass-transparent-keep-border {
+    border-color: transparent !important;
+}
+
+/* Dash to Dock's / UbuntuTahoeDock's own background, only while it has glass. */
+#dashtodockDashContainer.liquid-glass-transparent,
+.liquid-glass-transparent #dashtodockContainer,
+.liquid-glass-transparent .dash-background,
+.dash-background.liquid-glass-transparent,
+#dashtodockContainer .dash-background.liquid-glass-transparent {
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}

@@ -63,7 +63,7 @@ Bộ giao diện macOS Tahoe hoàn chỉnh cùng các tiện ích mở rộng đ
 - **UbuntuTahoeDock** là tiện ích Dock độc quyền chuẩn phong cách macOS Tahoe (nổi ở đáy màn hình, bo cong kính mờ, đèn báo 1 chấm tròn DOT, tự ẩn thông minh, có thanh trượt chỉnh kích thước icon). Nhờ có UbuntuTahoeDock, bộ giao diện hoàn toàn độc lập và không phụ thuộc vào Ubuntu Dock của hệ thống, tương thích mượt mà trên mọi bản phân phối Linux dùng GNOME.
 - GNOME Tweaks và Extension Manager là ứng dụng quản lý tùy chọn/extension, không phải thành phần tạo giao diện. Trình quản lý icon MacTahoe, launcher widget, **Âm lịch Việt Nam** và **Nén ảnh** được đóng gói trong repo.
 - Bộ cài cài hai ứng dụng vào menu GNOME, kèm icon và launcher; Âm lịch chạy offline, còn Nén ảnh xử lý tệp cục bộ bằng Pillow.
-- Extension được kiểm tra theo phiên bản GNOME Shell khai báo trong metadata và chỉ được bật cho lần đăng nhập tiếp theo. Bộ tiện ích độc quyền (**UbuntuTahoe**, **UbuntuTahoeDock**, **UbuntuTahoeWidgets**, **UbuntuTahoeClipboard**, **UbuntuTahoeSpotlight**, **UbuntuTahoeGlass**) tương thích toàn diện từ **GNOME Shell 45 đến 51+** (đã chuẩn hóa sang `Meta.CursorTracker` và `Clutter.Orientation`, loại bỏ hoàn toàn các API cũ như `pointerWatcher.js` và thuộc tính `vertical`).
+- Extension được kiểm tra theo phiên bản GNOME Shell khai báo trong metadata và chỉ được bật cho lần đăng nhập tiếp theo. Bộ tiện ích độc quyền (**UbuntuTahoe**, **UbuntuTahoeDock**, **UbuntuTahoeWidgets**, **UbuntuTahoeClipboard**, **UbuntuTahoeSpotlight**) được kích hoạt tự động theo thiết kế mặc định; riêng tiện ích kính lỏng **UbuntuTahoeGlass** được cài đặt sẵn nhưng **mặc định để tắt** (người dùng có thể bật trong Trình quản lý tiện ích / Extension Manager bất kỳ lúc nào nếu muốn sử dụng hiệu ứng kính lỏng). Tất cả tương thích toàn diện từ **GNOME Shell 45 đến 51+** (đã chuẩn hóa sang `Meta.CursorTracker` và `Clutter.Orientation`, loại bỏ hoàn toàn các API cũ như `pointerWatcher.js` và thuộc tính `vertical`).
 
 ## Cài đặt & Cập nhật
 
@@ -152,11 +152,13 @@ Mở nhanh bằng tổ hợp phím <kbd>Super</kbd> + <kbd>Alt</kbd> + <kbd>F</k
 - **Chuyển đổi cửa sổ mượt mà:** Nếu ứng dụng đã mở, bấm vào kết quả sẽ kích hoạt và chuyển ngay sang cửa sổ đang chạy thay vì mở cửa sổ mới trùng lặp.
 - **Giao diện chuẩn macOS Tahoe:** Thiết kế cửa sổ tìm kiếm ở trung tâm màn hình với bo góc bo tròn, thanh tìm kiếm nổi bật và điều hướng mượt mà bằng bàn phím hoặc chuột.
 
-#### 4. Kính lỏng Liquid Glass (UbuntuTahoeGlass)
-Bấm vào nút **Bánh răng (Cài đặt)** cạnh `UbuntuTahoeGlass` (hoặc chạy lệnh: `gnome-extensions prefs UbuntuTahoeGlass@adfoxtheme.github.io`):
-- **Hiệu ứng Liquid Glass (Kính lỏng) chân thực:** Tận dụng bộ shader GPU nâng cao để tạo hiệu ứng tán sắc, khúc xạ ánh sáng và viền sáng lỏng phong cách macOS Tahoe.
-- **Tối ưu riêng cho Dock & Cửa sổ:** Hỗ trợ áp dụng hiệu ứng kính lỏng cho thanh Dock (UbuntuTahoeDock), các cửa sổ ứng dụng và Quick Settings.
-- **Tùy chỉnh linh hoạt:** Điều chỉnh bán kính mờ (blur radius), bo góc (corner radius), độ sáng, độ bão hòa màu và lề hiển thị.
+#### 4. Kính lỏng Liquid Glass (UbuntuTahoeGlass) — Tùy chọn (Mặc định tắt)
+Tiện ích được tích hợp sẵn trong repo nhưng **mặc định để tắt** nhằm giữ cho hệ thống nhẹ nhàng, ổn định và tối ưu hiệu năng tối đa cho mọi cấu hình máy.
+- **Cách bật:** Mở **Trình quản lý tiện ích (Extension Manager)** hoặc ứng dụng **Tiện ích mở rộng (Extensions)** và gạt bật `UbuntuTahoeGlass`.
+- **Tùy chỉnh hiệu ứng:** Bấm vào nút **Bánh răng (Cài đặt)** cạnh `UbuntuTahoeGlass` (hoặc chạy lệnh: `gnome-extensions prefs UbuntuTahoeGlass@adfoxtheme.github.io`):
+  - *Hiệu ứng Liquid Glass (Kính lỏng) chân thực:* Tận dụng bộ shader GPU nâng cao để tạo hiệu ứng tán sắc, khúc xạ ánh sáng và viền sáng lỏng phong cách macOS Tahoe.
+  - *Tùy chọn từng thành phần:* Cho phép bật/tắt độc lập hiệu ứng kính lỏng cho thanh Dock (UbuntuTahoeDock), các cửa sổ ứng dụng và Quick Settings.
+  - *Tinh chỉnh thông số:* Điều chỉnh bán kính mờ (blur radius), bo góc (corner radius), độ sáng, độ bão hòa màu và lề hiển thị.
 
 ### Hỗ trợ & Kiểm thử trên Ubuntu 26.04, Debian 13, Fedora & CachyOS (Arch)
 

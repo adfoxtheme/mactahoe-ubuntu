@@ -315,6 +315,9 @@ gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
 
 extension_ids=(user-theme@gnome-shell-extensions.gcampax.github.com)
 for uuid in "${COMPATIBLE_EXTENSION_IDS[@]}"; do
+    # UbuntuTahoeGlass là tiện ích tuỳ chọn hiệu ứng kính lỏng, mặc định để tắt
+    # Người dùng có thể bật trong Trình quản lý tiện ích (Extension Manager) theo nhu cầu
+    [ "$uuid" != "UbuntuTahoeGlass@adfoxtheme.github.io" ] || continue
     extension_ids+=("$uuid")
 done
 python3 - "${extension_ids[@]}" -- -- "${INCOMPATIBLE_EXTENSION_IDS[@]}" <<'PY'

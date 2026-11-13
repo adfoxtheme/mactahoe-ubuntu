@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.ubuntutahoeglass" path="/org/gnome/shell/extensions/ubuntutahoeglass/">
+    <key name="ui-language" type="s">
+      <default>''</default>
+      <summary>Interface language</summary>
+      <description>Use the system language, Vietnamese, or English in the preferences.</description>
+    </key>
 
     <key name="preferences-advanced" type="b">
       <default>false</default>

@@ -75,6 +75,12 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
             this._settings.connect('changed::clock-gap-y', () => this._relayout()),
             this._settings.connect('changed::stack-gap-x', () => this._relayout()),
             this._settings.connect('changed::stack-gap-y', () => this._relayout()),
+            this._settings.connect('changed::ui-language', () => {
+                this._weatherWidget?.refreshWeather();
+                this._systemWidget?.queue_repaint();
+                this._lunarWidget?.queue_repaint();
+                this._restWidget?.queue_repaint();
+            }),
         ];
     }
 
@@ -105,7 +111,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         // 2. System
         if (this._settings.get_boolean('show-system')) {
             if (!this._systemWidget) {
-                this._systemWidget = new SystemWidget();
+                this._systemWidget = new SystemWidget(this._settings);
                 this._stackBox.add_child(this._systemWidget);
             }
         } else if (this._systemWidget) {
@@ -116,7 +122,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         // 3. Lunar
         if (this._settings.get_boolean('show-lunar')) {
             if (!this._lunarWidget) {
-                this._lunarWidget = new LunarWidget();
+                this._lunarWidget = new LunarWidget(this._settings);
                 this._stackBox.add_child(this._lunarWidget);
             }
         } else if (this._lunarWidget) {
@@ -127,7 +133,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         // 4. Rest
         if (this._settings.get_boolean('show-rest')) {
             if (!this._restWidget) {
-                this._restWidget = new RestWidget();
+                this._restWidget = new RestWidget(this._settings);
                 this._stackBox.add_child(this._restWidget);
             }
         } else if (this._restWidget) {

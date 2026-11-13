@@ -1,53 +1,53 @@
-# Nén ảnh
+# Image Compressor
 
-Ứng dụng GTK4/Adw để nén một hoặc nhiều ảnh, giao diện tối theo phong cách macOS.
+A GTK4/Libadwaita application for compressing one or more images with a Mac-style dark interface.
 
-## Chức năng
+## Features
 
-- Chọn nhiều ảnh cùng lúc hoặc kéo thả vào cửa sổ.
-- Hỗ trợ đầu vào **PNG, JPG/JPEG, WebP**.
-- Xuất ảnh sang **WebP, JPEG, PNG**, hoặc giữ định dạng gốc.
-- Giới hạn chiều ngang/chiều dọc:
-  - Cả hai bằng `0`: giữ nguyên kích thước.
-  - Một cạnh bằng `0`: cạnh còn lại là giới hạn, cạnh kia tự tính theo tỉ lệ.
-  - Cả hai > `0`: ảnh vừa trong khung, giữ đúng tỉ lệ.
-  - Không tự phóng to ảnh nhỏ hơn giới hạn.
-- Thanh chất lượng cho JPG/WebP; PNG nén không mất dữ liệu.
-- Tự tạo tên mới, không ghi đè ảnh cũ.
-- Hiển thị kích thước và dung lượng trước/sau khi nén.
-- Chạy offline, không upload ảnh.
+- Select multiple images or drag and drop them into the window.
+- Supports **PNG, JPG/JPEG, and WebP** input.
+- Export as **WebP, JPEG, or PNG**, or keep the original format.
+- Set maximum width and height:
+  - Both values `0`: keep the original dimensions.
+  - One value `0`: use the other as a limit and calculate dimensions proportionally.
+  - Both values greater than `0`: fit within the limits while preserving aspect ratio.
+  - Images are never enlarged beyond their original dimensions.
+- Adjust quality for JPG/WebP; PNG compression is lossless.
+- Creates new output names and never overwrites the original image.
+- Shows dimensions and file sizes before and after compression.
+- Works offline; images are processed locally and never uploaded.
 
-## Chạy
+## Run
 
 ```bash
 cd "$HOME/mactahoe-ubuntu/apps/image-compressor"
 python3 app.py
 ```
 
-Hoặc bấm biểu tượng **Nén ảnh** trong GNOME. Lệnh đã cài:
+Or launch **Image Compressor** from GNOME or run:
 
 ```bash
 image-compressor
 ```
 
-## Cấu trúc
+## Files
 
-- `app.py` — giao diện GTK4.
-- `compressor.py` — xử lý ảnh bằng Pillow.
-- `style.css` — giao diện macOS.
-- `assets/vn.ihoan.ImageCompressor.svg` — biểu tượng ứng dụng.
-- `test_compressor.py` — test kích thước, định dạng, alpha và batch.
+- `app.py` — GTK4 interface.
+- `compressor.py` — image processing with Pillow.
+- `style.css` — application styling.
+- `assets/vn.ihoan.ImageCompressor.svg` — application icon.
+- `test_compressor.py` — format, dimensions, alpha, and batch tests.
 
-## Kiểm tra
+## Test
 
 ```bash
 cd "$HOME/mactahoe-ubuntu/apps/image-compressor"
 python3 -m unittest -v test_compressor.py
 ```
 
-## Ghi chú
+## Notes
 
-- Ảnh được xử lý tuần tự trong luồng nền, giao diện không bị treo khi nén nhiều ảnh.
-- JPEG không có alpha; ảnh PNG/WebP trong suốt sẽ được đặt trên nền trắng khi xuất JPEG.
-- Ảnh động (animated WebP) hiện chỉ xử lý khung hình đầu tiên.
-- Mặc định lưu vào `~/Pictures/Ảnh đã nén`.
+- Images are processed sequentially in a background thread so the interface remains responsive.
+- JPEG does not support alpha; transparent PNG/WebP pixels are placed on a white background when exported as JPEG.
+- Animated WebP currently processes only its first frame.
+- The default output folder is `~/Pictures/Ảnh đã nén`.

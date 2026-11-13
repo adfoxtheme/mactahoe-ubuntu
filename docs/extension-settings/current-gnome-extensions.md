@@ -1,27 +1,27 @@
-# GNOME extensions đang bật trên máy
+# Enabled GNOME Extensions on the Reference System
 
-Snapshot được đọc từ cấu hình hiện tại. Bộ cài cần cài/copy các extension và đặt các giá trị bên dưới để tái tạo giao diện. Không bật Conky tự động lúc đăng nhập.
+This snapshot records the active configuration. The installer should install or copy the extensions and apply these values to reproduce the desktop. Conky is not enabled at login.
 
 ## Blur My Shell
 
 Extension: `blur-my-shell@aunetx`.
 
-- Bật blur: `overview` và `appfolder`.
-- Tắt blur: `applications`, `coverflow-alt-tab`, `dash-to-dock`, `lockscreen`, `panel`, `popup`, `screenshot`, `window-list`.
-- Pipeline đang dùng: `pipeline_default`, Dual Kawase, radius 30, brightness 0.6.
-- Ứng dụng `Plank` và `Conky` có trong danh sách loại trừ.
-- `dash-to-dock` có `static-blur=true` nhưng `blur=false`, nên blur dock hiện không hoạt động.
+- Blur is enabled for `overview` and `appfolder`.
+- Blur is disabled for `applications`, `coverflow-alt-tab`, `dash-to-dock`, `lockscreen`, `panel`, `popup`, `screenshot`, and `window-list`.
+- Active pipeline: `pipeline_default`, Dual Kawase, radius 30, brightness 0.6.
+- `Plank` and `Conky` are excluded.
+- `dash-to-dock` has `static-blur=true` but `blur=false`, so dock blur is currently inactive.
 
 ## Global Menu for GNOME
 
-Extension: `globalmenu@ShiroOSL.github.io`, version 15. Cấu hình hiện có bật thanh menu và nút System Menu. Các mục App, File, Edit, View, Go, Window, Help đều bật; các lối tắt System Menu như Settings, Terminal, Software Center, Force Quit, System Monitor, khóa/đăng xuất/tắt máy cũng bật.
+Extension: `globalmenu@ShiroOSL.github.io`, version 15. The menu bar and System Menu button are enabled. App, File, Edit, View, Go, Window, and Help menus are enabled. System Menu shortcuts for Settings, Terminal, Software Center, Force Quit, System Monitor, lock, log out, and shutdown are also enabled.
 
-Các giá trị chính: `show-indicator=true`, `show-logo-menu=true`, `hide-overview-button=true`, `logo-distro-icon-symbolic=true`, kích thước icon 16.
+Main values: `show-indicator=true`, `show-logo-menu=true`, `hide-overview-button=true`, `logo-distro-icon-symbolic=true`, and icon size 16.
 
-## Extension khác đang bật
+## Other enabled extensions
 
-- `just-perfection-desktop@just-perfection`, version 37: đồng hồ bên phải (`clock-menu-position=1`), offset 20; ẩn nút Overview.
+- `just-perfection-desktop@just-perfection`, version 37: clock on the right (`clock-menu-position=1`), offset 20; Overview button hidden.
 
-## Extension hệ thống liên quan
+## Related system extensions
 
-Tài liệu cấu hình cũng dùng `user-theme@gnome-shell-extensions.gcampax.github.com` và `ubuntu-dock@ubuntu.com`. Đây là extension đi kèm Ubuntu/gói hệ thống, không phải thư mục extension riêng trong repo này.
+The configuration also uses `user-theme@gnome-shell-extensions.gcampax.github.com` and `ubuntu-dock@ubuntu.com`. These ship with Ubuntu or system packages and are not separate extension directories in this repository.

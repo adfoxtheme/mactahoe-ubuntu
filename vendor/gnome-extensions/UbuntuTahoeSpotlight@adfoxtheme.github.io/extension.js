@@ -148,7 +148,7 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
 
         this._entry = new St.Entry({
             style_class: 'tahoe-spotlight-entry',
-            hint_text: 'Tìm kiếm ứng dụng, tính toán nhanh...',
+            hint_text: 'Search apps or calculate...',
             can_focus: true,
             x_expand: true,
         });
@@ -233,7 +233,7 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
         });
 
         const hintLabel = new St.Label({
-            text: '↑↓ Di chuyển  •  ↵ Mở ứng dụng  •  ESC Đóng',
+            text: '↑↓ Navigate  •  ↵ Open  •  ESC Close',
             style_class: 'tahoe-spotlight-footer-hint',
             x_expand: true,
         });
@@ -426,7 +426,7 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
             emptyBox.add_child(emptyIcon);
 
             const emptyLabel = new St.Label({
-                text: `Không tìm thấy ứng dụng nào cho "${trimmed}"`,
+                text: `No apps found for "${trimmed}"`,
                 style_class: 'tahoe-spotlight-empty-label',
             });
             emptyBox.add_child(emptyLabel);
@@ -666,12 +666,12 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
 
                 return {
                     title: `= ${formatted}`,
-                    subtitle: `Tính: ${trimmed} (Nhấn Enter để sao chép)`,
-                    badge: 'MÁY TÍNH',
+                    subtitle: `Calculate: ${trimmed} (press Enter to copy)`,
+                    badge: 'CALCULATOR',
                     iconName: 'accessories-calculator-symbolic',
                     action: () => {
                         St.Clipboard.get_default().set_text(St.ClipboardType.CLIPBOARD, String(res));
-                        Main.notify('Spotlight', `Đã sao chép kết quả: ${formatted}`);
+                        Main.notify('Spotlight', `Copied result: ${formatted}`);
                     },
                 };
             }
@@ -725,8 +725,8 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
             const isRunning = app.state !== Shell.AppState.STOPPED;
             return {
                 title: app.get_name(),
-                subtitle: isRunning ? 'Đang chạy' : (app.get_description() || 'Ứng dụng'),
-                badge: isRunning ? 'ĐANG CHẠY' : 'ỨNG DỤNG',
+                subtitle: isRunning ? 'Running' : (app.get_description() || 'Application'),
+                badge: isRunning ? 'RUNNING' : 'APP',
                 app: app,
             };
         });
@@ -745,8 +745,8 @@ class SpotlightDialog extends ModalDialog.ModalDialog {
                     const isRunning = app.state !== Shell.AppState.STOPPED;
                     results.push({
                         title: app.get_name(),
-                        subtitle: isRunning ? 'Đang chạy' : (app.get_description() || 'Ứng dụng yêu thích'),
-                        badge: isRunning ? 'ĐANG CHẠY' : 'YÊU THÍCH',
+                        subtitle: isRunning ? 'Running' : (app.get_description() || 'Favorite application'),
+                        badge: isRunning ? 'RUNNING' : 'FAVORITE',
                         app: app,
                     });
                 }

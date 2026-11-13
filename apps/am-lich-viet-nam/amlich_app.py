@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Âm lịch Việt Nam — ứng dụng lịch âm cho GNOME/GTK4."""
+"""Vietnamese Lunar Calendar — a lunar calendar for GNOME/GTK4."""
 
 from __future__ import annotations
 
-from calendar import monthrange
+from calendar import month_name, monthrange
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -16,42 +16,89 @@ from gi.repository import Adw, Gdk, Gio, Gtk, Pango
 
 from holidays import get_holidays
 from lunar import (
-    WEEKDAYS,
     LunarDate,
     can_chi_day,
     convert_solar_to_lunar,
-    lunar_day_label,
-    lunar_long_label,
 )
 
 APP_ID = "vn.ihoan.AmLich"
-WEEKDAY_SHORT = ("T2", "T3", "T4", "T5", "T6", "T7", "CN")
+WEEKDAY_SHORT = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+WEEKDAYS_EN = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+HOLIDAY_NAMES_EN = {
+    "Tết Dương lịch": "New Year's Day",
+    "Quốc tế Phụ nữ": "International Women's Day",
+    "Ngày Giải phóng miền Nam": "Reunification Day",
+    "Quốc tế Lao động": "International Workers' Day",
+    "Quốc tế Thiếu nhi": "International Children's Day",
+    "Ngày Thương binh - Liệt sĩ": "Remembrance Day",
+    "Quốc khánh": "National Day",
+    "Ngày Phụ nữ Việt Nam": "Vietnamese Women's Day",
+    "Ngày Nhà giáo Việt Nam": "Vietnamese Teachers' Day",
+    "Ngày thành lập Quân đội nhân dân Việt Nam": "Vietnam People's Army Day",
+    "Tết Nguyên Đán": "Lunar New Year",
+    "Rằm tháng Giêng": "First Full Moon Festival",
+    "Tết Hàn Thực": "Cold Food Festival",
+    "Giỗ Tổ Hùng Vương": "Hung Kings' Commemoration",
+    "Tết Đoan Ngọ": "Dragon Boat Festival",
+    "Lễ Vu Lan": "Vu Lan Festival",
+    "Tết Trung Thu": "Mid-Autumn Festival",
+    "Ông Công - Ông Táo": "Kitchen Gods' Day",
+    "Đêm Giao thừa": "Lunar New Year's Eve",
+}
+HOLIDAY_SHORT_EN = {
+    "Tết DL": "New Year",
+    "Tết": "Lunar New Year",
+    "Rằm": "Full Moon",
+    "Hàn Thực": "Cold Food",
+    "Giỗ Tổ": "Hung Kings",
+    "Đoan Ngọ": "Dragon Boat",
+    "Vu Lan": "Vu Lan",
+    "Trung Thu": "Mid-Autumn",
+    "Ông Táo": "Kitchen Gods",
+    "Giao thừa": "New Year's Eve",
+}
 MIN_YEAR = 1800
 MAX_YEAR = 2199
 
 
 def lunar_month_span(first: date, last: date) -> str:
-    """Mô tả khoảng tháng âm lịch mà một tháng Dương lịch đi qua."""
+    """Describe the lunar months covered by a Gregorian month."""
     l1 = convert_solar_to_lunar(first)
     l2 = convert_solar_to_lunar(last)
 
     def month_text(lunar: LunarDate) -> str:
-        return f"tháng {lunar.month}{' nhuận' if lunar.leap else ''}"
+        return f"month {lunar.month}{' (leap)' if lunar.leap else ''}"
 
     if l1.year == l2.year:
         if l1.month == l2.month and l1.leap == l2.leap:
-            return f"{month_text(l1)}, năm {l1.year_name}"
-        return f"{month_text(l1)} – {l2.month}{' nhuận' if l2.leap else ''}, năm {l1.year_name}"
+            return f"{month_text(l1)}, year {l1.year_name}"
+        return f"{month_text(l1)} – {l2.month}{' (leap)' if l2.leap else ''}, year {l1.year_name}"
     return (
-        f"{month_text(l1)} năm {l1.year_name} – "
-        f"{month_text(l2)} năm {l2.year_name}"
+        f"{month_text(l1)}, year {l1.year_name} – "
+        f"{month_text(l2)}, year {l2.year_name}"
     )
+
+
+def lunar_day_text(lunar: LunarDate) -> str:
+    if lunar.day == 1:
+        day = "First day"
+    elif lunar.day == 15:
+        day = "Full moon"
+    elif lunar.day == 30:
+        day = "Last day"
+    else:
+        day = f"Day {lunar.day}"
+    return f"{day} of lunar month {lunar.month}{' (leap)' if lunar.leap else ''}"
+
+
+def lunar_tooltip_text(lunar: LunarDate) -> str:
+    return f"Lunar day {lunar.day}, month {lunar.month}{' (leap)' if lunar.leap else ''}, year {lunar.year_name}"
 
 
 class MainWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.set_title("Âm lịch Việt Nam")
+        self.set_title("Vietnamese Lunar Calendar")
         self.set_default_size(1120, 780)
         self.set_size_request(920, 640)
         self.set_icon_name(APP_ID)
@@ -73,15 +120,15 @@ class MainWindow(Adw.ApplicationWindow):
         header.add_css_class("amlich-header")
 
         self._prev_button = Gtk.Button(icon_name="go-previous-symbolic")
-        self._prev_button.set_tooltip_text("Tháng trước (←)")
+        self._prev_button.set_tooltip_text("Previous month (←)")
         self._prev_button.connect("clicked", lambda *_: self.go_month(-1))
 
         self._next_button = Gtk.Button(icon_name="go-next-symbolic")
-        self._next_button.set_tooltip_text("Tháng sau (→)")
+        self._next_button.set_tooltip_text("Next month (→)")
         self._next_button.connect("clicked", lambda *_: self.go_month(1))
 
-        self._today_button = Gtk.Button(label="Hôm nay")
-        self._today_button.set_tooltip_text("Về hôm nay (Home)")
+        self._today_button = Gtk.Button(label="Today")
+        self._today_button.set_tooltip_text("Go to today (Home)")
         self._today_button.connect("clicked", lambda *_: self.go_today())
 
         header.pack_start(self._prev_button)
@@ -99,7 +146,7 @@ class MainWindow(Adw.ApplicationWindow):
         header.set_title_widget(title_box)
 
         about_button = Gtk.Button(icon_name="help-about-symbolic")
-        about_button.set_tooltip_text("Giới thiệu")
+        about_button.set_tooltip_text("About")
         about_button.connect("clicked", self._show_about)
         header.pack_end(about_button)
 
@@ -150,7 +197,7 @@ class MainWindow(Adw.ApplicationWindow):
         area.append(card)
 
         note = Gtk.Label(
-            label="Chọn một ngày để xem chi tiết  ·  Phím ← → để chuyển tháng",
+            label="Select a date to see details  ·  Use ← → to change months",
             xalign=0,
         )
         note.add_css_class("footer-note")
@@ -189,7 +236,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._weekday.add_css_class("sidebar-weekday")
         self._solar_month = Gtk.Label(xalign=0)
         self._solar_month.add_css_class("sidebar-month")
-        self._today_pill = Gtk.Label(label="HÔM NAY")
+        self._today_pill = Gtk.Label(label="TODAY")
         self._today_pill.add_css_class("today-pill")
         self._today_pill.set_halign(Gtk.Align.START)
         meta.append(self._weekday)
@@ -200,7 +247,7 @@ class MainWindow(Adw.ApplicationWindow):
 
         lunar_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         lunar_card.add_css_class("lunar-card")
-        lunar_title = Gtk.Label(label="ÂM LỊCH", xalign=0)
+        lunar_title = Gtk.Label(label="LUNAR CALENDAR", xalign=0)
         lunar_title.add_css_class("card-title")
         self._lunar_main = Gtk.Label(xalign=0)
         self._lunar_main.add_css_class("lunar-main")
@@ -220,7 +267,7 @@ class MainWindow(Adw.ApplicationWindow):
         canchi_grid.set_halign(Gtk.Align.FILL)
         self._canchi_values: dict[str, Gtk.Label] = {}
         for row, (key, label) in enumerate(
-            (("year", "Năm"), ("month", "Tháng"), ("day", "Ngày"))
+            (("year", "Year"), ("month", "Month"), ("day", "Day"))
         ):
             name = Gtk.Label(label=label, xalign=0)
             name.add_css_class("canchi-label")
@@ -232,7 +279,7 @@ class MainWindow(Adw.ApplicationWindow):
             self._canchi_values[key] = value
         content.append(canchi_grid)
 
-        holiday_title = Gtk.Label(label="SỰ KIỆN", xalign=0)
+        holiday_title = Gtk.Label(label="EVENTS", xalign=0)
         holiday_title.add_css_class("section-title")
         content.append(holiday_title)
 
@@ -240,7 +287,7 @@ class MainWindow(Adw.ApplicationWindow):
         content.append(self._holiday_box)
 
         footer = Gtk.Label(
-            label="Múi giờ Việt Nam · UTC+7\nThuật toán Hồ Ngọc Đức",
+            label="Vietnam time zone · UTC+7\nHo Ngoc Duc algorithm",
             xalign=0,
         )
         footer.add_css_class("footer-note")
@@ -301,12 +348,12 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _refresh_header(self) -> None:
         self._month_title.set_text(
-            f"Tháng {self.view_month} năm {self.view_year}"
+            f"{month_name[self.view_month]} {self.view_year}"
         )
         last_day = monthrange(self.view_year, self.view_month)[1]
         first = date(self.view_year, self.view_month, 1)
         last = date(self.view_year, self.view_month, last_day)
-        self._month_subtitle.set_text(f"Âm lịch: {lunar_month_span(first, last)}")
+        self._month_subtitle.set_text(f"Lunar calendar: {lunar_month_span(first, last)}")
 
     def _build_month(self) -> None:
         child = self._days_grid.get_first_child()
@@ -349,11 +396,11 @@ class MainWindow(Adw.ApplicationWindow):
             cell.add_css_class("selected")
 
         tooltip = (
-            f"{WEEKDAYS[day.weekday()]}, {day.day:02d}/{day.month:02d}/{day.year}"
-            f"\n{lunar_long_label(lunar)}"
+            f"{WEEKDAYS_EN[day.weekday()]}, {day.day:02d}/{day.month:02d}/{day.year}"
+            f"\n{lunar_tooltip_text(lunar)}"
         )
         if holidays:
-            tooltip += "\n" + "\n".join(holiday.name for holiday in holidays)
+            tooltip += "\n" + "\n".join(HOLIDAY_NAMES_EN.get(holiday.name, holiday.name) for holiday in holidays)
         cell.set_tooltip_text(tooltip)
 
         click = Gtk.GestureClick.new()
@@ -371,7 +418,7 @@ class MainWindow(Adw.ApplicationWindow):
         solar.add_css_class("solar-label")
         solar.set_xalign(0)
         solar.set_hexpand(True)
-        lunar_label = Gtk.Label(label=lunar_day_label(lunar))
+        lunar_label = Gtk.Label(label=str(lunar.day))
         lunar_label.add_css_class("lunar-label")
         lunar_label.set_xalign(1)
         top.append(solar)
@@ -379,7 +426,7 @@ class MainWindow(Adw.ApplicationWindow):
         cell.append(top)
 
         holiday_label = Gtk.Label(
-            label=holidays[0].short if holidays and in_month else " "
+            label=HOLIDAY_SHORT_EN.get(holidays[0].short, holidays[0].short) if holidays and in_month else " "
         )
         holiday_label.add_css_class("holiday-label")
         holiday_label.set_xalign(0)
@@ -395,24 +442,14 @@ class MainWindow(Adw.ApplicationWindow):
         holidays = get_holidays(self.selected, lunar)
 
         self._big_day.set_text(str(self.selected.day))
-        self._weekday.set_text(WEEKDAYS[self.selected.weekday()])
+        self._weekday.set_text(WEEKDAYS_EN[self.selected.weekday()])
         self._solar_month.set_text(
-            f"Tháng {self.selected.month} năm {self.selected.year}"
+            f"{month_name[self.selected.month]} {self.selected.year}"
         )
         self._today_pill.set_visible(self.selected == self.today)
 
-        if lunar.day == 1:
-            main = f"Mùng 1 tháng {lunar.month}"
-        elif lunar.day == 15:
-            main = f"Rằm tháng {lunar.month}"
-        elif lunar.day == 30:
-            main = f"Ba mươi tháng {lunar.month}"
-        else:
-            main = f"{lunar.day} tháng {lunar.month}"
-        if lunar.leap:
-            main += " nhuận"
-        self._lunar_main.set_text(main)
-        self._lunar_sub.set_text(f"Năm {lunar.year_name}")
+        self._lunar_main.set_text(lunar_day_text(lunar))
+        self._lunar_sub.set_text(f"Lunar year {lunar.year_name}")
 
         self._canchi_values["year"].set_text(lunar.year_name)
         self._canchi_values["month"].set_text(lunar.month_name)
@@ -424,12 +461,12 @@ class MainWindow(Adw.ApplicationWindow):
             child = self._holiday_box.get_first_child()
 
         if not holidays:
-            empty = Gtk.Label(label="Không có ngày lễ", xalign=0)
+            empty = Gtk.Label(label="No holidays", xalign=0)
             empty.add_css_class("muted")
             self._holiday_box.append(empty)
         else:
             for holiday in holidays:
-                item = Gtk.Label(label=f"•  {holiday.name}", xalign=0)
+                item = Gtk.Label(label=f"•  {HOLIDAY_NAMES_EN.get(holiday.name, holiday.name)}", xalign=0)
                 item.add_css_class("holiday-item")
                 item.set_wrap(True)
                 self._holiday_box.append(item)
@@ -440,10 +477,10 @@ class MainWindow(Adw.ApplicationWindow):
         about = Gtk.AboutDialog()
         about.set_transient_for(self)
         about.set_modal(True)
-        about.set_program_name("Âm lịch Việt Nam")
+        about.set_program_name("Vietnamese Lunar Calendar")
         about.set_version("1.0.0")
         about.set_comments(
-            "Lịch Dương – Âm Việt Nam, tính theo múi giờ UTC+7."
+            "Vietnamese solar and lunar calendar using the UTC+7 time zone."
         )
         about.set_logo_icon_name(APP_ID)
         about.set_authors(["iHoan"])

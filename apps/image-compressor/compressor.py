@@ -1,7 +1,6 @@
-"""Core nén ảnh cho ứng dụng Nén ảnh.
-
-Hỗ trợ đầu vào PNG/JPEG/WebP, đầu ra WebP/JPEG/PNG hoặc giữ định dạng gốc.
-Ảnh luôn được thu nhỏ theo đúng tỉ lệ; không tự phóng to ảnh nhỏ hơn giới hạn.
+"""Image compression core.
+Supports PNG/JPEG/WebP input and WebP/JPEG/PNG output or the original format.
+Images are resized proportionally and are never enlarged beyond their limits.
 """
 
 from __future__ import annotations
@@ -14,7 +13,7 @@ from PIL import Image, ImageOps
 
 SUPPORTED_INPUT_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 OUTPUT_FORMATS = {
-    "auto": "Giữ định dạng gốc",
+    "auto": "Keep original format",
     "webp": "WebP",
     "jpeg": "JPEG",
     "png": "PNG",
@@ -65,15 +64,14 @@ def target_dimensions(
     max_width: int,
     max_height: int,
 ) -> tuple[int, int]:
-    """Tính kích thước đích.
-
-    - Cả hai bằng 0: giữ nguyên.
-    - Một cạnh bằng 0: cạnh còn lại là giới hạn, cạnh kia tự tính theo tỉ lệ.
-    - Cả hai > 0: ảnh vừa trong hộp max_width × max_height, giữ tỉ lệ.
-    - Không bao giờ phóng to ảnh nhỏ hơn giới hạn.
+    """Calculate target dimensions.
+    - Both limits are zero: keep the original dimensions.
+    - One limit is zero: fit the other dimension proportionally.
+    - Both limits are positive: fit inside max_width × max_height.
+    - Never enlarge an image beyond its original dimensions.
     """
     if original_width <= 0 or original_height <= 0:
-        raise ValueError("Kích thước ảnh không hợp lệ")
+        raise ValueError("Invalid image dimensions")
 
     max_width = max(0, int(max_width))
     max_height = max(0, int(max_height))
@@ -131,7 +129,7 @@ def _unique_output_path(
 
 
 def _flatten_for_jpeg(image: Image.Image) -> Image.Image:
-    """JPEG không có alpha; đặt ảnh trong suốt lên nền trắng."""
+    """JPEG has no alpha channel; composite transparent pixels over white."""
     if image.mode in ("RGBA", "LA") or (
         image.mode == "P" and "transparency" in image.info
     ):
@@ -150,7 +148,7 @@ def compress_image(
     source: Path,
     settings: CompressionSettings,
 ) -> CompressionResult:
-    """Nén một ảnh và trả về kết quả. Không ném lỗi ra ngoài."""
+    """Compress an image and return the result without propagating errors."""
     source = source.expanduser()
     original_bytes = source.stat().st_size if source.exists() else 0
     original_size: tuple[int, int] = (0, 0)
@@ -211,7 +209,7 @@ def compress_image(
                     compress_level=9,
                 )
             else:
-                raise ValueError(f"Định dạng đầu ra không hợp lệ: {fmt}")
+                raise ValueError(f"Unsupported output format: {fmt}")
 
         output_bytes = output.stat().st_size
         with Image.open(output) as saved:
@@ -227,7 +225,7 @@ def compress_image(
         )
 
     except Exception as exc:
-        # Lỗi file hỏng, quyền ghi, codec, kích thước...
+        # Invalid file, permissions, codec, or dimensions.
         return CompressionResult(
             source=source,
             output=output if output and output.exists() else None,
@@ -243,5 +241,5 @@ def compress_images(
     sources: Iterable[Path],
     settings: CompressionSettings,
 ) -> list[CompressionResult]:
-    """Nén nhiều ảnh tuần tự, dùng cho CLI hoặc test."""
+    """Compress multiple images sequentially for CLI use or tests."""
     return [compress_image(Path(source), settings) for source in sources]

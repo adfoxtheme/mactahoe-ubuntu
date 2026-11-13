@@ -2,22 +2,22 @@
 """
 MacTahoe Icon Manager
 ---------------------
-Ứng dụng GTK4/Adw để đổi icon MacTahoe cho các ứng dụng đã cài
-(hệ thống, snap, flatpak, app local).
+GTK4/Adw application for changing MacTahoe icons for installed applications
+(system, Snap, Flatpak, and local apps).
 
-- Quét các file .desktop trong:
+- Scans .desktop files in:
   ~/.local/share/applications
   ~/.local/share/flatpak/exports/share/applications
   /var/lib/flatpak/exports/share/applications
   /var/lib/snapd/desktop/applications
-  các thư mục trong XDG_DATA_DIRS (thường /usr/local/share, /usr/share)
+  directories in XDG_DATA_DIRS (usually /usr/local/share and /usr/share)
 
-- Ghi đè an toàn vào ~/.local/share/applications/<tên>.desktop
-- Backup file gốc vào ~/.local/share/mactahoe-icon-manager/backups/
-- Có nút Khôi phục để trả lại icon gốc
+- Safely writes overrides to ~/.local/share/applications/<name>.desktop
+- Backs up original files in ~/.local/share/mactahoe-icon-manager/backups/
+- Includes a button to restore the original icon
 
-Chạy: mactahoe-icon-manager
-Kiểm tra dữ liệu: mactahoe-icon-manager --self-test
+Run: mactahoe-icon-manager
+Check data: mactahoe-icon-manager --self-test
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, Gtk, Pango
 
 
 # ---------------------------------------------------------------------------
-# Đường dẫn
+# Paths
 # ---------------------------------------------------------------------------
 
 HOME = Path.home()
@@ -85,7 +85,7 @@ ICON_THEME_ROOTS = _unique_dirs(
 
 
 # ---------------------------------------------------------------------------
-# Dữ liệu ứng dụng
+# Application data
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -110,7 +110,7 @@ def _unescape(value: str) -> str:
 
 
 def parse_desktop(path: Path) -> dict[str, str]:
-    """Đọc các khóa cần thiết trong [Desktop Entry]."""
+    """Read the required keys from a [Desktop Entry]."""
     info: dict[str, str] = {}
     section = ""
     keys = {
@@ -157,16 +157,16 @@ def icon_is_mactahoe(value: str) -> bool:
 def source_label(path: Path) -> str:
     s = str(path)
     if s.startswith(str(LOCAL_APPS)):
-        return "cục bộ"
+        return "Local"
     if "snapd" in s:
         return "snap"
     if "flatpak" in s:
         return "flatpak"
-    return "hệ thống"
+    return "System"
 
 
 def scan_apps(include_hidden: bool = True) -> list[AppEntry]:
-    """Quét tất cả .desktop, ưu tiên file trong ~/.local/share/applications."""
+    """Scan all .desktop files, preferring files in ~/.local/share/applications."""
     paths: dict[str, list[Path]] = {}
     for directory in APP_DIRS:
         try:
@@ -231,7 +231,7 @@ def can_reset(entry: AppEntry) -> bool:
 
 
 def set_icon_in_desktop(text: str, icon_value: str) -> str:
-    """Thay Icon= trong [Desktop Entry]; thêm nếu chưa có."""
+    """Replace Icon= in a [Desktop Entry], adding it if missing."""
     lines = text.splitlines()
     out: list[str] = []
     in_entry = False
@@ -284,9 +284,9 @@ def apply_icon(entry: AppEntry, icon_path: Path) -> str:
     ICON_STORE_DIR.mkdir(parents=True, exist_ok=True)
 
     if not icon_path.is_file():
-        raise OSError(f"Không tìm thấy file icon: {icon_path}")
+        raise OSError(f"Icon file not found: {icon_path}")
 
-    # Copy icon sang thư mục riêng để update/đổi theme không làm hỏng đường dẫn.
+    # Keep a private icon copy so theme updates cannot invalidate its path.
     stable_icon = ICON_STORE_DIR / (
         entry.desktop_id.removesuffix(".desktop") + icon_path.suffix.lower()
     )
@@ -294,7 +294,7 @@ def apply_icon(entry: AppEntry, icon_path: Path) -> str:
         if icon_path.resolve() != stable_icon.resolve():
             shutil.copy2(icon_path, stable_icon)
     except OSError as exc:
-        raise OSError(f"Không copy được icon: {exc}") from exc
+        raise OSError(f"Could not copy icon: {exc}") from exc
 
     local = LOCAL_APPS / entry.desktop_id
     backup = BACKUP_DIR / (entry.desktop_id + ".bak")
@@ -306,7 +306,7 @@ def apply_icon(entry: AppEntry, icon_path: Path) -> str:
         local.unlink()
     elif local.exists():
         if not local.is_file():
-            raise OSError(f"{local} không phải file thường")
+            raise OSError(f"{local} is not a regular file")
         if not backup.exists():
             shutil.copy2(local, backup)
         text = local.read_text(encoding="utf-8", errors="replace")
@@ -321,7 +321,7 @@ def apply_icon(entry: AppEntry, icon_path: Path) -> str:
         pass
 
     update_desktop_database()
-    return f"Đã đặt icon MacTahoe cho {entry.name}"
+    return f"Set the MacTahoe icon for {entry.name}"
 
 
 def reset_icon(entry: AppEntry) -> str:
@@ -332,7 +332,7 @@ def reset_icon(entry: AppEntry) -> str:
         if local.is_symlink():
             local.unlink()
         elif local.exists() and not local.is_file():
-            raise OSError(f"{local} không phải file thường")
+            raise OSError(f"{local} is not a regular file")
         shutil.copy2(backup, local)
         try:
             local.chmod(0o644)
@@ -340,17 +340,17 @@ def reset_icon(entry: AppEntry) -> str:
             pass
         backup.unlink()
         update_desktop_database()
-        return f"Đã khôi phục icon gốc cho {entry.name}"
+        return f"Restored the original icon for {entry.name}"
 
     if local.exists() and entry.has_system:
         if local.is_symlink() or local.is_file():
             local.unlink()
         else:
-            raise OSError(f"{local} không phải file thường")
+            raise OSError(f"{local} is not a regular file")
         update_desktop_database()
-        return f"Đã bỏ ghi đè, {entry.name} dùng lại icon hệ thống"
+        return f"Removed the override; {entry.name} now uses its system icon"
 
-    return "Không có ghi đè để khôi phục"
+    return "There is no icon override to restore"
 
 
 # ---------------------------------------------------------------------------
@@ -470,7 +470,7 @@ def make_icon_image(icon_value: str, size: int) -> Gtk.Image:
 
 
 # ---------------------------------------------------------------------------
-# Giao diện
+# User interface
 # ---------------------------------------------------------------------------
 
 class IconManagerWindow(Adw.ApplicationWindow):
@@ -504,7 +504,7 @@ class IconManagerWindow(Adw.ApplicationWindow):
         self.rebuild_app_list()
 
         if not self.icon_theme_dir:
-            self._toast("Không tìm thấy icon theme MacTahoe trong ~/.local/share/icons")
+            self._toast("MacTahoe icon theme not found in ~/.local/share/icons")
 
     def _install_css(self) -> None:
         display = Gdk.Display.get_default()
@@ -536,11 +536,11 @@ class IconManagerWindow(Adw.ApplicationWindow):
         header.set_title_widget(
             Adw.WindowTitle(
                 title="MacTahoe Icon Manager",
-                subtitle="Đổi icon cho ứng dụng đã cài",
+                subtitle="Change icons for installed applications",
             )
         )
         self.refresh_button = Gtk.Button.new_from_icon_name("view-refresh-symbolic")
-        self.refresh_button.set_tooltip_text("Quét lại ứng dụng")
+        self.refresh_button.set_tooltip_text("Rescan applications")
         self.refresh_button.connect("clicked", lambda *_: self.rebuild_app_list())
         header.pack_end(self.refresh_button)
 
@@ -552,24 +552,24 @@ class IconManagerWindow(Adw.ApplicationWindow):
         paned.set_shrink_start_child(False)
         paned.set_vexpand(True)
 
-        # --- Cột trái: ứng dụng ---
+        # --- Left column: applications ---
         left = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         left.set_margin_start(12)
         left.set_margin_end(6)
         left.set_margin_top(8)
         left.set_margin_bottom(8)
 
-        app_title = Gtk.Label(label="Ứng dụng", xalign=0)
+        app_title = Gtk.Label(label="Applications", xalign=0)
         app_title.add_css_class("heading")
         left.append(app_title)
 
         self.app_search = Gtk.SearchEntry()
-        self.app_search.set_placeholder_text("Tìm ứng dụng…")
+        self.app_search.set_placeholder_text("Search applications…")
         self.app_search.connect("search-changed", lambda *_: self._apply_app_filter())
         left.append(self.app_search)
 
         hidden_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        hidden_label = Gtk.Label(label="Hiện app ẩn", xalign=0)
+        hidden_label = Gtk.Label(label="Show hidden apps", xalign=0)
         hidden_label.set_hexpand(True)
         self.hidden_switch = Gtk.Switch()
         self.hidden_switch.connect("notify::active", lambda *_: self.rebuild_app_list())
@@ -589,7 +589,7 @@ class IconManagerWindow(Adw.ApplicationWindow):
         app_scroller.set_child(self.app_list)
         left.append(app_scroller)
 
-        # --- Cột phải: icon ---
+        # --- Right column: icons ---
         right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         right.set_margin_start(6)
         right.set_margin_end(12)
@@ -601,21 +601,21 @@ class IconManagerWindow(Adw.ApplicationWindow):
         icon_title.add_css_class("heading")
         icon_title.set_hexpand(True)
         self.group_dropdown = Gtk.DropDown.new_from_strings(
-            ["Ứng dụng", "Thư mục", "Tất cả"]
+            ["Applications", "Folders", "All"]
         )
         self.group_dropdown.connect("notify::selected", self._on_group_changed)
         right_header.append(icon_title)
         right_header.append(self.group_dropdown)
         right.append(right_header)
 
-        self.target_label = Gtk.Label(label="Chưa chọn ứng dụng", xalign=0)
+        self.target_label = Gtk.Label(label="No application selected", xalign=0)
         self.target_label.add_css_class("dim-label")
         self.target_label.add_css_class("caption")
         self.target_label.set_ellipsize(Pango.EllipsizeMode.END)
         right.append(self.target_label)
 
         self.icon_search = Gtk.SearchEntry()
-        self.icon_search.set_placeholder_text("Tìm icon… (ví dụ: firefox, terminal)")
+        self.icon_search.set_placeholder_text("Search icons… (e.g. Firefox, Terminal)")
         self.icon_search.connect("search-changed", self._on_icon_search)
         right.append(self.icon_search)
 
@@ -630,25 +630,25 @@ class IconManagerWindow(Adw.ApplicationWindow):
         paned.set_end_child(right)
         root.append(paned)
 
-        # --- Thanh hành động ---
+        # --- Actions ---
         actionbar = Gtk.ActionBar()
         self.status_label = Gtk.Label(
-            label="Chọn ứng dụng bên trái, rồi chọn icon MacTahoe bên phải."
+            label="Select an application on the left, then choose a MacTahoe icon on the right."
         )
         self.status_label.set_xalign(0)
         self.status_label.set_hexpand(True)
         self.status_label.set_ellipsize(Pango.EllipsizeMode.END)
         actionbar.pack_start(self.status_label)
 
-        self.reset_button = Gtk.Button(label="Khôi phục")
-        self.reset_button.set_tooltip_text("Trả lại icon gốc / bỏ ghi đè")
+        self.reset_button = Gtk.Button(label="Restore")
+        self.reset_button.set_tooltip_text("Restore the original icon or remove the override")
         self.reset_button.connect("clicked", self._on_reset_clicked)
         self.reset_button.set_sensitive(False)
         actionbar.pack_end(self.reset_button)
 
-        self.apply_button = Gtk.Button(label="Áp dụng")
+        self.apply_button = Gtk.Button(label="Apply")
         self.apply_button.add_css_class("suggested-action")
-        self.apply_button.set_tooltip_text("Đặt icon đã chọn cho ứng dụng")
+        self.apply_button.set_tooltip_text("Set the selected icon for this application")
         self.apply_button.connect("clicked", self._on_apply_clicked)
         self.apply_button.set_sensitive(False)
         actionbar.pack_end(self.apply_button)
@@ -761,24 +761,24 @@ class IconManagerWindow(Adw.ApplicationWindow):
         selected = self.icon_selection.get_selected_item()
         if selected is None:
             self.selected_icon = None
-            self.status_label.set_text("Chọn một icon MacTahoe ở bên phải.")
+            self.status_label.set_text("Select a MacTahoe icon on the right.")
         else:
             self.selected_icon = selected.get_string()
-            self.status_label.set_text(f"Icon đã chọn: {self.selected_icon}")
+            self.status_label.set_text(f"Selected icon: {self.selected_icon}")
         self._update_buttons()
 
     def _on_app_selected(self, _listbox, row) -> None:
         if row is None:
             self.selected_app = None
-            self.status_label.set_text("Chọn một ứng dụng ở bên trái.")
+            self.status_label.set_text("Select an application on the left.")
         else:
             self.selected_app = self.row_apps.get(row)
             if self.selected_app is not None:
-                self.status_label.set_text(f"Đang chọn: {self.selected_app.name}")
+                self.status_label.set_text(f"Selected: {self.selected_app.name}")
         if self.selected_app is None:
-            self.target_label.set_text("Chưa chọn ứng dụng")
+            self.target_label.set_text("No application selected")
         else:
-            self.target_label.set_text(f"Đang sửa: {self.selected_app.name}")
+            self.target_label.set_text(f"Editing: {self.selected_app.name}")
         self._update_buttons()
 
     def _update_buttons(self) -> None:
@@ -809,7 +809,7 @@ class IconManagerWindow(Adw.ApplicationWindow):
 
         subtitle = f"{entry.desktop_id} • {entry.source_label}"
         if entry.custom:
-            subtitle += " • đã đổi"
+            subtitle += " • customized"
         sub = Gtk.Label(label=subtitle, xalign=0)
         sub.add_css_class("dim-label")
         sub.add_css_class("caption")
@@ -843,8 +843,8 @@ class IconManagerWindow(Adw.ApplicationWindow):
         apps = scan_apps(include_hidden=self.hidden_switch.get_active())
         if not apps:
             self.selected_app = None
-            self.target_label.set_text("Chưa chọn ứng dụng")
-            self.status_label.set_text("Không tìm thấy ứng dụng nào.")
+            self.target_label.set_text("No application selected")
+            self.status_label.set_text("No applications found.")
             self._update_buttons()
             return
 
@@ -867,31 +867,31 @@ class IconManagerWindow(Adw.ApplicationWindow):
             self.app_list.select_row(target)
         else:
             self.selected_app = None
-            self.target_label.set_text("Chưa chọn ứng dụng")
+            self.target_label.set_text("No application selected")
             self._update_buttons()
 
     def _on_apply_clicked(self, _button) -> None:
         entry = self.selected_app
         icon_name = self.selected_icon
         if entry is None:
-            self._toast("Chọn ứng dụng ở cột bên trái trước.")
+            self._toast("Select an application in the left column first.")
             return
         if icon_name is None:
-            self._toast("Chọn icon MacTahoe ở cột bên phải trước.")
+            self._toast("Select a MacTahoe icon in the right column first.")
             return
         icon_path = self.icon_paths.get(icon_name)
         if icon_path is None:
-            self._toast("Không tìm thấy file icon đã chọn.")
+            self._toast("The selected icon file was not found.")
             return
 
         desktop_id = entry.desktop_id
         try:
             message = apply_icon(entry, icon_path)
         except OSError as exc:
-            self._toast(f"Lỗi: {exc}")
+            self._toast(f"Error: {exc}")
             return
 
-        self._toast(message + " — có thể cần logout/login để icon cập nhật")
+        self._toast(message + " — log out and back in if the icon does not update")
         self.rebuild_app_list(select_id=desktop_id)
 
     def _on_reset_clicked(self, _button) -> None:
@@ -900,13 +900,13 @@ class IconManagerWindow(Adw.ApplicationWindow):
             return
 
         dialog = Adw.MessageDialog(transient_for=self)
-        dialog.set_heading("Khôi phục icon gốc?")
+        dialog.set_heading("Restore the original icon?")
         dialog.set_body(
-            f"Ứng dụng: {entry.name}\n\n"
-            "Thao tác này sẽ bỏ icon MacTahoe đã đặt và trả lại icon ban đầu."
+            f"Application: {entry.name}\n\n"
+            "This removes the MacTahoe icon and restores the original icon."
         )
-        dialog.add_response("cancel", "Hủy")
-        dialog.add_response("reset", "Khôi phục")
+        dialog.add_response("cancel", "Cancel")
+        dialog.add_response("reset", "Restore")
         dialog.set_response_appearance(
             "reset", Adw.ResponseAppearance.DESTRUCTIVE
         )
@@ -922,7 +922,7 @@ class IconManagerWindow(Adw.ApplicationWindow):
         try:
             message = reset_icon(entry)
         except OSError as exc:
-            self._toast(f"Lỗi: {exc}")
+            self._toast(f"Error: {exc}")
             return
         self._toast(message)
         self.rebuild_app_list(select_id=desktop_id)
@@ -949,7 +949,7 @@ class IconManagerApplication(Adw.Application):
 
 
 # ---------------------------------------------------------------------------
-# Self-test (không cần màn hình)
+# Self-test (no display required)
 # ---------------------------------------------------------------------------
 
 def self_test() -> int:
@@ -959,7 +959,7 @@ def self_test() -> int:
     print(f"ICON_STORE_DIR: {ICON_STORE_DIR}")
 
     apps = scan_apps(include_hidden=True)
-    print(f"\nỨng dụng tìm thấy: {len(apps)}")
+    print(f"\nApplications found: {len(apps)}")
     for entry in apps[:8]:
         print(
             f"  - {entry.desktop_id} | {entry.name} | icon={entry.icon!r} "
@@ -973,7 +973,7 @@ def self_test() -> int:
         counts: dict[str, int] = {}
         for _path, group in index.values():
             counts[group] = counts.get(group, 0) + 1
-        print(f"Icon tìm thấy: {len(index)} {counts}")
+        print(f"Icons found: {len(index)} {counts}")
 
     # Test parser
     sample = "[Desktop Entry]\nType=Application\nName=Test\nIcon=old\n"
@@ -1001,24 +1001,21 @@ def print_help() -> None:
     print(
         """MacTahoe Icon Manager
 
-Cách dùng:
-  mactahoe-icon-manager              Mở giao diện
-  mactahoe-icon-manager --self-test  Kiểm tra dữ liệu, không mở cửa sổ
-  mactahoe-icon-manager --help       Hiện trợ giúp
-  mactahoe-icon-manager --version    Hiện phiên bản
+Usage:
+  mactahoe-icon-manager              Open the application
+  mactahoe-icon-manager --self-test  Check data without opening a window
+  mactahoe-icon-manager --help       Show this help
+  mactahoe-icon-manager --version    Show the version
 
-Trong giao diện:
-  1. Chọn ứng dụng ở cột trái.
-  2. Chọn icon MacTahoe ở cột phải.
-  3. Bấm "Áp dụng".
-  4. Bấm "Khôi phục" để trả lại icon gốc.
+In the application:
+  1. Select an application in the left column.
+  2. Select a MacTahoe icon in the right column.
+  3. Click "Apply".
+  4. Click "Restore" to restore the original icon.
 
-Ghi đè được lưu tại:
-  ~/.local/share/applications/
-Backup icon gốc:
-  ~/.local/share/mactahoe-icon-manager/backups/
-Icon đã chọn được copy vào:
-  ~/.local/share/mactahoe-icon-manager/icons/
+Overrides: ~/.local/share/applications/
+Original icon backups: ~/.local/share/mactahoe-icon-manager/backups/
+Copied icons: ~/.local/share/mactahoe-icon-manager/icons/
 """
     )
 

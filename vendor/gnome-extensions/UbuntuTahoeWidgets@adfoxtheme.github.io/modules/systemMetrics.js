@@ -121,7 +121,7 @@ function readDisk() {
 function readNet() {
     const netdev = readFile('/proc/net/dev');
     let rxBytes = 0, txBytes = 0;
-    let mainIf = 'mạng';
+    let mainIf = '';
 
     for (const line of netdev.split('\n')) {
         const trimmed = line.trim();
@@ -135,7 +135,7 @@ function readNet() {
         if (numbers.length >= 9) {
             rxBytes += numbers[0];
             txBytes += numbers[8];
-            if (mainIf === 'mạng') mainIf = ifName;
+            if (!mainIf) mainIf = ifName;
         }
     }
 

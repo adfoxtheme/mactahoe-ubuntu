@@ -1,12 +1,16 @@
 [Desktop Entry]
 Type=Application
-Name=Giao diện ứng dụng
-GenericName=Trình tinh chỉnh giao diện Tahoe
-Comment=Cài đặt và đồng bộ giao diện macOS Tahoe cho Firefox, Brave và các ứng dụng
+Name=Application Theme Manager
+Name[vi]=Giao diện ứng dụng
+GenericName=Theme Manager
+GenericName[vi]=Trình tinh chỉnh giao diện Tahoe
+Comment=Apply and sync the macOS Tahoe appearance with Firefox, Brave, and other applications
+Comment[vi]=Cài đặt và đồng bộ giao diện macOS Tahoe cho Firefox, Brave và các ứng dụng
 Exec=mactahoe-app-themer
 Icon=io.github.adfoxtheme.MacTahoeAppThemer
 Terminal=false
 Categories=Settings;DesktopSettings;GTK;Utility;
 Keywords=tahoe;mactahoe;theme;firefox;brave;safari;
+Keywords[vi]=tahoe;mactahoe;giao diện;firefox;brave;safari;
 StartupNotify=true
 StartupWMClass=io.github.adfoxtheme.MacTahoeAppThemer

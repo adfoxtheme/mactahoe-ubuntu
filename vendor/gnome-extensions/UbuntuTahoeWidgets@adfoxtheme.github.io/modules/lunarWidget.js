@@ -5,10 +5,11 @@ import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import * as Drawing from './drawing.js';
 import { getTodayLunar } from './lunarCalc.js';
+import { getLanguage, textFor } from './language.js';
 
 export const LunarWidget = GObject.registerClass(
 class LunarWidget extends St.DrawingArea {
-    _init() {
+    _init(settings) {
         super._init({
             width: 340,
             height: 150,
@@ -16,6 +17,7 @@ class LunarWidget extends St.DrawingArea {
             track_hover: true,
         });
 
+        this._settings = settings;
         this._lunar = getTodayLunar();
 
         this.connect('repaint', this._onRepaint.bind(this));
@@ -59,17 +61,19 @@ class LunarWidget extends St.DrawingArea {
         // Crescent moon watermark in top right
         Drawing.drawMoonWatermark(cr, width - 30, 39, 30);
 
-        // Header: 'Âm lịch' & 'Hôm nay'
-        Drawing.drawText(cr, 22, 29, 'Âm lịch', 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
-        Drawing.drawText(cr, width - 22, 29, 'Hôm nay', 8.5, Drawing.COLORS.sysMuted, false, 'right');
+        const language = getLanguage(this._settings);
+        Drawing.drawText(cr, 22, 29, textFor(language, 'Âm lịch', 'Lunar calendar'), 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
+        Drawing.drawText(cr, width - 22, 29, textFor(language, 'Hôm nay', 'Today'), 8.5, Drawing.COLORS.sysMuted, false, 'right');
 
         // Main Lunar Day
         Drawing.drawText(cr, 22, 87, String(l.lunarDay), 44, Drawing.COLORS.gold, true, 'left', 'SF Pro Display');
 
         // Month & Year title
-        const monthLabel = `Tháng ${l.lunarMonth}${l.lunarLeap ? ' nhuận' : ''} · ${l.yearName}`;
+        const monthLabel = language === 'vi'
+            ? `Tháng ${l.lunarMonth}${l.lunarLeap ? ' nhuận' : ''} · ${l.yearName}`
+            : `Month ${l.lunarMonth}${l.lunarLeap ? ' (leap)' : ''} · ${l.yearName}`;
         Drawing.drawText(cr, 94, 59, monthLabel, 13, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
-        Drawing.drawText(cr, 94, 78, 'Âm lịch hôm nay', 9, Drawing.COLORS.sysSub, false);
+        Drawing.drawText(cr, 94, 78, textFor(language, 'Âm lịch hôm nay', 'Lunar date'), 9, Drawing.COLORS.sysSub, false);
 
         // Separator
         cr.setSourceRGBA(1, 1, 1, 0.10);
@@ -80,7 +84,7 @@ class LunarWidget extends St.DrawingArea {
 
         // Solar date info
         const solarDateStr = `${String(l.solarDay).padStart(2, '0')}/${String(l.solarMonth).padStart(2, '0')}/${l.solarYear}  ·  ${l.weekday}`;
-        Drawing.drawText(cr, 22, 112, 'Dương lịch', 8.5, Drawing.COLORS.sysMuted, false);
+        Drawing.drawText(cr, 22, 112, textFor(language, 'Dương lịch', 'Solar date'), 8.5, Drawing.COLORS.sysMuted, false);
         Drawing.drawText(cr, 94, 112, solarDateStr, 9.2, Drawing.COLORS.sysSub, false);
     }
 

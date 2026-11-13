@@ -1,6 +1,6 @@
 {
   "name": "UbuntuTahoeWidgets",
-  "description": "Widget phong cách macOS Tahoe (Đồng hồ, Thời tiết OpenWeather, Hệ thống, Âm lịch, Nhắc nghỉ) cho GNOME Shell",
+  "description": "macOS Tahoe-style desktop widgets for GNOME Shell: clock, weather, system monitor, lunar calendar, and break reminders",
   "uuid": "UbuntuTahoeWidgets@adfoxtheme.github.io",
   "settings-schema": "org.gnome.shell.extensions.ubuntutahoewidgets",
   "shell-version": [

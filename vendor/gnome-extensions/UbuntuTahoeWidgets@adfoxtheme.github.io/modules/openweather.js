@@ -74,6 +74,30 @@ const WMO_CODES = {
     99: ['Dông kèm mưa đá to', 'weather-storm', 'weather-storm-night'],
 };
 
+const WMO_CODES_EN = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Drizzle',
+    55: 'Dense drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    71: 'Slight snow',
+    73: 'Snow',
+    75: 'Heavy snow',
+    80: 'Slight rain showers',
+    81: 'Rain showers',
+    82: 'Violent rain showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with light hail',
+    99: 'Thunderstorm with heavy hail',
+};
+
 function sendGetRequest(url) {
     return new Promise((resolve, reject) => {
         const message = Soup.Message.new('GET', url);
@@ -99,17 +123,17 @@ function sendGetRequest(url) {
 export async function fetchWeather(settings) {
     const apiKey = (settings.weatherApiKey || '').trim();
     const city = (settings.weatherCity || 'Hà Nội').trim();
+    const language = settings.language === 'en' ? 'en' : 'vi';
     const lat = settings.weatherLat || 21.0285;
     const lon = settings.weatherLon || 105.8542;
 
     const now = new Date();
-    const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-    const dateLabel = `${weekdays[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}`;
+    const dateLabel = `${new Intl.DateTimeFormat(language === 'vi' ? 'vi-VN' : 'en-US', { weekday: 'long' }).format(now)}, ${now.getDate()}/${now.getMonth() + 1}`;
 
     // 1. If OpenWeather API key is provided, try OpenWeatherMap
     if (apiKey.length > 0) {
         try {
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=vi`;
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=${language}`;
             const data = await sendGetRequest(url);
 
             const temp = Math.round(data.main.temp);
@@ -119,11 +143,13 @@ export async function fetchWeather(settings) {
             const humidity = data.main.humidity;
             const wind = Math.round(data.wind.speed * 3.6); // m/s to km/h
 
-            let condition = 'Trời quang';
+            let condition = language === 'vi' ? 'Trời quang' : 'Clear sky';
             let iconName = 'weather-clear';
             if (data.weather && data.weather.length > 0) {
                 const w = data.weather[0];
-                condition = w.description ? (w.description.charAt(0).toUpperCase() + w.description.slice(1)) : 'Có mây';
+                condition = w.description
+                    ? (w.description.charAt(0).toUpperCase() + w.description.slice(1))
+                    : language === 'vi' ? 'Có mây' : 'Cloudy';
                 iconName = mapOpenWeatherIcon(w.icon, w.id);
             }
 
@@ -170,7 +196,7 @@ export async function fetchWeather(settings) {
         const hour = now.getHours();
         const isNight = hour < 6 || hour >= 18;
         const entry = WMO_CODES[code] || ['Thời tiết tốt', 'weather-few-clouds', 'weather-few-clouds-night'];
-        const condition = entry[0];
+        const condition = language === 'vi' ? entry[0] : (WMO_CODES_EN[code] || 'Fair weather');
         const iconName = isNight ? entry[2] : entry[1];
 
         return {
@@ -196,7 +222,7 @@ export async function fetchWeather(settings) {
             feels: '--',
             humidity: '--',
             wind: '--',
-            condition: 'Chưa có mạng',
+            condition: language === 'vi' ? 'Chưa có mạng' : 'No network connection',
             iconPath: getIconPath('weather-few-clouds'),
         };
     }

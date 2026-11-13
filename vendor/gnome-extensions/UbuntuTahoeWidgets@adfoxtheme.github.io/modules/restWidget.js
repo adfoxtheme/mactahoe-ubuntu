@@ -2,6 +2,7 @@ import St from 'gi://St';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
 import * as Drawing from './drawing.js';
+import { getLanguage, textFor } from './language.js';
 
 function readUptimeSeconds() {
     try {
@@ -25,7 +26,8 @@ function formatClockText(seconds) {
 
 export const RestWidget = GObject.registerClass(
 class RestWidget extends St.DrawingArea {
-    _init() {
+    _init(settings) {
+        this._settings = settings;
         super._init({
             width: 340,
             height: 165,
@@ -50,6 +52,7 @@ class RestWidget extends St.DrawingArea {
         const uptime = readUptimeSeconds();
         const cycle = Math.floor(uptime) % 3300;
         const onBreak = cycle >= 3000;
+        const language = getLanguage(this._settings);
 
         let accent, top, bottom;
         if (onBreak) {
@@ -82,31 +85,34 @@ class RestWidget extends St.DrawingArea {
         const minutes = Math.floor(uptime / 60) % 60;
         let uptimeLabel;
         if (days > 0) {
-            uptimeLabel = `${days} ngày ${hours}h`;
+            uptimeLabel = language === 'vi' ? `${days} ngày ${hours}h` : `${days}d ${hours}h`;
         } else if (hours > 0) {
             uptimeLabel = `${hours}h ${String(minutes).padStart(2, '0')}m`;
         } else {
-            uptimeLabel = `${minutes} phút`;
+            uptimeLabel = language === 'vi' ? `${minutes} phút` : `${minutes} min`;
         }
 
-        // Header: 'Nhắc nghỉ'
-        Drawing.drawText(cr, 22, 29, 'Nhắc nghỉ', 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
+        Drawing.drawText(cr, 22, 29, textFor(language, 'Nhắc nghỉ', 'Break reminder'), 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
         Drawing.drawText(cr, 22, 64, uptimeLabel, 25, accent, true, 'left', 'SF Pro Display');
-        Drawing.drawText(cr, 22, 83, 'Máy hoạt động', 8.5, Drawing.COLORS.sysSub, false);
+        Drawing.drawText(cr, 22, 83, textFor(language, 'Máy hoạt động', 'System uptime'), 8.5, Drawing.COLORS.sysSub, false);
 
         let progress, status, hint;
         if (onBreak) {
             const remaining = 3300 - cycle;
             progress = ((cycle - 3000) / 300) * 100;
-            status = `Nghỉ ngắn · còn ${formatClockText(remaining)}`;
-            hint = 'Đi lại nhẹ nhàng, rời màn hình.';
+            status = language === 'vi'
+                ? `Nghỉ ngắn · còn ${formatClockText(remaining)}`
+                : `Short break · ${formatClockText(remaining)} left`;
+            hint = textFor(language, 'Đi lại nhẹ nhàng, rời màn hình.', 'Move around and look away from the screen.');
         } else {
             const remaining = 3000 - cycle;
             progress = (cycle / 3000) * 100;
-            status = `Còn ${formatClockText(remaining)} đến giờ nghỉ`;
+            status = language === 'vi'
+                ? `Còn ${formatClockText(remaining)} đến giờ nghỉ`
+                : `${formatClockText(remaining)} until your break`;
             hint = cycle >= 2700
-                ? 'Sắp đến lúc đứng dậy, vươn vai.'
-                : 'Đổi tư thế, chớp mắt và nhìn xa.';
+                ? textFor(language, 'Sắp đến lúc đứng dậy, vươn vai.', 'Time to stand up and stretch soon.')
+                : textFor(language, 'Đổi tư thế, chớp mắt và nhìn xa.', 'Change posture, blink, and look into the distance.');
         }
 
         // Progress bar

@@ -26,6 +26,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
 
         // Build widgets based on settings
         this._buildWidgets();
+        this._updateWidgetParents();
 
         // Position widgets
         this._relayout();
@@ -42,11 +43,14 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
                     mode: Clutter.AnimationMode.EASE_OUT_QUAD,
                 });
             }
-            this._stackBox.ease({
-                opacity: 0,
-                duration: 200,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
+            for (const widget of [this._weatherWidget, this._systemWidget, this._lunarWidget, this._restWidget]) {
+                if (!widget) continue;
+                widget.ease({
+                    opacity: 0,
+                    duration: 200,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                });
+            }
         });
 
         this._overviewHiddenId = Main.overview.connect('hidden', () => {
@@ -57,11 +61,14 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
                     mode: Clutter.AnimationMode.EASE_OUT_QUAD,
                 });
             }
-            this._stackBox.ease({
-                opacity: 255,
-                duration: 200,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
+            for (const widget of [this._weatherWidget, this._systemWidget, this._lunarWidget, this._restWidget]) {
+                if (!widget) continue;
+                widget.ease({
+                    opacity: 255,
+                    duration: 200,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                });
+            }
         });
 
         // Watch settings changes
@@ -71,10 +78,24 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
             this._settings.connect('changed::show-system', () => this._rebuildAndRelayout()),
             this._settings.connect('changed::show-lunar', () => this._rebuildAndRelayout()),
             this._settings.connect('changed::show-rest', () => this._rebuildAndRelayout()),
+            this._settings.connect('changed::position-mode', () => {
+                this._updateWidgetParents();
+                this._relayout();
+            }),
             this._settings.connect('changed::clock-gap-x', () => this._relayout()),
             this._settings.connect('changed::clock-gap-y', () => this._relayout()),
             this._settings.connect('changed::stack-gap-x', () => this._relayout()),
             this._settings.connect('changed::stack-gap-y', () => this._relayout()),
+            this._settings.connect('changed::widget-clock-x', () => this._relayout()),
+            this._settings.connect('changed::widget-clock-y', () => this._relayout()),
+            this._settings.connect('changed::widget-weather-x', () => this._relayout()),
+            this._settings.connect('changed::widget-weather-y', () => this._relayout()),
+            this._settings.connect('changed::widget-system-x', () => this._relayout()),
+            this._settings.connect('changed::widget-system-y', () => this._relayout()),
+            this._settings.connect('changed::widget-lunar-x', () => this._relayout()),
+            this._settings.connect('changed::widget-lunar-y', () => this._relayout()),
+            this._settings.connect('changed::widget-rest-x', () => this._relayout()),
+            this._settings.connect('changed::widget-rest-y', () => this._relayout()),
             this._settings.connect('changed::ui-language', () => {
                 this._weatherWidget?.refreshWeather();
                 this._systemWidget?.queue_repaint();
@@ -82,6 +103,29 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
                 this._restWidget?.queue_repaint();
             }),
         ];
+    }
+
+    _addCardWidget(widget) {
+        const parent = this._settings.get_string('position-mode') === 'individual'
+            ? Main.layoutManager._backgroundGroup
+            : this._stackBox;
+        parent.add_child(widget);
+    }
+
+    _updateWidgetParents() {
+        const individual = this._settings.get_string('position-mode') === 'individual';
+        this._stackBox.visible = !individual;
+
+        for (const widget of [this._weatherWidget, this._systemWidget, this._lunarWidget, this._restWidget]) {
+            if (!widget) continue;
+
+            const parent = widget.get_parent();
+            const target = individual ? Main.layoutManager._backgroundGroup : this._stackBox;
+            if (parent !== target) {
+                parent.remove_child(widget);
+                target.add_child(widget);
+            }
+        }
     }
 
     _buildWidgets() {
@@ -101,7 +145,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         if (this._settings.get_boolean('show-weather')) {
             if (!this._weatherWidget) {
                 this._weatherWidget = new WeatherWidget(this._settings);
-                this._stackBox.add_child(this._weatherWidget);
+                this._addCardWidget(this._weatherWidget);
             }
         } else if (this._weatherWidget) {
             this._weatherWidget.destroy();
@@ -112,7 +156,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         if (this._settings.get_boolean('show-system')) {
             if (!this._systemWidget) {
                 this._systemWidget = new SystemWidget(this._settings);
-                this._stackBox.add_child(this._systemWidget);
+                this._addCardWidget(this._systemWidget);
             }
         } else if (this._systemWidget) {
             this._systemWidget.destroy();
@@ -123,7 +167,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         if (this._settings.get_boolean('show-lunar')) {
             if (!this._lunarWidget) {
                 this._lunarWidget = new LunarWidget(this._settings);
-                this._stackBox.add_child(this._lunarWidget);
+                this._addCardWidget(this._lunarWidget);
             }
         } else if (this._lunarWidget) {
             this._lunarWidget.destroy();
@@ -134,7 +178,7 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
         if (this._settings.get_boolean('show-rest')) {
             if (!this._restWidget) {
                 this._restWidget = new RestWidget(this._settings);
-                this._stackBox.add_child(this._restWidget);
+                this._addCardWidget(this._restWidget);
             }
         } else if (this._restWidget) {
             this._restWidget.destroy();
@@ -150,15 +194,35 @@ export default class UbuntuTahoeWidgetsExtension extends Extension {
     _relayout() {
         const monitor = Main.layoutManager.primaryMonitor;
         if (!monitor) return;
+        const individual = this._settings.get_string('position-mode') === 'individual';
 
         // Clock layout (left)
         if (this._clockWidget) {
-            const clockGapX = this._settings.get_int('clock-gap-x');
-            const clockGapY = this._settings.get_int('clock-gap-y');
+            const clockGapX = this._settings.get_int(individual ? 'widget-clock-x' : 'clock-gap-x');
+            const clockGapY = this._settings.get_int(individual ? 'widget-clock-y' : 'clock-gap-y');
             this._clockWidget.set_position(
                 monitor.x + clockGapX,
                 monitor.y + clockGapY
             );
+        }
+
+        if (individual) {
+            const widgetPositions = [
+                [this._weatherWidget, 'widget-weather-x', 'widget-weather-y'],
+                [this._systemWidget, 'widget-system-x', 'widget-system-y'],
+                [this._lunarWidget, 'widget-lunar-x', 'widget-lunar-y'],
+                [this._restWidget, 'widget-rest-x', 'widget-rest-y'],
+            ];
+            for (const [widget, xKey, yKey] of widgetPositions) {
+                if (!widget) continue;
+                const rightMargin = this._settings.get_int(xKey);
+                const topMargin = this._settings.get_int(yKey);
+                widget.set_position(
+                    monitor.x + monitor.width - widget.width - rightMargin,
+                    monitor.y + topMargin
+                );
+            }
+            return;
         }
 
         // Stack layout (right)

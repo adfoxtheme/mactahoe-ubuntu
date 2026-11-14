@@ -58,6 +58,61 @@
       <description>How often to refresh weather data automatically.</description>
     </key>
 
+    <key name="position-mode" type="s">
+      <default>'group'</default>
+      <summary>Widget position mode</summary>
+      <description>Choose between positioning the widget group or positioning each widget individually.</description>
+    </key>
+    <key name="widget-clock-x" type="i">
+      <default>80</default>
+      <summary>Individual clock horizontal position</summary>
+      <description>Distance from the left edge of the desktop to the clock in individual mode.</description>
+    </key>
+    <key name="widget-clock-y" type="i">
+      <default>80</default>
+      <summary>Individual clock vertical position</summary>
+      <description>Distance from the top edge of the desktop to the clock in individual mode.</description>
+    </key>
+    <key name="widget-weather-x" type="i">
+      <default>20</default>
+      <summary>Individual weather horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the weather widget in individual mode.</description>
+    </key>
+    <key name="widget-weather-y" type="i">
+      <default>80</default>
+      <summary>Individual weather vertical position</summary>
+      <description>Distance from the top edge of the desktop to the weather widget in individual mode.</description>
+    </key>
+    <key name="widget-system-x" type="i">
+      <default>20</default>
+      <summary>Individual system horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the system widget in individual mode.</description>
+    </key>
+    <key name="widget-system-y" type="i">
+      <default>302</default>
+      <summary>Individual system vertical position</summary>
+      <description>Distance from the top edge of the desktop to the system widget in individual mode.</description>
+    </key>
+    <key name="widget-lunar-x" type="i">
+      <default>20</default>
+      <summary>Individual lunar horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the lunar widget in individual mode.</description>
+    </key>
+    <key name="widget-lunar-y" type="i">
+      <default>614</default>
+      <summary>Individual lunar vertical position</summary>
+      <description>Distance from the top edge of the desktop to the lunar widget in individual mode.</description>
+    </key>
+    <key name="widget-rest-x" type="i">
+      <default>20</default>
+      <summary>Individual break reminder horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the break reminder widget in individual mode.</description>
+    </key>
+    <key name="widget-rest-y" type="i">
+      <default>776</default>
+      <summary>Individual break reminder vertical position</summary>
+      <description>Distance from the top edge of the desktop to the break reminder widget in individual mode.</description>
+    </key>
     <key name="clock-gap-x" type="i">
       <default>80</default>
       <summary>Clock left margin</summary>

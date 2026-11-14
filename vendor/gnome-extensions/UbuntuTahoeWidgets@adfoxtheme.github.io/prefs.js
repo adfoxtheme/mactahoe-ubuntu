@@ -106,14 +106,36 @@ export default class UbuntuTahoeWidgetsPreferences extends ExtensionPreferences 
         settings.bind('weather-update-interval', intervalRow, 'value', Gio.SettingsBindFlags.DEFAULT);
         weatherGroup.add(intervalRow);
 
-        // Group 3: Position and margins
+        const modeGroup = new Adw.PreferencesGroup({
+            title: text('Chế độ vị trí', 'Position mode'),
+            description: text(
+                'Chọn vị trí dùng chung cho nhóm hoặc đặt riêng từng widget',
+                'Use one shared position for the group or position each widget separately'
+            ),
+        });
+        page.add(modeGroup);
+
+        const modeRow = new Adw.ComboRow({
+            title: text('Kiểu bố trí', 'Layout'),
+            model: Gtk.StringList.new([
+                text('Theo nhóm', 'Group'),
+                text('Từng widget', 'Individual widgets'),
+            ]),
+        });
+        modeRow.selected = settings.get_string('position-mode') === 'individual' ? 1 : 0;
+        modeGroup.add(modeRow);
+
+        // Group 3: Group position and margins
         const posGroup = new Adw.PreferencesGroup({
-            title: text('Vị trí và Căn lề', 'Position and margins'),
-            description: text('Khoảng cách hiển thị widget trên màn hình desktop', 'Widget offsets from the desktop edges'),
+            title: text('Vị trí nhóm', 'Group position'),
+            description: text(
+                'Điều chỉnh vị trí đồng hồ và toàn bộ nhóm thẻ tiện ích',
+                'Set the clock and the position of the widget card group'
+            ),
         });
         page.add(posGroup);
 
-        const addSpin = (title, key, lower, upper, step) => {
+        const addSpin = (group, title, key, lower, upper, step) => {
             const row = new Adw.SpinRow({
                 title,
                 adjustment: new Gtk.Adjustment({
@@ -124,12 +146,47 @@ export default class UbuntuTahoeWidgetsPreferences extends ExtensionPreferences 
                 }),
             });
             settings.bind(key, row, 'value', Gio.SettingsBindFlags.DEFAULT);
-            posGroup.add(row);
+            group.add(row);
         };
 
-        addSpin(text('Lề trái Đồng hồ (px)', 'Clock left margin (px)'), 'clock-gap-x', 0, 500, 10);
-        addSpin(text('Lề trên Đồng hồ (px)', 'Clock top margin (px)'), 'clock-gap-y', 0, 500, 10);
-        addSpin(text('Lề phải Cụm widget (px)', 'Widget group right margin (px)'), 'stack-gap-x', 0, 500, 10);
-        addSpin(text('Lề trên Cụm widget (px)', 'Widget group top margin (px)'), 'stack-gap-y', 0, 500, 10);
+        addSpin(posGroup, text('Lề trái Đồng hồ (px)', 'Clock left margin (px)'), 'clock-gap-x', 0, 500, 10);
+        addSpin(posGroup, text('Lề trên Đồng hồ (px)', 'Clock top margin (px)'), 'clock-gap-y', 0, 500, 10);
+        addSpin(posGroup, text('Lề phải Cụm widget (px)', 'Widget group right margin (px)'), 'stack-gap-x', 0, 500, 10);
+        addSpin(posGroup, text('Lề trên Cụm widget (px)', 'Widget group top margin (px)'), 'stack-gap-y', 0, 500, 10);
+
+        const individualPositionGroup = new Adw.PreferencesGroup({
+            title: text('Vị trí từng tiện ích', 'Individual widget positions'),
+            description: text(
+                'Đặt tọa độ X và Y cho từng tiện ích. X của đồng hồ tính từ trái; X của các thẻ khác tính từ phải. Y tính từ trên màn hình.',
+                'Set X and Y for each widget. The clock X is measured from the left; other cards from the right. Y is measured from the top.'
+            ),
+        });
+        page.add(individualPositionGroup);
+
+        addSpin(individualPositionGroup, text('Đồng hồ - khoảng cách X từ trái (px)', 'Clock - left X margin (px)'), 'widget-clock-x', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Đồng hồ - khoảng cách Y từ trên (px)', 'Clock - top Y margin (px)'), 'widget-clock-y', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Thời tiết - khoảng cách X từ phải (px)', 'Weather - right X margin (px)'), 'widget-weather-x', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Thời tiết - khoảng cách Y từ trên (px)', 'Weather - top Y margin (px)'), 'widget-weather-y', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Hệ thống - khoảng cách X từ phải (px)', 'System - right X margin (px)'), 'widget-system-x', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Hệ thống - khoảng cách Y từ trên (px)', 'System - top Y margin (px)'), 'widget-system-y', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Lịch âm - khoảng cách X từ phải (px)', 'Lunar calendar - right X margin (px)'), 'widget-lunar-x', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Lịch âm - khoảng cách Y từ trên (px)', 'Lunar calendar - top Y margin (px)'), 'widget-lunar-y', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Nhắc nghỉ - khoảng cách X từ phải (px)', 'Break reminder - right X margin (px)'), 'widget-rest-x', 0, 5000, 10);
+        addSpin(individualPositionGroup, text('Nhắc nghỉ - khoảng cách Y từ trên (px)', 'Break reminder - top Y margin (px)'), 'widget-rest-y', 0, 5000, 10);
+
+        const updatePositionGroups = () => {
+            const individual = settings.get_string('position-mode') === 'individual';
+            posGroup.visible = !individual;
+            individualPositionGroup.visible = individual;
+        };
+        modeRow.connect('notify::selected', () => {
+            settings.set_string('position-mode', modeRow.selected === 1 ? 'individual' : 'group');
+            updatePositionGroups();
+        });
+        settings.connect('changed::position-mode', () => {
+            modeRow.selected = settings.get_string('position-mode') === 'individual' ? 1 : 0;
+            updatePositionGroups();
+        });
+        updatePositionGroups();
     }
 }

@@ -1,77 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
   <schema id="org.gnome.shell.extensions.ubuntutahoewidgets" path="/org/gnome/shell/extensions/ubuntutahoewidgets/">
+    <key name="ui-language" type="s">
+      <default>''</default>
+      <summary>Interface language</summary>
+      <description>Use the system language, Vietnamese, or English in preferences and widgets.</description>
+    </key>
     <key name="show-clock" type="b">
       <default>true</default>
-      <summary>Hiển thị đồng hồ lớn</summary>
-      <description>Bật hoặc tắt widget đồng hồ lớn phong cách macOS Tahoe bên trái màn hình</description>
+      <summary>Show large clock</summary>
+      <description>Show or hide the macOS Tahoe-style large clock on the left side of the desktop.</description>
     </key>
     <key name="show-weather" type="b">
       <default>true</default>
-      <summary>Hiển thị widget thời tiết</summary>
-      <description>Bật hoặc tắt widget thời tiết</description>
+      <summary>Show weather widget</summary>
+      <description>Show or hide the weather widget.</description>
     </key>
     <key name="show-system" type="b">
       <default>true</default>
-      <summary>Hiển thị widget hệ thống</summary>
-      <description>Bật hoặc tắt widget giám sát tài nguyên hệ thống (CPU, GPU, RAM, SSD, Mạng)</description>
+      <summary>Show system widget</summary>
+      <description>Show or hide the system resource monitor (CPU, GPU, RAM, storage, and network).</description>
     </key>
     <key name="show-lunar" type="b">
       <default>true</default>
-      <summary>Hiển thị widget âm lịch</summary>
-      <description>Bật hoặc tắt widget âm lịch Việt Nam</description>
+      <summary>Show lunar calendar widget</summary>
+      <description>Show or hide the Vietnamese lunar calendar widget.</description>
     </key>
     <key name="show-rest" type="b">
       <default>true</default>
-      <summary>Hiển thị widget nhắc nghỉ</summary>
-      <description>Bật hoặc tắt widget theo dõi thời gian và nhắc nhở nghỉ ngơi</description>
+      <summary>Show break reminder widget</summary>
+      <description>Show or hide the uptime and break reminder widget.</description>
     </key>
 
     <key name="weather-api-key" type="s">
       <default>""</default>
       <summary>OpenWeather API Key</summary>
-      <description>API Key từ OpenWeatherMap. Nếu để trống, tiện ích sẽ dùng Open-Meteo miễn phí</description>
+      <description>OpenWeatherMap API key. Leave blank to use free Open-Meteo weather data.</description>
     </key>
     <key name="weather-city" type="s">
       <default>"Hà Nội"</default>
-      <summary>Tên thành phố</summary>
-      <description>Tên thành phố dùng để lấy dữ liệu thời tiết (ví dụ: Hà Nội, TP Hồ Chí Minh, Quy Nhơn)</description>
+      <summary>City</summary>
+      <description>City used for weather data (for example, Hanoi, Ho Chi Minh City, or Quy Nhon).</description>
     </key>
     <key name="weather-lat" type="d">
       <default>21.0285</default>
-      <summary>Vĩ độ</summary>
-      <description>Vĩ độ địa lý cho thời tiết</description>
+      <summary>Latitude</summary>
+      <description>Geographic latitude used for weather data.</description>
     </key>
     <key name="weather-lon" type="d">
       <default>105.8542</default>
-      <summary>Kinh độ</summary>
-      <description>Kinh độ địa lý cho thời tiết</description>
+      <summary>Longitude</summary>
+      <description>Geographic longitude used for weather data.</description>
     </key>
     <key name="weather-update-interval" type="i">
       <default>15</default>
-      <summary>Chu kỳ cập nhật thời tiết (phút)</summary>
-      <description>Khoảng thời gian tự động làm mới thời tiết</description>
+      <summary>Weather update interval (minutes)</summary>
+      <description>How often to refresh weather data automatically.</description>
     </key>
 
+    <key name="position-mode" type="s">
+      <default>'group'</default>
+      <summary>Widget position mode</summary>
+      <description>Choose between positioning the widget group or positioning each widget individually.</description>
+    </key>
+    <key name="widget-clock-x" type="i">
+      <default>80</default>
+      <summary>Individual clock horizontal position</summary>
+      <description>Distance from the left edge of the desktop to the clock in individual mode.</description>
+    </key>
+    <key name="widget-clock-y" type="i">
+      <default>80</default>
+      <summary>Individual clock vertical position</summary>
+      <description>Distance from the top edge of the desktop to the clock in individual mode.</description>
+    </key>
+    <key name="widget-weather-x" type="i">
+      <default>20</default>
+      <summary>Individual weather horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the weather widget in individual mode.</description>
+    </key>
+    <key name="widget-weather-y" type="i">
+      <default>80</default>
+      <summary>Individual weather vertical position</summary>
+      <description>Distance from the top edge of the desktop to the weather widget in individual mode.</description>
+    </key>
+    <key name="widget-system-x" type="i">
+      <default>20</default>
+      <summary>Individual system horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the system widget in individual mode.</description>
+    </key>
+    <key name="widget-system-y" type="i">
+      <default>302</default>
+      <summary>Individual system vertical position</summary>
+      <description>Distance from the top edge of the desktop to the system widget in individual mode.</description>
+    </key>
+    <key name="widget-lunar-x" type="i">
+      <default>20</default>
+      <summary>Individual lunar horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the lunar widget in individual mode.</description>
+    </key>
+    <key name="widget-lunar-y" type="i">
+      <default>614</default>
+      <summary>Individual lunar vertical position</summary>
+      <description>Distance from the top edge of the desktop to the lunar widget in individual mode.</description>
+    </key>
+    <key name="widget-rest-x" type="i">
+      <default>20</default>
+      <summary>Individual break reminder horizontal position</summary>
+      <description>Distance from the right edge of the desktop to the break reminder widget in individual mode.</description>
+    </key>
+    <key name="widget-rest-y" type="i">
+      <default>776</default>
+      <summary>Individual break reminder vertical position</summary>
+      <description>Distance from the top edge of the desktop to the break reminder widget in individual mode.</description>
+    </key>
     <key name="clock-gap-x" type="i">
       <default>80</default>
-      <summary>Khoảng cách lề trái đồng hồ</summary>
-      <description>Khoảng cách từ mép trái màn hình đến đồng hồ lớn</description>
+      <summary>Clock left margin</summary>
+      <description>Distance from the left edge of the desktop to the large clock.</description>
     </key>
     <key name="clock-gap-y" type="i">
       <default>80</default>
-      <summary>Khoảng cách lề trên đồng hồ</summary>
-      <description>Khoảng cách từ mép trên màn hình đến đồng hồ lớn</description>
+      <summary>Clock top margin</summary>
+      <description>Distance from the top edge of the desktop to the large clock.</description>
     </key>
     <key name="stack-gap-x" type="i">
       <default>20</default>
-      <summary>Khoảng cách lề phải cụm widget</summary>
-      <description>Khoảng cách từ mép phải màn hình đến cụm widget bên phải</description>
+      <summary>Widget group right margin</summary>
+      <description>Distance from the right edge of the desktop to the widget group.</description>
     </key>
     <key name="stack-gap-y" type="i">
       <default>80</default>
-      <summary>Khoảng cách lề trên cụm widget</summary>
-      <description>Khoảng cách từ mép trên màn hình đến widget đầu tiên bên phải</description>
+      <summary>Widget group top margin</summary>
+      <description>Distance from the top edge of the desktop to the first widget.</description>
     </key>
   </schema>
 </schemalist>

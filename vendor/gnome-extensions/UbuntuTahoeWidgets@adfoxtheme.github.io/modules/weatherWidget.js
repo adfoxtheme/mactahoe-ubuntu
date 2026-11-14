@@ -5,6 +5,7 @@ import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import * as Drawing from './drawing.js';
 import { fetchWeather } from './openweather.js';
+import { getLanguage, textFor } from './language.js';
 
 export const WeatherWidget = GObject.registerClass(
 class WeatherWidget extends St.DrawingArea {
@@ -17,16 +18,17 @@ class WeatherWidget extends St.DrawingArea {
         });
 
         this._settings = settings;
+        const language = getLanguage(settings);
         this._weatherData = {
             city: settings.get_string('weather-city') || 'Hà Nội',
-            date: 'Đang tải…',
+            date: language === 'vi' ? 'Đang tải…' : 'Loading…',
             temp: '--',
             high: '--',
             low: '--',
             feels: '--',
             humidity: '--',
             wind: '--',
-            condition: 'Đang kết nối…',
+            condition: language === 'vi' ? 'Đang kết nối…' : 'Connecting…',
             iconPath: null,
         };
 
@@ -68,6 +70,7 @@ class WeatherWidget extends St.DrawingArea {
                 weatherCity: this._settings.get_string('weather-city'),
                 weatherLat: this._settings.get_double('weather-lat'),
                 weatherLon: this._settings.get_double('weather-lon'),
+                language: getLanguage(this._settings),
             });
             this._weatherData = data;
             this.queue_repaint();
@@ -96,21 +99,24 @@ class WeatherWidget extends St.DrawingArea {
 
         // Weather text
         const d = this._weatherData;
+        const language = getLanguage(this._settings);
         Drawing.drawText(cr, 22, 33, d.city || 'Hà Nội', 14, Drawing.COLORS.white, true, 'left', 'SF Pro Display');
         Drawing.drawText(cr, 22, 50, d.date || '', 9, Drawing.COLORS.weatherSub, false, 'left');
 
         Drawing.drawText(cr, 22, 111, (d.temp || '--') + '°', 52, Drawing.COLORS.white, true, 'left', 'SF Pro Display');
-        Drawing.drawText(cr, 22, 132, d.condition || 'Đang tải…', 11.5, Drawing.COLORS.weatherSub, false);
+        Drawing.drawText(cr, 22, 132, d.condition || textFor(language, 'Đang tải…', 'Loading…'), 11.5, Drawing.COLORS.weatherSub, false);
 
         Drawing.drawText(
             cr, 22, 154,
-            `H:${d.high || '--'}°    L:${d.low || '--'}°`,
+            `${textFor(language, 'C:', 'H:')}${d.high || '--'}°    ${textFor(language, 'T:', 'L:')}${d.low || '--'}°`,
             10, Drawing.COLORS.weatherSub, false
         );
 
         Drawing.drawText(
             cr, 22, 174,
-            `Cảm giác ${d.feels || '--'}°   •   Độ ẩm ${d.humidity || '--'}%   •   Gió ${d.wind || '--'} km/h`,
+            language === 'vi'
+                ? `Cảm giác ${d.feels || '--'}°   •   Độ ẩm ${d.humidity || '--'}%   •   Gió ${d.wind || '--'} km/h`
+                : `Feels ${d.feels || '--'}°   •   Humidity ${d.humidity || '--'}%   •   Wind ${d.wind || '--'} km/h`,
             8.2, Drawing.COLORS.weatherMuted, false
         );
 

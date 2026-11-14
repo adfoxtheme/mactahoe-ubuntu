@@ -1,54 +1,54 @@
-# Âm lịch Việt Nam
+# Vietnamese Lunar Calendar
 
-Ứng dụng lịch âm viết bằng Python + GTK4/Adw, giao diện tối theo phong cách macOS của bộ MacTahoe.
+A GTK4/Libadwaita desktop calendar that displays Vietnamese lunar dates alongside the Gregorian calendar, using the MacTahoe dark appearance.
 
-## Chức năng
+## Features
 
-- Lịch tháng Dương lịch kèm ngày âm, tháng nhuận và Can Chi.
-- Xem chi tiết ngày đang chọn: Dương lịch, Âm lịch, Can Chi năm/tháng/ngày.
-- Đánh dấu ngày lễ, ngày kỷ niệm Việt Nam (Tết, Giỗ Tổ, Trung Thu, 2/9, 20/10…).
-- Nút **Hôm nay**, chuyển tháng bằng chuột hoặc bàn phím.
-- Chạy hoàn toàn offline, không cần mạng.
+- Monthly Gregorian calendar with lunar days, leap months, and Can Chi.
+- Details for the selected date, including its solar and lunar dates and year/month/day Can Chi.
+- Vietnamese holidays and commemorative dates, including Lunar New Year, Hung Kings' Commemoration, Mid-Autumn Festival, and national holidays.
+- Navigate months with the mouse or keyboard; use **Today** to return to the current date.
+- Works offline.
 
-## Chạy
+## Run
 
 ```bash
 cd "$HOME/mactahoe-ubuntu/apps/am-lich-viet-nam"
 python3 amlich_app.py
 ```
 
-Hoặc bấm biểu tượng **Âm lịch Việt Nam** trong ứng dụng GNOME. Lệnh đã cài:
+Or launch **Vietnamese Lunar Calendar** from GNOME or run:
 
 ```bash
 am-lich-viet-nam
 ```
 
-## Phím tắt
+## Keyboard shortcuts
 
-| Phím | Tác dụng |
+| Key | Action |
 |---|---|
-| `←` / `Page Up` | Tháng trước |
-| `→` / `Page Down` | Tháng sau |
-| `Home` / `Ctrl+T` | Về hôm nay |
+| `←` / `Page Up` | Previous month |
+| `→` / `Page Down` | Next month |
+| `Home` / `Ctrl+T` | Go to today |
 
-## Cấu trúc
+## Files
 
-- `amlich_app.py` — giao diện GTK4.
-- `lunar.py` — thuật toán chuyển đổi Dương lịch/Âm lịch của Hồ Ngọc Đức, múi giờ UTC+7.
-- `holidays.py` — danh sách ngày lễ, ngày kỷ niệm.
-- `style.css` — giao diện macOS.
-- `assets/vn.ihoan.AmLich.svg` — biểu tượng ứng dụng.
-- `test_lunar.py` — kiểm tra thuật toán và ngày lễ.
+- `amlich_app.py` — GTK4 interface.
+- `lunar.py` — Ho Ngoc Duc solar/lunar conversion algorithm using UTC+7.
+- `holidays.py` — Vietnamese holidays and commemorative dates.
+- `style.css` — application styling.
+- `assets/vn.ihoan.AmLich.svg` — application icon.
+- `test_lunar.py` — algorithm and holiday tests.
 
-## Kiểm tra
+## Test
 
 ```bash
 cd "$HOME/mactahoe-ubuntu/apps/am-lich-viet-nam"
 python3 -m unittest -v test_lunar.py
 ```
 
-## Ghi chú
+## Notes
 
-- Thuật toán dùng múi giờ Việt Nam UTC+7, hỗ trợ tốt khoảng năm 1800–2199.
-- Tháng nhuận được tính tự động; ngày lễ âm lịch không áp dụng cho tháng nhuận.
-- Ngày Can Chi tính theo Julian Day Number; tháng Can Chi theo Can của năm âm lịch.
+- Uses Vietnam time (UTC+7) and supports dates from 1800 to 2199.
+- Leap months are calculated automatically; lunar holidays are not repeated in leap months.
+- Can Chi day names use the Julian Day Number; month Can Chi uses the lunar year's stem.

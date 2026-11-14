@@ -5,10 +5,12 @@ import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import * as Drawing from './drawing.js';
 import { readSystemMetrics } from './systemMetrics.js';
+import { getLanguage, textFor } from './language.js';
 
 export const SystemWidget = GObject.registerClass(
 class SystemWidget extends St.DrawingArea {
-    _init() {
+    _init(settings) {
+        this._settings = settings;
         this._metrics = readSystemMetrics();
         const hasGpu = !!(this._metrics?.gpu?.hasGpu);
         const initHeight = hasGpu ? 300 : 258;
@@ -69,8 +71,8 @@ class SystemWidget extends St.DrawingArea {
             0.15
         );
 
-        // Header: 'Hệ thống' & Uptime
-        Drawing.drawText(cr, 22, 33, 'Hệ thống', 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
+        const language = getLanguage(this._settings);
+        Drawing.drawText(cr, 22, 33, textFor(language, 'Hệ thống', 'System'), 14, Drawing.COLORS.sysText, true, 'left', 'SF Pro Display');
         Drawing.drawText(cr, width - 22, 33, m.uptime, 8.2, Drawing.COLORS.sysMuted, false, 'right');
 
         // 1. CPU
@@ -100,7 +102,7 @@ class SystemWidget extends St.DrawingArea {
         }
 
         // 3. RAM
-        const ramSub = `${m.ram.text}  •  Swap ${m.ram.swapPercent}%`;
+        const ramSub = `${m.ram.text}  •  ${textFor(language, 'Swap', 'Swap')} ${m.ram.swapPercent}%`;
         Drawing.drawSystemIcon(cr, 'ram', 22, yOffset, Drawing.COLORS.purple);
         Drawing.drawText(cr, 44, yOffset + 10, 'RAM', 9.5, Drawing.COLORS.sysSub, false);
         Drawing.drawText(cr, width - 22, yOffset + 10, `${m.ram.percent}%`, 10, Drawing.COLORS.sysText, true, 'right');
@@ -126,7 +128,7 @@ class SystemWidget extends St.DrawingArea {
 
         // 5. Network
         Drawing.drawSystemIcon(cr, 'network', 22, yOffset, Drawing.COLORS.cyan);
-        Drawing.drawText(cr, 44, yOffset + 10, 'Mạng', 9.5, Drawing.COLORS.sysSub, false);
+        Drawing.drawText(cr, 44, yOffset + 10, textFor(language, 'Mạng', 'Network'), 9.5, Drawing.COLORS.sysSub, false);
         Drawing.drawText(cr, width - 22, yOffset + 10, `↓ ${m.net.downText}    ↑ ${m.net.upText}`, 9.0, Drawing.COLORS.sysText, true, 'right');
         Drawing.drawText(cr, 22, yOffset + 27, m.net.interface, 8.0, Drawing.COLORS.sysMuted, false);
     }

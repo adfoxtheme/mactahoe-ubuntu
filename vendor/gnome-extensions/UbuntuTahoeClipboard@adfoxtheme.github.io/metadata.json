@@ -1,6 +1,6 @@
 {
   "name": "UbuntuTahoeClipboard",
-  "description": "Quản lý lịch sử sao chép phong cách macOS Tahoe (Lưu tối đa 20 mục, phím tắt Win + Alt + Space)",
+  "description": "A macOS Tahoe-style clipboard history with up to 20 items and the Win + Alt + Space shortcut",
   "uuid": "UbuntuTahoeClipboard@adfoxtheme.github.io",
   "settings-schema": "org.gnome.shell.extensions.ubuntutahoeclipboard",
   "shell-version": [

@@ -110,7 +110,7 @@ def detect_firefox():
 
     is_installed = len(installations) > 0 or shutil.which("firefox") is not None
 
-    type_str = ", ".join(i["type"] for i in installations) if installations else ("Hệ thống" if is_installed else "Chưa cài đặt")
+    type_str = ", ".join(i["type"] for i in installations) if installations else ("System" if is_installed else "Not installed")
 
     return {
         "is_installed": is_installed,
@@ -125,10 +125,10 @@ def apply_firefox_theme():
     """Apply the macOS Tahoe Safari theme to all detected Firefox profiles."""
     status = detect_firefox()
     if not status["is_installed"]:
-        return {"success": False, "message": "Không tìm thấy Firefox trên hệ thống!"}
+        return {"success": False, "message": "Firefox was not found on this system."}
 
     if not os.path.isdir(FIREFOX_SRC_ASSETS):
-        return {"success": False, "message": f"Không tìm thấy tài nguyên giao diện tại {FIREFOX_SRC_ASSETS}!"}
+        return {"success": False, "message": f"Theme assets were not found at {FIREFOX_SRC_ASSETS}."}
 
     updated_profiles = 0
 
@@ -194,7 +194,7 @@ def apply_firefox_theme():
 
     return {
         "success": True,
-        "message": f"Đã áp dụng giao diện Safari macOS Tahoe cho {updated_profiles} hồ sơ Firefox!",
+        "message": f"Applied the macOS Tahoe Safari theme to {updated_profiles} Firefox profiles.",
         "count": updated_profiles,
     }
 
@@ -203,7 +203,7 @@ def restore_firefox_default():
     """Remove Safari theme from all Firefox profiles and restore defaults."""
     status = detect_firefox()
     if not status["is_installed"]:
-        return {"success": False, "message": "Không tìm thấy Firefox trên hệ thống!"}
+        return {"success": False, "message": "Firefox was not found on this system."}
 
     restored_profiles = 0
 
@@ -245,6 +245,6 @@ def restore_firefox_default():
 
     return {
         "success": True,
-        "message": f"Đã khôi phục {restored_profiles} hồ sơ Firefox về giao diện mặc định!",
+        "message": f"Restored {restored_profiles} Firefox profiles to the default appearance.",
         "count": restored_profiles,
     }

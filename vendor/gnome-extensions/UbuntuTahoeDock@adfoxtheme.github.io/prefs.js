@@ -1,36 +1,68 @@
 import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class UbuntuTahoeDockPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
         const settings = this.getSettings();
+        const language = settings.get_string('ui-language') ||
+            (GLib.get_language_names().some(name => /^vi([_-]|$)/i.test(name)) ? 'vi' : 'en');
+        const text = (vietnamese, english) => language === 'vi' ? vietnamese : english;
 
         const page = new Adw.PreferencesPage({
-            title: 'Cài đặt UbuntuTahoe Dock',
+            title: text('Cài đặt UbuntuTahoe Dock', 'UbuntuTahoe Dock Settings'),
             icon_name: 'preferences-desktop-display-symbolic',
         });
         window.add(page);
 
-        // Group 1: Chế độ hiển thị & Ẩn hiện
+        const languageGroup = new Adw.PreferencesGroup();
+        const languageModel = Gtk.StringList.new([
+            text('Ngôn ngữ hệ thống', 'System default'),
+            'Tiếng Việt',
+            'English',
+        ]);
+        const languageRow = new Adw.ComboRow({
+            title: text('Ngôn ngữ', 'Language'),
+            model: languageModel,
+        });
+        languageRow.selected = settings.get_string('ui-language') === 'vi' ? 1 :
+            settings.get_string('ui-language') === 'en' ? 2 : 0;
+        languageRow.connect('notify::selected', () => {
+            const value = ['', 'vi', 'en'][languageRow.selected];
+            if (settings.get_string('ui-language') === value) return;
+            settings.set_string('ui-language', value);
+            window.remove(page);
+            this.fillPreferencesWindow(window);
+        });
+        languageGroup.add(languageRow);
+        page.add(languageGroup);
+
+        // Group 1: Visibility
         const behaviorGroup = new Adw.PreferencesGroup({
-            title: 'Chế độ hiển thị Dock',
-            description: 'Tùy chỉnh hành vi ẩn hoặc giữ cố định thanh Dock trên màn hình',
+            title: text('Chế độ hiển thị Dock', 'Dock visibility'),
+            description: text(
+                'Tùy chỉnh hành vi ẩn hoặc giữ cố định thanh Dock trên màn hình',
+                'Choose when the Dock hides or stays visible on screen'
+            ),
         });
         page.add(behaviorGroup);
 
         const hideModeModel = new Gtk.StringList({
             strings: [
-                'Ẩn khi ứng dụng full',
-                'Luôn ẩn',
-                'Luôn hiển thị',
+                text('Ẩn khi ứng dụng phóng to', 'Hide when a window is maximized'),
+                text('Luôn ẩn', 'Always hidden'),
+                text('Luôn hiển thị', 'Always visible'),
             ],
         });
 
         const hideModeRow = new Adw.ComboRow({
-            title: 'Hành vi thanh Dock',
-            subtitle: 'Chọn cách thanh Dock xuất hiện khi làm việc với cửa sổ',
+            title: text('Hành vi thanh Dock', 'Dock behavior'),
+            subtitle: text(
+                'Chọn cách thanh Dock xuất hiện khi làm việc với cửa sổ',
+                'Choose how the Dock behaves while working with windows'
+            ),
             model: hideModeModel,
         });
         behaviorGroup.add(hideModeRow);
@@ -95,16 +127,19 @@ export default class UbuntuTahoeDockPreferences extends ExtensionPreferences {
         settings.connect('changed::intellihide', updateRow);
         settings.connect('changed::intellihide-mode', updateRow);
 
-        // Group 2: Kích thước Dock
+        // Group 2: Dock size
         const group = new Adw.PreferencesGroup({
-            title: 'Kích thước Dock',
-            description: 'Kéo thanh trượt qua lại để tùy chỉnh độ lớn biểu tượng trên thanh Dock',
+            title: text('Kích thước Dock', 'Dock size'),
+            description: text(
+                'Kéo thanh trượt qua lại để tùy chỉnh độ lớn biểu tượng trên thanh Dock',
+                'Adjust the size of icons in the Dock'
+            ),
         });
         page.add(group);
 
         const iconSizeRow = new Adw.ActionRow({
-            title: 'Kích thước biểu tượng',
-            subtitle: 'Mặc định chuẩn macOS Tahoe là 45px',
+            title: text('Kích thước biểu tượng', 'Icon size'),
+            subtitle: text('Mặc định chuẩn macOS Tahoe là 45px', 'The macOS Tahoe default is 45 px'),
         });
 
         const scale = new Gtk.Scale({

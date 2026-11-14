@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Nén ảnh — ứng dụng GTK4/Adw để nén một hoặc nhiều ảnh."""
+"""Image Compressor — GTK4/Adw application for compressing images."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ def format_bytes(size: int) -> str:
 
 
 def make_thumbnail(path: Path, size: int = 48) -> Gtk.Image:
-    """Tạo thumbnail bằng Pillow để WebP/PNG/JPG đều hiển thị giống nhau."""
+    """Use Pillow to create consistent thumbnails for WebP, PNG, and JPG."""
     try:
         with Image.open(path) as opened:
             image = opened.convert("RGBA")
@@ -86,7 +86,7 @@ class ImageRow:
         self.name.add_css_class("file-name")
         self.meta = Gtk.Label(xalign=0)
         self.meta.add_css_class("muted")
-        self.status = Gtk.Label(label="Sẵn sàng", xalign=0)
+        self.status = Gtk.Label(label="Ready", xalign=0)
         self.status.add_css_class("file-status")
         text.append(self.name)
         text.append(self.meta)
@@ -94,7 +94,7 @@ class ImageRow:
         self.row.append(text)
 
         self.remove = Gtk.Button(icon_name="window-close-symbolic")
-        self.remove.set_tooltip_text("Bỏ ảnh này")
+        self.remove.set_tooltip_text("Remove this image")
         self.remove.add_css_class("flat")
         self.remove.add_css_class("row-remove")
         self.row.append(self.remove)
@@ -151,21 +151,21 @@ class ImageRow:
                 f"  →  {result.output_size[0]} × {result.output_size[1]} px"
                 f"  ·  {format_bytes(result.output_bytes)}"
             )
-            self.status.set_text("Xong")
+            self.status.set_text("Done")
             self.status.remove_css_class("error")
             self.status.add_css_class("success")
             self.status.set_tooltip_text(str(result.output))
         else:
-            self.status.set_text("Lỗi")
+            self.status.set_text("Error")
             self.status.remove_css_class("success")
             self.status.add_css_class("error")
-            self.status.set_tooltip_text(result.error or "Không rõ lỗi")
+            self.status.set_tooltip_text(result.error or "Unknown error")
 
 
 class CompressorWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.set_title("Nén ảnh")
+        self.set_title("Image Compressor")
         self.set_default_size(1120, 760)
         self.set_size_request(920, 620)
         self.set_icon_name(APP_ID)
@@ -191,14 +191,14 @@ class CompressorWindow(Adw.ApplicationWindow):
         add_button.set_child(
             Gtk.Image.new_from_icon_name("list-add-symbolic")
         )
-        add_button.set_tooltip_text("Thêm ảnh (PNG, JPG, WebP)")
+        add_button.set_tooltip_text("Add images (PNG, JPG, WebP)")
         add_button.add_css_class("add-button")
         add_button.connect("clicked", self._choose_files)
         header.pack_start(add_button)
 
         title_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         title_box.set_halign(Gtk.Align.CENTER)
-        title = Gtk.Label(label="Nén ảnh")
+        title = Gtk.Label(label="Image Compressor")
         title.add_css_class("app-title")
         subtitle = Gtk.Label(label="WebP · PNG · JPG")
         subtitle.add_css_class("app-subtitle")
@@ -207,7 +207,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         header.set_title_widget(title_box)
 
         about = Gtk.Button(icon_name="help-about-symbolic")
-        about.set_tooltip_text("Giới thiệu")
+        about.set_tooltip_text("About")
         about.connect("clicked", self._show_about)
         header.pack_end(about)
 
@@ -233,12 +233,12 @@ class CompressorWindow(Adw.ApplicationWindow):
         panel.set_hexpand(True)
 
         heading = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        title = Gtk.Label(label="Ảnh cần nén", xalign=0)
+        title = Gtk.Label(label="Images to compress", xalign=0)
         title.add_css_class("section-heading")
         title.set_hexpand(True)
-        self.count_label = Gtk.Label(label="0 ảnh", xalign=1)
+        self.count_label = Gtk.Label(label="0 images", xalign=1)
         self.count_label.add_css_class("muted")
-        clear_button = Gtk.Button(label="Xóa tất cả")
+        clear_button = Gtk.Button(label="Clear all")
         clear_button.add_css_class("flat")
         clear_button.connect("clicked", self._clear_files)
         heading.append(title)
@@ -256,13 +256,13 @@ class CompressorWindow(Adw.ApplicationWindow):
         empty.add_css_class("empty-state")
         icon = Gtk.Image.new_from_icon_name("folder-pictures-symbolic")
         icon.set_pixel_size(72)
-        empty_title = Gtk.Label(label="Kéo ảnh vào đây")
+        empty_title = Gtk.Label(label="Drop images here")
         empty_title.add_css_class("empty-title")
         empty_hint = Gtk.Label(
-            label="hoặc bấm “Thêm ảnh” để chọn nhiều ảnh cùng lúc"
+            label="or click “Add images” to select multiple files"
         )
         empty_hint.add_css_class("muted")
-        empty_button = Gtk.Button(label="Chọn ảnh")
+        empty_button = Gtk.Button(label="Choose images")
         empty_button.add_css_class("suggested-action")
         empty_button.set_halign(Gtk.Align.CENTER)
         empty_button.connect("clicked", self._choose_files)
@@ -302,11 +302,11 @@ class CompressorWindow(Adw.ApplicationWindow):
         card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         card.add_css_class("settings-card")
 
-        title = Gtk.Label(label="TÙY CHỌN NÉN", xalign=0)
+        title = Gtk.Label(label="COMPRESSION", xalign=0)
         title.add_css_class("settings-title")
         card.append(title)
 
-        format_label = Gtk.Label(label="Định dạng đầu ra", xalign=0)
+        format_label = Gtk.Label(label="Output format", xalign=0)
         format_label.add_css_class("field-label")
         card.append(format_label)
         self.format_dropdown = Gtk.DropDown.new_from_strings(
@@ -318,7 +318,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         card.append(self.format_dropdown)
 
         quality_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        quality_label = Gtk.Label(label="Chất lượng", xalign=0)
+        quality_label = Gtk.Label(label="Quality", xalign=0)
         quality_label.add_css_class("field-label")
         quality_label.set_hexpand(True)
         self.quality_value = Gtk.Label(label="80", xalign=1)
@@ -335,7 +335,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         self.quality_scale.connect("value-changed", self._on_quality_changed)
         card.append(self.quality_scale)
         self.quality_hint = Gtk.Label(
-            label="JPG/WebP: chất lượng càng thấp càng nhẹ. PNG luôn nén không mất dữ liệu.",
+            label="JPG/WebP: lower quality creates smaller files. PNG is always lossless.",
             xalign=0,
         )
         self.quality_hint.add_css_class("muted")
@@ -345,31 +345,31 @@ class CompressorWindow(Adw.ApplicationWindow):
 
         size_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         size_card.add_css_class("settings-card")
-        size_title = Gtk.Label(label="KÍCH THƯỚC", xalign=0)
+        size_title = Gtk.Label(label="DIMENSIONS", xalign=0)
         size_title.add_css_class("settings-title")
         size_card.append(size_title)
 
         size_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         width_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         width_box.set_hexpand(True)
-        width_label = Gtk.Label(label="Chiều ngang (px)", xalign=0)
+        width_label = Gtk.Label(label="Width (px)", xalign=0)
         width_label.add_css_class("field-label")
         self.width_spin = Gtk.SpinButton.new_with_range(0, 30000, 10)
         self.width_spin.set_value(0)
         self.width_spin.set_hexpand(True)
-        self.width_spin.set_tooltip_text("0 = tự động")
+        self.width_spin.set_tooltip_text("0 = automatic")
         self.width_spin.connect("value-changed", self._update_size_preview)
         width_box.append(width_label)
         width_box.append(self.width_spin)
 
         height_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         height_box.set_hexpand(True)
-        height_label = Gtk.Label(label="Chiều dọc (px)", xalign=0)
+        height_label = Gtk.Label(label="Height (px)", xalign=0)
         height_label.add_css_class("field-label")
         self.height_spin = Gtk.SpinButton.new_with_range(0, 30000, 10)
         self.height_spin.set_value(0)
         self.height_spin.set_hexpand(True)
-        self.height_spin.set_tooltip_text("0 = tự động")
+        self.height_spin.set_tooltip_text("0 = automatic")
         self.height_spin.connect("value-changed", self._update_size_preview)
         height_box.append(height_label)
         height_box.append(self.height_spin)
@@ -378,7 +378,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         size_card.append(size_row)
 
         size_hint = Gtk.Label(
-            label="Đặt một cạnh bằng 0 để cạnh kia tự co theo tỉ lệ. Đặt cả hai để ảnh vừa trong khung.",
+            label="Set one side to 0 to scale it proportionally. Set both limits to fit the image within the box.",
             xalign=0,
         )
         size_hint.add_css_class("muted")
@@ -393,23 +393,23 @@ class CompressorWindow(Adw.ApplicationWindow):
 
         output_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         output_card.add_css_class("settings-card")
-        output_title = Gtk.Label(label="THƯ MỤC LƯU", xalign=0)
+        output_title = Gtk.Label(label="OUTPUT FOLDER", xalign=0)
         output_title.add_css_class("settings-title")
         output_card.append(output_title)
         output_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         self.output_entry = Gtk.Entry()
         self.output_entry.set_text(str(DEFAULT_OUTPUT))
         self.output_entry.set_hexpand(True)
-        self.output_entry.set_tooltip_text("Thư mục chứa ảnh sau khi nén")
+        self.output_entry.set_tooltip_text("Folder for compressed images")
         choose_folder = Gtk.Button(icon_name="folder-open-symbolic")
-        choose_folder.set_tooltip_text("Chọn thư mục")
+        choose_folder.set_tooltip_text("Choose a folder")
         choose_folder.connect("clicked", self._choose_output_folder)
         output_row.append(self.output_entry)
         output_row.append(choose_folder)
         output_card.append(output_row)
         sidebar.append(output_card)
 
-        self.summary_label = Gtk.Label(label="Chưa có ảnh nào", xalign=0)
+        self.summary_label = Gtk.Label(label="No images selected", xalign=0)
         self.summary_label.add_css_class("summary")
         self.summary_label.set_wrap(True)
         sidebar.append(self.summary_label)
@@ -418,7 +418,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         self.progress.set_show_text(False)
         sidebar.append(self.progress)
 
-        self.compress_button = Gtk.Button(label="Nén ảnh")
+        self.compress_button = Gtk.Button(label="Compress")
         self.compress_button.add_css_class("suggested-action")
         self.compress_button.add_css_class("compress-button")
         self.compress_button.set_sensitive(False)
@@ -432,12 +432,12 @@ class CompressorWindow(Adw.ApplicationWindow):
 
     def _choose_files(self, _button: Gtk.Button) -> None:
         dialog = Gtk.FileDialog()
-        dialog.set_title("Chọn ảnh cần nén")
+        dialog.set_title("Choose images to compress")
         dialog.set_modal(True)
 
         filters = Gio.ListStore.new(Gtk.FileFilter)
         image_filter = Gtk.FileFilter()
-        image_filter.set_name("Ảnh PNG, JPG, WebP")
+        image_filter.set_name("PNG, JPG, and WebP images")
         for pattern in ("*.png", "*.jpg", "*.jpeg", "*.webp"):
             image_filter.add_pattern(pattern)
         filters.append(image_filter)
@@ -511,22 +511,22 @@ class CompressorWindow(Adw.ApplicationWindow):
         self._total_original = sum(
             path.stat().st_size for path in self.paths if path.exists()
         )
-        self.count_label.set_text(f"{len(self.paths)} ảnh")
+        self.count_label.set_text(f"{len(self.paths)} images")
         if self.paths:
             self.summary_label.set_text(
-                f"{len(self.paths)} ảnh · {format_bytes(self._total_original)}"
+                f"{len(self.paths)} images · {format_bytes(self._total_original)}"
             )
         else:
-            self.summary_label.set_text("Chưa có ảnh nào")
+            self.summary_label.set_text("No images selected")
         self._update_size_preview()
 
     def _update_size_preview(self, *_args) -> None:
-        """Hiển thị kích thước dự kiến ngay khi người dùng nhập giới hạn."""
+        """Show projected dimensions as soon as the user sets size limits."""
         if not hasattr(self, "size_preview"):
             return
 
         if not self.paths:
-            self.size_preview.set_text("Thêm ảnh để xem kích thước sau khi nén.")
+            self.size_preview.set_text("Add images to preview the compressed dimensions.")
             self.size_preview.set_tooltip_text(None)
             return
 
@@ -551,16 +551,16 @@ class CompressorWindow(Adw.ApplicationWindow):
             )
 
         if not previews:
-            self.size_preview.set_text("Không đọc được kích thước ảnh.")
+            self.size_preview.set_text("Could not read image dimensions.")
             self.size_preview.set_tooltip_text(None)
             return
 
         _, width, height, new_width, new_height = previews[0]
         if (new_width, new_height) == (width, height):
-            first_text = f"Giữ nguyên: {width} × {height} px"
+            first_text = f"Unchanged: {width} × {height} px"
         else:
             first_text = (
-                f"Sau nén: {width} × {height} → {new_width} × {new_height} px"
+                f"After compression: {width} × {height} → {new_width} × {new_height} px"
             )
 
         if len(previews) == 1:
@@ -568,7 +568,7 @@ class CompressorWindow(Adw.ApplicationWindow):
             self.size_preview.set_tooltip_text(None)
         else:
             self.size_preview.set_text(
-                f"Ảnh đầu tiên: {width} × {height} → "
+                f"First image: {width} × {height} → "
                 f"{new_width} × {new_height} px"
             )
             lines = [
@@ -576,7 +576,7 @@ class CompressorWindow(Adw.ApplicationWindow):
                 for name, w, h, nw, nh in previews[:10]
             ]
             if len(previews) > 10:
-                lines.append(f"… và {len(previews) - 10} ảnh khác")
+                lines.append(f"… and {len(previews) - 10} more images")
             self.size_preview.set_tooltip_text("\n".join(lines))
 
     def _update_empty_state(self) -> None:
@@ -600,9 +600,9 @@ class CompressorWindow(Adw.ApplicationWindow):
         selected = FORMAT_KEYS[self.format_dropdown.get_selected()]
         self.quality_scale.set_sensitive(selected != "png")
         self.quality_hint.set_text(
-            "PNG luôn nén không mất dữ liệu; chất lượng không áp dụng."
+            "PNG is always lossless; the quality setting does not apply."
             if selected == "png"
-            else "JPG/WebP: chất lượng càng thấp càng nhẹ. PNG luôn nén không mất dữ liệu."
+            else "JPG/WebP: lower quality creates smaller files. PNG is always lossless."
         )
 
     def _on_quality_changed(self, scale: Gtk.Scale) -> None:
@@ -610,7 +610,7 @@ class CompressorWindow(Adw.ApplicationWindow):
 
     def _choose_output_folder(self, _button: Gtk.Button) -> None:
         dialog = Gtk.FileDialog()
-        dialog.set_title("Chọn thư mục lưu")
+        dialog.set_title("Choose an output folder")
         dialog.set_modal(True)
         dialog.select_folder(self, None, self._on_output_folder_selected)
 
@@ -643,7 +643,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         self.busy = True
         self._results = []
         self.progress.set_fraction(0)
-        self.summary_label.set_text("Đang nén…")
+        self.summary_label.set_text("Compressing…")
         self._set_controls_sensitive(False)
         self.compress_button.set_sensitive(False)
 
@@ -671,7 +671,7 @@ class CompressorWindow(Adw.ApplicationWindow):
     def _mark_processing(self, path: Path) -> bool:
         row = self.rows.get(path)
         if row is not None:
-            row.set_status("Đang nén…", "processing")
+            row.set_status("Compressing…", "processing")
         return False
 
     def _update_progress(self, fraction: float) -> bool:
@@ -695,7 +695,7 @@ class CompressorWindow(Adw.ApplicationWindow):
         failures = [result for result in self._results if not result.ok]
         if not successes:
             self.summary_label.set_text(
-                f"Không nén được ảnh nào · {len(failures)} lỗi"
+                f"No images compressed · {len(failures)} errors"
             )
             return False
 
@@ -705,12 +705,12 @@ class CompressorWindow(Adw.ApplicationWindow):
             round((1 - total_output / total_input) * 100) if total_input else 0
         )
         if reduction >= 0:
-            save_text = f"giảm {reduction}%"
+            save_text = f"saved {reduction}%"
         else:
-            save_text = f"tăng {abs(reduction)}%"
-        extra = f" · {len(failures)} lỗi" if failures else ""
+            save_text = f"increased by {abs(reduction)}%"
+        extra = f" · {len(failures)} errors" if failures else ""
         self.summary_label.set_text(
-            f"{len(successes)}/{len(self._results)} ảnh · "
+            f"{len(successes)}/{len(self._results)} images · "
             f"{format_bytes(total_output)} · {save_text}{extra}"
         )
         return False
@@ -732,10 +732,10 @@ class CompressorWindow(Adw.ApplicationWindow):
         about = Gtk.AboutDialog()
         about.set_transient_for(self)
         about.set_modal(True)
-        about.set_program_name("Nén ảnh")
+        about.set_program_name("Image Compressor")
         about.set_version("1.0.0")
         about.set_comments(
-            "Nén ảnh hàng loạt sang WebP, PNG hoặc JPG, giữ đúng tỉ lệ."
+            "Batch-compress images to WebP, PNG, or JPG while preserving aspect ratio."
         )
         about.set_logo_icon_name(APP_ID)
         about.set_authors(["iHoan"])

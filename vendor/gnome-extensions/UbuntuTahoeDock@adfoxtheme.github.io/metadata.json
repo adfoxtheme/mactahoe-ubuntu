@@ -1,6 +1,6 @@
 {
   "name": "UbuntuTahoeDock",
-  "description": "Thanh Dock phong cách macOS Tahoe cho GNOME Shell",
+  "description": "A macOS Tahoe-style dock for GNOME Shell",
   "uuid": "UbuntuTahoeDock@adfoxtheme.github.io",
   "settings-schema": "org.gnome.shell.extensions.ubuntutahoedock",
   "shell-version": [

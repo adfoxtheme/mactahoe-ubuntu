@@ -161,7 +161,7 @@ class ClipboardIndicator extends PanelMenu.Button {
         });
 
         this._headerLabel = new St.Label({
-            text: `Bảng nhớ tạm (${this._history.length}/20)`,
+            text: `Clipboard (${this._history.length}/20)`,
             x_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
             style_class: 'tahoe-clip-header-title',
@@ -192,7 +192,7 @@ class ClipboardIndicator extends PanelMenu.Button {
             style_class: 'tahoe-clip-search-item',
         });
         this._searchEntry = new St.Entry({
-            hint_text: 'Tìm kiếm lịch sử (Win + Alt + Space)...',
+            hint_text: 'Search clipboard history (Win + Alt + Space)...',
             x_expand: true,
             style_class: 'tahoe-clip-search-entry search-entry',
         });
@@ -237,12 +237,12 @@ class ClipboardIndicator extends PanelMenu.Button {
         }
 
         if (this._headerLabel) {
-            this._headerLabel.set_text(`Bảng nhớ tạm (${this._history.length}/20)`);
+            this._headerLabel.set_text(`Clipboard (${this._history.length}/20)`);
         }
 
         if (filtered.length === 0) {
             const emptyItem = new PopupMenu.PopupMenuItem(
-                filterQuery ? 'Không tìm thấy kết quả phù hợp' : 'Chưa có nội dung sao chép',
+                filterQuery ? 'No matching results' : 'No clipboard history yet',
                 { reactive: false, style_class: 'tahoe-clip-menu-item' }
             );
             this._listSection.addMenuItem(emptyItem);

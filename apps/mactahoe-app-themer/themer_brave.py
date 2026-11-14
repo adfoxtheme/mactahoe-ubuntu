@@ -93,7 +93,7 @@ def detect_brave():
             })
 
     is_installed = len(found) > 0 or shutil.which("brave") is not None or shutil.which("brave-browser") is not None
-    type_str = ", ".join(f["type"] for f in found) if found else ("Hệ thống" if is_installed else "Chưa cài đặt")
+    type_str = ", ".join(f["type"] for f in found) if found else ("System" if is_installed else "Not installed")
 
     return {
         "is_installed": is_installed,
@@ -139,7 +139,7 @@ def apply_brave_theme():
     """Apply MacTahoe GTK theming to all detected Brave installations."""
     status = detect_brave()
     if not status["is_installed"]:
-        return {"success": False, "message": "Không tìm thấy Brave trên hệ thống!"}
+        return {"success": False, "message": "Brave was not found on this system."}
 
     # 1. Update host GTK3 settings
     ensure_system_gtk3_theme()
@@ -195,7 +195,7 @@ def apply_brave_theme():
 
     return {
         "success": True,
-        "message": f"Đã kết nối giao diện GTK MacTahoe cho Brave ({status['type_str']})!",
+        "message": f"Connected the MacTahoe GTK theme to Brave ({status['type_str']}).",
         "count": updated_count,
     }
 
@@ -204,7 +204,7 @@ def restore_brave_default():
     """Restore Brave to default Classic theme (system_theme = 0)."""
     status = detect_brave()
     if not status["is_installed"]:
-        return {"success": False, "message": "Không tìm thấy Brave trên hệ thống!"}
+        return {"success": False, "message": "Brave was not found on this system."}
 
     restored_count = 0
     for inst in status["installations"]:
@@ -215,6 +215,6 @@ def restore_brave_default():
 
     return {
         "success": True,
-        "message": f"Đã khôi phục Brave về giao diện mặc định ({status['type_str']})!",
+        "message": f"Restored Brave's default appearance ({status['type_str']}).",
         "count": restored_count,
     }

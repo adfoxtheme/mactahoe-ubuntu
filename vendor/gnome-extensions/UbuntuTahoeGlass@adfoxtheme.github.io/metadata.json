@@ -1,6 +1,6 @@
 {
   "name": "UbuntuTahoeGlass",
-  "description": "Hiệu ứng Liquid Glass (Kính lỏng) cho Dock và Quick Settings phong cách macOS Tahoe",
+  "description": "macOS Tahoe-style liquid glass effects for the Dock and Quick Settings",
   "uuid": "UbuntuTahoeGlass@adfoxtheme.github.io",
   "settings-schema": "org.gnome.shell.extensions.ubuntutahoeglass",
   "shell-version": [

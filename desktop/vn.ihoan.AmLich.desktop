@@ -1,12 +1,15 @@
 [Desktop Entry]
 Type=Application
-Name=Âm lịch Việt Nam
-Comment=Xem lịch âm, ngày lễ và Can Chi
+Name=Vietnamese Lunar Calendar
+Name[vi]=Âm lịch Việt Nam
+Comment=View Vietnamese lunar dates, holidays, and Can Chi
+Comment[vi]=Xem lịch âm, ngày lễ và Can Chi
 Exec=am-lich-viet-nam
 Icon=vn.ihoan.AmLich
 Terminal=false
 Categories=Office;Calendar;
-Keywords=am lich;lunar;calendar;lich viet nam;
+Keywords=lunar;calendar;Vietnam;Can Chi;
+Keywords[vi]=âm lịch;lịch;lịch Việt Nam;can chi;
 StartupNotify=true
 StartupWMClass=vn.ihoan.AmLich
 X-GNOME-UsesNotifications=false
